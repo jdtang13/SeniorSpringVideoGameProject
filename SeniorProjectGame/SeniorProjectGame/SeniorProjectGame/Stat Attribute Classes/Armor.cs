@@ -25,7 +25,7 @@ namespace SeniorProjectGame
             armorAttributes["resistance modifier"] = resmod;
             armorAttributes["speed modifier"] = spdmod;
 
-            //hi test
+            
         }
     }
 }
