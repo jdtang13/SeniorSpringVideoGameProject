@@ -24,6 +24,8 @@ namespace SeniorProjectGame
             armorAttributes["defense modifier"] = defmod;
             armorAttributes["resistance modifier"] = resmod;
             armorAttributes["speed modifier"] = spdmod;
+
+            
         }
     }
 }
