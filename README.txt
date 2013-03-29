@@ -11,3 +11,5 @@ File > Add existing project > select entityengine's project file
 
 Then, right click the "References" folder under SeniorProjectGame and click "add reference". 
 Then select EntityEngine and click OK.
+
+March 29: everyone gets github
