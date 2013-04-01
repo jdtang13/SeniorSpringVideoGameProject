@@ -213,6 +213,14 @@ namespace SeniorProjectGame
                     SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
 
                     sprite.setColor(Color.BurlyWood);
+                    
+                    List<HexComponent> hexRing = boardComp.GetAllRings(2);
+                    for (int p = 0; p < hexRing.Count; p++)
+                    {
+                        Entity hexParent = hexRing[p]._parent;
+                        SpriteComponent spriteParent = hexParent.getDrawable("SpriteComponent") as SpriteComponent;
+                        spriteParent.setColor(Color.CadetBlue);
+                    }
 
                 }
                 if (mouseRightClick.Evaluate())
