@@ -30,7 +30,7 @@ namespace EntityEngine.Components.TileComponents
         }
 
 
-        public HexComponent n , ne, se, s , sw, nw;
+        public HexComponent n, ne, se, s, sw, nw;
 
         //List of counters on top of the hex.
         List<PlaceableComponent> placeableList = new List<PlaceableComponent>();
@@ -43,14 +43,15 @@ namespace EntityEngine.Components.TileComponents
             placeableList.Remove(myPlaceable);
         }
 
-    
-        public HexComponent(Entity myParent, Vector2 myCoordPosition) : base(myParent)
+
+        public HexComponent(Entity myParent, Vector2 myCoordPosition)
+            : base(myParent)
         {
             this.name = "HexComponent";
             coordPosition = myCoordPosition;
         }
 
-        public void setAdjacent(HexComponent N, HexComponent NE, HexComponent SE , HexComponent S, HexComponent SW, HexComponent NW)
+        public void setAdjacent(HexComponent N, HexComponent NE, HexComponent SE, HexComponent S, HexComponent SW, HexComponent NW)
         {
             n = N; ne = NE; se = SE; s = S; sw = SW; nw = NW;
         }
@@ -63,18 +64,51 @@ namespace EntityEngine.Components.TileComponents
                 case Orientation.n:
                     return n;
                 case Orientation.ne:
-                    return ne;                   
+                    return ne;
                 case Orientation.se:
-                    return se;                    
+                    return se;
                 case Orientation.s:
-                    return s;                    
+                    return s;
                 case Orientation.sw:
-                    return sw;                   
+                    return sw;
                 case Orientation.nw:
-                    return nw;                    
+                    return nw;
                 default:
                     return this;
-           
+
+            }
+        }
+
+        public void SetFog(Visibility myVis)
+        {
+            if (myVis == Visibility.Visible)
+            {
+                HexComponent hexComp = this;
+                Entity hexEntity = hexComp._parent;
+                SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
+
+                sprite.setColor(Color.White);
+                sprite._visible = true;
+            }
+
+            if (myVis == Visibility.Explored)
+            {
+                HexComponent hexComp = this;
+                Entity hexEntity = hexComp._parent;
+                SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
+
+                sprite.setColor(Color.Gray);
+                sprite._visible = true;
+            }
+
+            if (myVis == Visibility.Unexplored)
+            {
+                HexComponent hexComp = this;
+                Entity hexEntity = hexComp._parent;
+                SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
+
+                sprite.setColor(Color.White);
+                sprite._visible = false;
             }
         }
     }

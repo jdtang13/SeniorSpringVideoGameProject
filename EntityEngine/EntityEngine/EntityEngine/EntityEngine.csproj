@@ -52,6 +52,7 @@
     <Compile Include="Components\TileComponents\Orientation.cs" />
     <Compile Include="Components\TileComponents\PlaceableComponent.cs" />
     <Compile Include="Components\TileComponents\HexComponent.cs" />
+    <Compile Include="Components\TileComponents\Visibility.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EntityManager.cs" />
     <Compile Include="Input\InputAction.cs" />

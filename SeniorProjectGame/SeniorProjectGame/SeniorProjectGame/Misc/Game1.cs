@@ -173,7 +173,7 @@ namespace SeniorProjectGame
                         }
                         else
                         {
-                            State.displayedDialogueMessage += curChar; 
+                            State.displayedDialogueMessage += curChar;
                             //  add chars blipping onto the screen
                         }
 
@@ -222,6 +222,14 @@ namespace SeniorProjectGame
                         spriteParent.setColor(Color.CadetBlue);
                     }
 
+                    //List<HexComponent> hexRing = boardComp.GetAllRings(3);
+                    //for (int p = 0; p < hexRing.Count; p++)
+                    //{
+                    //    Entity hexParent = hexRing[p]._parent;
+                    //    SpriteComponent spriteParent = hexParent.getDrawable("SpriteComponent") as SpriteComponent;
+                    //    spriteParent.setColor(Color.CadetBlue);
+                    //}
+
                 }
                 if (mouseRightClick.Evaluate())
                 {
@@ -245,7 +253,7 @@ namespace SeniorProjectGame
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
 
