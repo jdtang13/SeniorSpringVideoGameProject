@@ -55,6 +55,21 @@ namespace EntityEngine.Components.Sprites
             interval = myInterval;
             animating = true;
         }
+        public AnimatedSpriteComponent(Entity myParent, bool myMain, Vector2 myPosition, Texture2D myTex,
+                float myInterval, int mySpriteWidth, int mySpriteHeight, int myXOffset, int myYOffset)
+            : base(myParent, myMain)
+        {
+            this.name = "AnimatedSpriteComponent";
+            this.position = myPosition;
+
+            this.texture = myTex;
+            spriteWidth = mySpriteWidth;
+            spriteHeight = mySpriteHeight;
+
+            numberFrames = this.texture.Width / spriteWidth;
+            interval = myInterval;
+            animating = true;
+        }
 
         public override void Initialize()
         {

@@ -286,6 +286,29 @@ namespace EntityEngine.Components.TileComponents
             return allRings;
         }
 
+        public void CreateUnit(Vector2 myCoordinate, Texture2D myUnitTexture)
+        {
+            HexComponent hexComp = getHex(myCoordinate);
+
+            if (hexComp.GetUnit() == null)
+            {
+                Entity unitEntity = new Entity(5);
+                UnitComponent unitComp = new UnitComponent(_parent, getHex(myCoordinate), true);
+                unitEntity.AddComponent(unitComp);
+                SpriteComponent hexSprite = getHex(myCoordinate)._parent.getDrawable("SpriteComponent") as SpriteComponent;
+                unitEntity.AddComponent(new AnimatedSpriteComponent(unitEntity, true, hexSprite.getCenterPosition(), myUnitTexture, 200f, 50, 50));
+                unitEntity.AddComponent(new CameraComponent(unitEntity, hexSprite.getCenterPosition()));
+                EntityManager.AddEntity(unitEntity);
+
+                hexComp.SetUnit(unitComp);
+
+            }
+            else
+            {
+                throw new Exception("There is already a unit where you are trying to create one.");
+            }
+        }
+
         //Some rounding functions, nothing to see here
         public float roundUp(float myNum)
         {
