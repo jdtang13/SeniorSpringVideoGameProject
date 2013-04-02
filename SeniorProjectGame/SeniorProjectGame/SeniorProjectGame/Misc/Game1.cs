@@ -70,6 +70,7 @@ namespace SeniorProjectGame
             mouseRightClick = new InputAction(MouseButton.right, false);
 
             State.screenState = State.ScreenState.SKIRMISH;
+            State.selectionState = State.SelectionState.NoSelection;
             State.dialoguePosition = 0;
             State.dialogueChoicePosition = 0;
             State.displayedDialogueMessage = "";
@@ -210,6 +211,39 @@ namespace SeniorProjectGame
                 {
                     HexComponent hexComp = boardComp.getCurrentHexAtMouse();
                     Entity hexEntity = hexComp._parent;
+
+                    // PSEUDO-CODE OUTLINE BELOW. DO NOT ERASE! t.Jon
+
+                    /*
+                    if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection) {
+                        UnitComponent unit = hexComp.GetUnit();
+                        State.selectionState = State.SelectionState.SelectingUnit;
+
+                        State.originalHexClicked = hexComp;
+                    }
+                    else if (State.selectionState == State.SelectionState.SelectingUnit)
+                    {
+                        State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
+                    }
+                    else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits) {
+
+                        if (ButtonPressed == "Back")
+                        {
+                            State.selectionState = State.SelectionState.NoSelection;
+                        }
+                        else if (OptionSelected == "Wait" || OptionSelected == "Item")
+                        {
+                            UnitComponent unit = State.originalHexClicked.GetUnit();
+                            State.originalHexClicked.RemoveUnit();
+
+                            hexComp.SetUnit(unit);
+
+                            State.SelectionState.NoSelection;
+                        }
+
+                    }
+                    */
+
                     SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
 
                     sprite.setColor(Color.BurlyWood);

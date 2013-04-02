@@ -53,7 +53,6 @@ namespace EntityEngine.Components.TileComponents
             return placeableList;
         }
 
-    
         public HexComponent(Entity myParent, Vector2 myCoordPosition) : base(myParent)
         {
             this.name = "HexComponent";
