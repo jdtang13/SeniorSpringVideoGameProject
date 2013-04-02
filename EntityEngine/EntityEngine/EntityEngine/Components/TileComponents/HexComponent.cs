@@ -29,9 +29,15 @@ namespace EntityEngine.Components.TileComponents
             }
         }
 
-
         public HexComponent n , ne, se, s , sw, nw;
 
+        //As there can only be one unit per tile, there is but one unit var
+        UnitComponent unit;
+        public UnitComponent GetUnit()
+        {
+            return unit;
+        }
+        
         //List of counters on top of the hex.
         List<PlaceableComponent> placeableList = new List<PlaceableComponent>();
         public void addPlaceable(PlaceableComponent myPlaceable)
@@ -41,6 +47,10 @@ namespace EntityEngine.Components.TileComponents
         public void removePlaceable(PlaceableComponent myPlaceable)
         {
             placeableList.Remove(myPlaceable);
+        }
+        public List<PlaceableComponent> GetPlaceables()
+        {
+            return placeableList;
         }
 
     
@@ -56,21 +66,21 @@ namespace EntityEngine.Components.TileComponents
         }
 
         //Returns the hex component of the hex entity in a certain direction
-        public HexComponent getAdjacent(Orientation myOar)
+        public HexComponent getAdjacent(Orient myOar)
         {
             switch (myOar)
             {
-                case Orientation.n:
+                case Orient.n:
                     return n;
-                case Orientation.ne:
+                case Orient.ne:
                     return ne;                   
-                case Orientation.se:
+                case Orient.se:
                     return se;                    
-                case Orientation.s:
+                case Orient.s:
                     return s;                    
-                case Orientation.sw:
+                case Orient.sw:
                     return sw;                   
-                case Orientation.nw:
+                case Orient.nw:
                     return nw;                    
                 default:
                     return this;

@@ -49,9 +49,12 @@
     <Compile Include="Components\Sprites\SpriteSheetComponent.cs" />
     <Compile Include="Components\Sprites\TextSpriteComponent.cs" />
     <Compile Include="Components\TileComponents\BoardComponent.cs" />
-    <Compile Include="Components\TileComponents\Orientation.cs" />
-    <Compile Include="Components\TileComponents\PlaceableComponent.cs" />
+    <Compile Include="Components\TileComponents\Orient.cs" />
     <Compile Include="Components\TileComponents\HexComponent.cs" />
+    <Compile Include="Components\TileComponents\PlaceableComponent.cs" />
+    <Compile Include="Components\TileComponents\TerrainComponent.cs" />
+    <Compile Include="Components\TileComponents\CommandState.cs" />
+    <Compile Include="Components\TileComponents\UnitComponent.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EntityManager.cs" />
     <Compile Include="Input\InputAction.cs" />
