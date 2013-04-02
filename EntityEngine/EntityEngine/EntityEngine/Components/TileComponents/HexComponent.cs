@@ -37,7 +37,14 @@ namespace EntityEngine.Components.TileComponents
         {
             return unit;
         }
-        
+        public void SetUnit(UnitComponent myUnit)
+        {
+            placeableList.Remove(unit);
+            unit = myUnit;
+            placeableList.Add(myUnit);
+            
+        }
+
         //List of counters on top of the hex.
         List<PlaceableComponent> placeableList = new List<PlaceableComponent>();
         public void addPlaceable(PlaceableComponent myPlaceable)
