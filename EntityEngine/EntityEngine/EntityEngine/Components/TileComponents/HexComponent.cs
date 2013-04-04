@@ -29,12 +29,9 @@ namespace EntityEngine.Components.TileComponents
             }
         }
 
-<<<<<<< HEAD
-        public HexComponent n , ne, se, s , sw, nw;
-=======
 
         public HexComponent n, ne, se, s, sw, nw;
->>>>>>> origin/lionel
+
 
         //As there can only be one unit per tile, there is but one unit var
         UnitComponent unit;
@@ -65,13 +62,9 @@ namespace EntityEngine.Components.TileComponents
             return placeableList;
         }
 
-<<<<<<< HEAD
-        public HexComponent(Entity myParent, Vector2 myCoordPosition) : base(myParent)
-=======
 
-        public HexComponent(Entity myParent, Vector2 myCoordPosition)
-            : base(myParent)
->>>>>>> origin/lionel
+
+        public HexComponent(Entity myParent, Vector2 myCoordPosition) : base(myParent)
         {
             this.name = "HexComponent";
             coordPosition = myCoordPosition;
@@ -89,7 +82,6 @@ namespace EntityEngine.Components.TileComponents
             {
                 case Orient.n:
                     return n;
-<<<<<<< HEAD
                 case Orient.ne:
                     return ne;                   
                 case Orient.se:
@@ -100,18 +92,7 @@ namespace EntityEngine.Components.TileComponents
                     return sw;                   
                 case Orient.nw:
                     return nw;                    
-=======
-                case Orientation.ne:
-                    return ne;
-                case Orientation.se:
-                    return se;
-                case Orientation.s:
-                    return s;
-                case Orientation.sw:
-                    return sw;
-                case Orientation.nw:
-                    return nw;
->>>>>>> origin/lionel
+
                 default:
                     return this;
 

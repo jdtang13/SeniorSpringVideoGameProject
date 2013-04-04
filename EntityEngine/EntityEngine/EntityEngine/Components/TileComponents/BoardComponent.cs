@@ -303,7 +303,6 @@ namespace EntityEngine.Components.TileComponents
             return allRings;
         }
 
-<<<<<<< HEAD
         public void CreateUnit(Vector2 myCoordinate, Texture2D myUnitTexture)
         {
             HexComponent hexComp = getHex(myCoordinate);
@@ -325,7 +324,8 @@ namespace EntityEngine.Components.TileComponents
             {
                 throw new Exception("There is already a unit where you are trying to create one.");
             }
-=======
+        }
+
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
@@ -375,53 +375,6 @@ namespace EntityEngine.Components.TileComponents
                 oldPlayerPosition = newPlayerPosition;
                 oldVisible = newVisible;
             }
-
->>>>>>> origin/lionel
-        }
-        
-        //returns ring of hexes distance radius away from mouseCurrentHex
-        public List<HexComponent> GetRing(int radius)
-        {
-            List<HexComponent> ring = new List<HexComponent>();
-            Vector2 startCoord = new Vector2(mouseCurrentHex.X, mouseCurrentHex.Y - radius);
-            Vector2 ghostCoord = startCoord;
-
-            //                              N                  NE                 SE                S                  SW                   NW
-            Vector2[] directions = { new Vector2(0, -1), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1), new Vector2(-1, 0), new Vector2(-1, -1) };
-
-            // 7 % 6 = orientation 1
-            for (int o = 2; o <= 7; o++)
-            {
-                int times = radius;
-                while (times > 0) // > or >=
-                {
-                    ghostCoord = ghostCoord + directions[o % 6];
-
-                    if (getHex(ghostCoord) != null)
-                    {
-                        ring.Add(getHex(ghostCoord));
-                    }
-
-                    times--;
-                }
-            }
-
-            return ring;
-        }
-
-        //returns all rings of hexes distance radius or less away from mouseCurrentHex
-        public List<HexComponent> GetAllRings(int radius)
-        {
-            List<HexComponent> allRings = new List<HexComponent>();
-
-            for (int r = 0; r <= radius; r++)
-            {
-                allRings.AddRange(GetRing(r));
-            }
-
-            allRings.Add(getHex(mouseCurrentHex));
-
-            return allRings;
         }
 
         //Some rounding functions, nothing to see here

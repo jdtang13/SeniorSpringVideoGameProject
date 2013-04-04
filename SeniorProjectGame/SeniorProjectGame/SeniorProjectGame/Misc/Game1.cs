@@ -31,7 +31,7 @@ namespace SeniorProjectGame
         Random rand;
 
         Texture2D hexTexture;
-        Texture2D hexPiece;
+        //Texture2D hexPiece;
 
         SpriteFont font;
 
@@ -64,13 +64,14 @@ namespace SeniorProjectGame
             LoadContent();
             CreateBoard();
 
-            boardComp.CreateUnit(new Vector2(5, 5), hexPiece);
+            //boardComp.CreateUnit(new Vector2(5, 5), hexPiece);
 
             rand = new Random();
             escapeAction = new InputAction(new Keys[] { Keys.Escape }, true);
             mouseLeftClick = new InputAction(MouseButton.left, false);
             mouseRightClick = new InputAction(MouseButton.right, false);
 
+            #region stateInit
             State.screenState = State.ScreenState.SKIRMISH;
             State.selectionState = State.SelectionState.NoSelection;
             State.dialoguePosition = 0;
@@ -85,6 +86,7 @@ namespace SeniorProjectGame
             State.lastTimeDialogueChecked = 0;
             State.messageBegin = false;
             State.currentDialogueMessage = new List<string>();
+            #endregion
 
             Globals.font = Content.Load<SpriteFont>("font");
 
@@ -110,7 +112,7 @@ namespace SeniorProjectGame
 
             font = Content.Load<SpriteFont>("Debug");
             hexTexture = Content.Load<Texture2D>("hex");
-            hexPiece = Content.Load<Texture2D>("hexPiece");
+            //hexPiece = Content.Load<Texture2D>("hexPiece");
 
         }
 
