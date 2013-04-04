@@ -94,7 +94,6 @@ namespace SeniorProjectGame
             boardComp = new BoardComponent(board, hexTexture, font, new Vector2(27, 12));
             board.AddComponent(boardComp);
             EntityManager.AddEntity(board);
-
         }
 
         /// <summary>
