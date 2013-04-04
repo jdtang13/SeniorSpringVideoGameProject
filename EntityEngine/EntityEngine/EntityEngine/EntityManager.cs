@@ -82,7 +82,7 @@ namespace EntityEngine
 
         public static void Draw(SpriteBatch myBatch)
         {
-            //Cycle through the layers of all the entities, 0 being the msot background
+            //Cycle through the layers of all the entities, 0 being the most background
             for (int q = 0; q < LAYER_LIMIT; q++)
             {
                 for (int p = 0; p < currentList.Count; p++)
