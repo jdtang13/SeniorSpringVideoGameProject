@@ -55,6 +55,7 @@
     <Compile Include="Components\TileComponents\TerrainComponent.cs" />
     <Compile Include="Components\TileComponents\CommandState.cs" />
     <Compile Include="Components\TileComponents\UnitComponent.cs" />
+    <Compile Include="Components\TileComponents\Visibility.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EntityManager.cs" />
     <Compile Include="Input\InputAction.cs" />

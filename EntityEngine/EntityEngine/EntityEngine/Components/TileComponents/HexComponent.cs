@@ -29,7 +29,12 @@ namespace EntityEngine.Components.TileComponents
             }
         }
 
+<<<<<<< HEAD
         public HexComponent n , ne, se, s , sw, nw;
+=======
+
+        public HexComponent n, ne, se, s, sw, nw;
+>>>>>>> origin/lionel
 
         //As there can only be one unit per tile, there is but one unit var
         UnitComponent unit;
@@ -60,13 +65,19 @@ namespace EntityEngine.Components.TileComponents
             return placeableList;
         }
 
+<<<<<<< HEAD
         public HexComponent(Entity myParent, Vector2 myCoordPosition) : base(myParent)
+=======
+
+        public HexComponent(Entity myParent, Vector2 myCoordPosition)
+            : base(myParent)
+>>>>>>> origin/lionel
         {
             this.name = "HexComponent";
             coordPosition = myCoordPosition;
         }
 
-        public void setAdjacent(HexComponent N, HexComponent NE, HexComponent SE , HexComponent S, HexComponent SW, HexComponent NW)
+        public void setAdjacent(HexComponent N, HexComponent NE, HexComponent SE, HexComponent S, HexComponent SW, HexComponent NW)
         {
             n = N; ne = NE; se = SE; s = S; sw = SW; nw = NW;
         }
@@ -78,6 +89,7 @@ namespace EntityEngine.Components.TileComponents
             {
                 case Orient.n:
                     return n;
+<<<<<<< HEAD
                 case Orient.ne:
                     return ne;                   
                 case Orient.se:
@@ -88,9 +100,54 @@ namespace EntityEngine.Components.TileComponents
                     return sw;                   
                 case Orient.nw:
                     return nw;                    
+=======
+                case Orientation.ne:
+                    return ne;
+                case Orientation.se:
+                    return se;
+                case Orientation.s:
+                    return s;
+                case Orientation.sw:
+                    return sw;
+                case Orientation.nw:
+                    return nw;
+>>>>>>> origin/lionel
                 default:
                     return this;
-           
+
+            }
+        }
+
+        public void SetFog(Visibility myVis)
+        {
+            if (myVis == Visibility.Visible)
+            {
+                HexComponent hexComp = this;
+                Entity hexEntity = hexComp._parent;
+                SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
+
+                sprite.setColor(Color.White);
+                sprite._visible = true;
+            }
+
+            if (myVis == Visibility.Explored)
+            {
+                HexComponent hexComp = this;
+                Entity hexEntity = hexComp._parent;
+                SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
+
+                sprite.setColor(Color.Gray);
+                sprite._visible = true;
+            }
+
+            if (myVis == Visibility.Unexplored)
+            {
+                HexComponent hexComp = this;
+                Entity hexEntity = hexComp._parent;
+                SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
+
+                sprite.setColor(Color.White);
+                sprite._visible = false;
             }
         }
     }
