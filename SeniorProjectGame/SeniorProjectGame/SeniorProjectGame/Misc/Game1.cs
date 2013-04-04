@@ -46,8 +46,8 @@ namespace SeniorProjectGame
             Content.RootDirectory = "Content";
 
             //1280x720
-            //graphics.PreferredBackBufferHeight = 720;
-            //graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 680;
+            graphics.PreferredBackBufferWidth = 1280;
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace SeniorProjectGame
         void CreateBoard()
         {
             Entity board = new Entity(0);
-            boardComp = new BoardComponent(board, hexTexture, font, new Vector2(20, 20));
+            boardComp = new BoardComponent(board, hexTexture, font, new Vector2(27, 12));
             board.AddComponent(boardComp);
             EntityManager.AddEntity(board);
 
@@ -213,14 +213,6 @@ namespace SeniorProjectGame
                     SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
 
                     sprite.setColor(Color.BurlyWood);
-                    
-                    List<HexComponent> hexRing = boardComp.GetAllRings(2);
-                    for (int p = 0; p < hexRing.Count; p++)
-                    {
-                        Entity hexParent = hexRing[p]._parent;
-                        SpriteComponent spriteParent = hexParent.getDrawable("SpriteComponent") as SpriteComponent;
-                        spriteParent.setColor(Color.CadetBlue);
-                    }
 
                     //List<HexComponent> hexRing = boardComp.GetAllRings(3);
                     //for (int p = 0; p < hexRing.Count; p++)
