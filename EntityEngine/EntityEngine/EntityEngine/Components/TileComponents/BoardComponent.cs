@@ -296,7 +296,7 @@ namespace EntityEngine.Components.TileComponents
                 UnitComponent unitComp = new UnitComponent(_parent, getHex(myCoordinate), true);
                 unitEntity.AddComponent(unitComp);
                 SpriteComponent hexSprite = getHex(myCoordinate)._parent.getDrawable("SpriteComponent") as SpriteComponent;
-                unitEntity.AddComponent(new AnimatedSpriteComponent(unitEntity, true, hexSprite.getCenterPosition(), myUnitTexture, 200f, 50, 50));
+                unitEntity.AddComponent(new AnimatedSpriteComponent(unitEntity, true, hexSprite.getCenterPosition(), myUnitTexture, 75f, 50, 50));
                 unitEntity.AddComponent(new CameraComponent(unitEntity, hexSprite.getCenterPosition()));
                 EntityManager.AddEntity(unitEntity);
 
