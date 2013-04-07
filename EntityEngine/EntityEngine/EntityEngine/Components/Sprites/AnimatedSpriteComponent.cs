@@ -33,7 +33,7 @@ namespace EntityEngine.Components.Sprites
         int numberFrames;
 
         bool animating;//Turns the animating on and off
-        public void setAnimated(bool myTruth)
+        public void SetAnimated(bool myTruth)
         {
             animating = myTruth;
         }
