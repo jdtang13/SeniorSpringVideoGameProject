@@ -31,12 +31,11 @@ namespace SeniorProjectGame
         Random rand;
 
         Texture2D hexTexture;
-        //Texture2D hexPiece;
+        Texture2D unitTexture;
 
         SpriteFont font;
 
-        Entity player;
-        InputAction mouseLeftClick, mouseRightClick, escapeAction;
+        InputAction mouseSingleLeftClick, mouseSingleRightClick, escapeAction;
 
         BoardComponent boardComp;
 
@@ -50,15 +49,9 @@ namespace SeniorProjectGame
             graphics.PreferredBackBufferWidth = 1280;
         }
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            
 
             IsMouseVisible = true;
             LoadContent();
@@ -68,8 +61,8 @@ namespace SeniorProjectGame
 
             rand = new Random();
             escapeAction = new InputAction(new Keys[] { Keys.Escape }, true);
-            mouseLeftClick = new InputAction(MouseButton.left, false);
-            mouseRightClick = new InputAction(MouseButton.right, false);
+            mouseSingleLeftClick = new InputAction(MouseButton.left, true);
+            mouseSingleRightClick = new InputAction(MouseButton.right, true);
 
             #region stateInit
             State.screenState = State.ScreenState.SKIRMISH;
@@ -112,7 +105,7 @@ namespace SeniorProjectGame
 
             font = Content.Load<SpriteFont>("Debug");
             hexTexture = Content.Load<Texture2D>("hex");
-            //hexPiece = Content.Load<Texture2D>("hexPiece");
+            unitTexture = Content.Load<Texture2D>("hexPiece");
 
         }
 
@@ -125,6 +118,47 @@ namespace SeniorProjectGame
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
+
+            if (escapeAction.Evaluate())
+            {
+                this.Exit();
+            }
+
+            switch (State.screenState)
+            {
+                case State.ScreenState.MAIN_PAGE:
+                    break;
+                case State.ScreenState.SETTINGS_MENU:
+                    break;
+                case State.ScreenState.WORLD_MAP:
+                    break;
+                case State.ScreenState.SHOP:
+                    break;
+                case State.ScreenState.DIALOGUE:
+                    break;
+                case State.ScreenState.SKIRMISH:
+
+                    EntityManager.Update(gameTime);
+
+                    if (mouseSingleLeftClick.Evaluate())
+                    {
+                    }
+                    break;
+
+                //As of now, we will not be using the states below
+                case State.ScreenState.BATTLE_FORECAST:
+                    break;
+                case State.ScreenState.BATTLING:
+                    break;
+                case State.ScreenState.BATTLE_RESOLUTION:
+                    break;
+
+                
+
+                default:
+                    //This should nevr happen
+                    break;
+            }
 
             if (State.screenState == State.ScreenState.DIALOGUE)
             {
@@ -193,49 +227,50 @@ namespace SeniorProjectGame
             }
             else if (State.screenState == State.ScreenState.SKIRMISH)
             {
-                // skirmish map update
+
                 EntityManager.Update(gameTime);
 
-                if (escapeAction.Evaluate())
+                
+                if (mouseSingleLeftClick.Evaluate())
                 {
-                    this.Exit();
-                }
-                if (mouseLeftClick.Evaluate())
-                {
-                    HexComponent hexComp = boardComp.getCurrentHexAtMouse();
+                    HexComponent hexComp = boardComp.GetCurrentHexAtMouse();
                     Entity hexEntity = hexComp._parent;
 
                     // PSEUDO-CODE OUTLINE BELOW. DO NOT ERASE! t.Jon
 
-                    /*
-                    if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection) {
+                    
+                    if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection) 
+                    {
                         UnitComponent unit = hexComp.GetUnit();
                         State.selectionState = State.SelectionState.SelectingUnit;
 
                         State.originalHexClicked = hexComp;
                     }
-                    else if (State.selectionState == State.SelectionState.SelectingUnit)
-                    {
-                        State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
-                    }
-                    else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits) {
 
-                        if (ButtonPressed == "Back")
-                        {
-                            State.selectionState = State.SelectionState.NoSelection;
-                        }
-                        else if (OptionSelected == "Wait" || OptionSelected == "Item")
-                        {
-                            UnitComponent unit = State.originalHexClicked.GetUnit();
-                            State.originalHexClicked.RemoveUnit();
 
-                            hexComp.SetUnit(unit);
 
-                            State.SelectionState.NoSelection;
-                        }
+                    //else if (State.selectionState == State.SelectionState.SelectingUnit)
+                    //{
+                    //    State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
+                    //}
+                    //else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits) {
 
-                    }
-                    */
+                    //    if (ButtonPressed == "Back")
+                    //    {
+                    //        State.selectionState = State.SelectionState.NoSelection;
+                    //    }
+                    //    else if (OptionSelected == "Wait" || OptionSelected == "Item")
+                    //    {
+                    //        UnitComponent unit = State.originalHexClicked.GetUnit();
+                    //        State.originalHexClicked.RemoveUnit();
+
+                    //        hexComp.SetUnit(unit);
+
+                    //        State.SelectionState.NoSelection;
+                    //    }
+
+                    //}
+                    //*/
 
                     SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
 
@@ -250,9 +285,9 @@ namespace SeniorProjectGame
                     //}
 
                 }
-                if (mouseRightClick.Evaluate())
+                if (mouseSingleRightClick.Evaluate())
                 {
-                    HexComponent hexComp = boardComp.getCurrentHexAtMouse();
+                    HexComponent hexComp = boardComp.GetCurrentHexAtMouse();
                     Entity hexEntity = hexComp._parent;
                     SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
 

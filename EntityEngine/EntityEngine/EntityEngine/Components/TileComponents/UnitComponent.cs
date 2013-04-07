@@ -8,8 +8,20 @@ using EntityEngine.Components.TileComponents;
 
 namespace EntityEngine.Components.TileComponents
 {
-    public class UnitComponent : PlaceableComponent
+    public class UnitComponent : UpdateableComponent
     {
+        HexComponent hex;
+        public HexComponent GetHex()
+        {
+            return hex;
+        }
+        public void SetHex(HexComponent myHex)
+        {
+            hex.SetUnit(null);
+            hex = myHex;
+            myHex.SetUnit(this);
+        }
+
         bool selected = false;
         public bool getSelected()
         {
@@ -33,7 +45,7 @@ namespace EntityEngine.Components.TileComponents
         }
 
         public UnitComponent(Entity myParent, HexComponent myHex, bool mySelectable)
-            : base(myParent, myHex)
+            : base(myParent)
         {
             this.name = "UnitComponent";
         }

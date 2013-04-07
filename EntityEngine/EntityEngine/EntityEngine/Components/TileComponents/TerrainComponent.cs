@@ -8,8 +8,20 @@ using EntityEngine.Components.TileComponents;
 
 namespace EntityEngine.Components.TileComponents
 {
-    public class TerrainComponent : PlaceableComponent
+    public class TerrainComponent : UpdateableComponent
     {
+        HexComponent hex;
+        public HexComponent GetHex()
+        {
+            return hex;
+        }
+        public void SetHex(HexComponent myHex)
+        {
+            hex.RemoveTerrain(this);
+            myHex.AddTerrain(this);
+            hex = myHex;
+            
+        }
 
         Boolean impassable;
         public Boolean getImpassable()
@@ -28,7 +40,7 @@ namespace EntityEngine.Components.TileComponents
         }
 
         public TerrainComponent(Entity myParent, HexComponent myHex, bool myImpassable)
-            : base(myParent,myHex)
+            : base(myParent)
         {
             this.name = "TerrainComponent";
             impassable = myImpassable;

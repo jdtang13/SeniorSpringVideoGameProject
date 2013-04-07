@@ -29,9 +29,29 @@ namespace EntityEngine.Components.TileComponents
             }
         }
 
-
         public HexComponent n, ne, se, s, sw, nw;
+        public HexComponent getAdjacent(Orient myOar)
+        {
+            switch (myOar)
+            {
+                case Orient.n:
+                    return n;
+                case Orient.ne:
+                    return ne;
+                case Orient.se:
+                    return se;
+                case Orient.s:
+                    return s;
+                case Orient.sw:
+                    return sw;
+                case Orient.nw:
+                    return nw;
 
+                default:
+                    return this;
+
+            }
+        }
 
         //As there can only be one unit per tile, there is but one unit var
         UnitComponent unit;
@@ -41,28 +61,27 @@ namespace EntityEngine.Components.TileComponents
         }
         public void SetUnit(UnitComponent myUnit)
         {
-            placeableList.Remove(unit);
-            unit = myUnit;
-            placeableList.Add(myUnit);
-            
+            unit = myUnit;   
+        }
+        public Boolean HasUnit()
+        {
+            return (unit!=null);
         }
 
         //List of counters on top of the hex.
-        List<PlaceableComponent> placeableList = new List<PlaceableComponent>();
-        public void addPlaceable(PlaceableComponent myPlaceable)
+        List<TerrainComponent> terrainList = new List<TerrainComponent>();
+        public void AddTerrain(TerrainComponent myPlaceable)
         {
-            placeableList.Add(myPlaceable);
+            terrainList.Add(myPlaceable);
         }
-        public void removePlaceable(PlaceableComponent myPlaceable)
+        public void RemoveTerrain(TerrainComponent myPlaceable)
         {
-            placeableList.Remove(myPlaceable);
+            terrainList.Remove(myPlaceable);
         }
-        public List<PlaceableComponent> GetPlaceables()
+        public List<TerrainComponent> GetTerrain()
         {
-            return placeableList;
+            return terrainList;
         }
-
-
 
         public HexComponent(Entity myParent, Vector2 myCoordPosition) : base(myParent)
         {
@@ -73,30 +92,6 @@ namespace EntityEngine.Components.TileComponents
         public void setAdjacent(HexComponent N, HexComponent NE, HexComponent SE, HexComponent S, HexComponent SW, HexComponent NW)
         {
             n = N; ne = NE; se = SE; s = S; sw = SW; nw = NW;
-        }
-
-        //Returns the hex component of the hex entity in a certain direction
-        public HexComponent getAdjacent(Orient myOar)
-        {
-            switch (myOar)
-            {
-                case Orient.n:
-                    return n;
-                case Orient.ne:
-                    return ne;                   
-                case Orient.se:
-                    return se;                    
-                case Orient.s:
-                    return s;                    
-                case Orient.sw:
-                    return sw;                   
-                case Orient.nw:
-                    return nw;                    
-
-                default:
-                    return this;
-
-            }
         }
 
         public void SetFog(Visibility myVis)

@@ -51,7 +51,6 @@
     <Compile Include="Components\TileComponents\BoardComponent.cs" />
     <Compile Include="Components\TileComponents\Orient.cs" />
     <Compile Include="Components\TileComponents\HexComponent.cs" />
-    <Compile Include="Components\TileComponents\PlaceableComponent.cs" />
     <Compile Include="Components\TileComponents\TerrainComponent.cs" />
     <Compile Include="Components\TileComponents\CommandState.cs" />
     <Compile Include="Components\TileComponents\UnitComponent.cs" />

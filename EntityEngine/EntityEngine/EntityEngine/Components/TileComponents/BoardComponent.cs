@@ -28,6 +28,12 @@ namespace EntityEngine.Components.TileComponents
 
         Entity[,] hexEntityGrid;
 
+        UnitComponent selectedUnit;
+        public void SetSelectedUnit(UnitComponent myUnit)
+        {
+            selectedUnit = myUnit;
+        }
+
         //You must handle nulls for this dictionary
         Dictionary<Vector2, HexComponent> HexDictionary = new Dictionary<Vector2, HexComponent>();
         public HexComponent getHex(Vector2 myVec)
@@ -54,8 +60,6 @@ namespace EntityEngine.Components.TileComponents
                 return null;
             }
         }
-
-        Entity positionEntity;
 
         //You must pass in the texture of the grids, the font for debugging, and the dimensions of the grid
         public BoardComponent(Entity myParent, Texture2D myTexture, SpriteFont myFont, Vector2 mySize)
@@ -174,7 +178,7 @@ namespace EntityEngine.Components.TileComponents
         }
 
         //Returns the hex component of the hex entity that is under the mouse
-        public HexComponent getCurrentHexAtMouse()
+        public HexComponent GetCurrentHexAtMouse()
         {
             float distance = 0;
             Vector2 mousePosition = InputState.getMousePosition();
@@ -257,8 +261,6 @@ namespace EntityEngine.Components.TileComponents
         }        
         
         //returns ring of hexes distance radius away from mouseCurrentHex
-
-
         public List<HexComponent> GetRing(int radius)
         {
             List<HexComponent> ring = new List<HexComponent>();
@@ -303,18 +305,21 @@ namespace EntityEngine.Components.TileComponents
             return allRings;
         }
 
-        public void CreateUnit(Vector2 myCoordinate, Texture2D myUnitTexture)
+        public void CreateUnit(Vector2 myCoordinate, Texture2D myTexture,int mySpriteFrameWidth,int mySpriteFrameHeight)
         {
             HexComponent hexComp = getHex(myCoordinate);
 
             if (hexComp.GetUnit() == null)
             {
                 Entity unitEntity = new Entity(5);
-                UnitComponent unitComp = new UnitComponent(_parent, getHex(myCoordinate), true);
+
+                UnitComponent unitComp = new UnitComponent(unitEntity, getHex(myCoordinate), true);
                 unitEntity.AddComponent(unitComp);
+                
                 SpriteComponent hexSprite = getHex(myCoordinate)._parent.getDrawable("SpriteComponent") as SpriteComponent;
-                unitEntity.AddComponent(new AnimatedSpriteComponent(unitEntity, true, hexSprite.getCenterPosition(), myUnitTexture, 75f, 50, 50));
+                unitEntity.AddComponent(new AnimatedSpriteComponent(unitEntity, true, hexSprite.getCenterPosition(), myTexture, 75f, mySpriteFrameWidth, mySpriteFrameHeight));
                 unitEntity.AddComponent(new CameraComponent(unitEntity, hexSprite.getCenterPosition()));
+                
                 EntityManager.AddEntity(unitEntity);
 
                 hexComp.SetUnit(unitComp);
@@ -325,11 +330,25 @@ namespace EntityEngine.Components.TileComponents
                 throw new Exception("There is already a unit where you are trying to create one.");
             }
         }
+        public void CreateTerrain(Vector2 myCoordinate, Texture2D myTexture, bool myImpassable)
+        {
+            HexComponent hexComp = getHex(myCoordinate);
+
+            Entity terrainEntity = new Entity(4);
+            TerrainComponent terrainComp = new TerrainComponent(terrainEntity, getHex(myCoordinate), myImpassable);
+            terrainEntity.AddComponent(terrainComp);
+            SpriteComponent hexSprite = getHex(myCoordinate)._parent.getDrawable("SpriteComponent") as SpriteComponent;
+            terrainEntity.AddComponent(new SpriteComponent(terrainEntity,true,hexSprite.getCenterPosition(),myTexture));
+            terrainEntity.AddComponent(new CameraComponent(terrainEntity, hexSprite.getCenterPosition()));
+            EntityManager.AddEntity(terrainEntity);
+
+            hexComp.AddTerrain(terrainComp);
+        }
 
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            HexComponent currentHex = getCurrentHexAtMouse();
+            HexComponent currentHex = GetCurrentHexAtMouse();
             UpdateFog();
         }
 
