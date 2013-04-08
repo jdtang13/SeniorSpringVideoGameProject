@@ -71,13 +71,13 @@ namespace EntityEngine.Components.TileComponents
                 sprite._visible = true;                
             }
 
-            if (visibility == Visibility.Explored)
+            else if (visibility == Visibility.Explored)
             {
                 sprite.setColor(Color.SlateGray);
                 sprite._visible = true;
             }
 
-            if (visibility == Visibility.Unexplored)
+            else if (visibility == Visibility.Unexplored)
             { 
 
                 sprite._visible = false;
