@@ -71,11 +71,17 @@
     <Folder Include="Audio\Music\" />
     <Folder Include="Audio\Sounds\" />
     <Folder Include="Graphics\Animations\" />
-    <Folder Include="Graphics\UnitTextures\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Graphics\TileTextures\hexBase.png">
       <Name>hexBase</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Graphics\UnitTextures\unitSample.png">
+      <Name>unitSample</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

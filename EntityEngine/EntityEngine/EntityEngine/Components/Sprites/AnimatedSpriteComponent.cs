@@ -51,7 +51,7 @@ namespace EntityEngine.Components.Sprites
             spriteWidth = mySpriteWidth;
             spriteHeight = mySpriteHeight;
 
-            numberFrames = this.texture.Width / spriteWidth;
+            numberFrames = this.texture.Width / spriteWidth -1;
             interval = myInterval;
             animating = true;
         }
@@ -66,7 +66,7 @@ namespace EntityEngine.Components.Sprites
             spriteWidth = mySpriteWidth;
             spriteHeight = mySpriteHeight;
 
-            numberFrames = this.texture.Width / spriteWidth;
+            numberFrames = this.texture.Width / spriteWidth -1;
             interval = myInterval;
             animating = true;
         }

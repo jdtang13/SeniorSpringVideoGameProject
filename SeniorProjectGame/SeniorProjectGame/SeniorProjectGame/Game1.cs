@@ -9,19 +9,15 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System.IO;
-
 using EntityEngine;
 using EntityEngine.Components.TileComponents;
 using EntityEngine.Components.Sprites;
 using EntityEngine.Input;
-using EntityEngine.Components.TileComponents;
-using EntityEngine.Input;
+
 
 namespace SeniorProjectGame
 {
-    /// <summary>
-    /// This is the main type for your game
-    /// </summary>
+
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
@@ -31,6 +27,7 @@ namespace SeniorProjectGame
         Random rand;
 
         Texture2D hexBaseTexture, hexDirtTexture,hexGrassTexture;
+        Texture2D unitTexture;
 
         SpriteFont font;
 
@@ -77,7 +74,7 @@ namespace SeniorProjectGame
             State.currentDialogueMessage = new List<string>();
             #endregion
 
-            Globals.font = font;
+            boardComp.CreateUnit(playerTeam,5, new Vector2(5, 5) unitTexture, 50, 50);
 
             base.Initialize();
         }
@@ -95,10 +92,13 @@ namespace SeniorProjectGame
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
+            Globals.font = font;
 
             hexBaseTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\hexBase");
             hexGrassTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\hexGrass");
-            hexDirtTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\hexDirt"); 
+            hexDirtTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\hexDirt");
+
+            unitTexture = Content.Load<Texture2D>("Graphics\\UnitTextures\\unitSample"); 
         }
 
         protected override void Update(GameTime gameTime)

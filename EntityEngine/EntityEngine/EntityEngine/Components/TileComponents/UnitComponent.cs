@@ -5,6 +5,7 @@ using System.Text;
 using EntityEngine.Components.Component_Parents;
 using Microsoft.Xna.Framework;
 using EntityEngine.Components.TileComponents;
+using EntityEngine.Components.Sprites;
 
 namespace EntityEngine.Components.TileComponents
 {
@@ -38,17 +39,61 @@ namespace EntityEngine.Components.TileComponents
             orientation = myOar;
         }
 
+        Visibility visibility;
+        public void SetVisbility(Visibility myVis)
+        {
+            visibility = myVis;
+        }
+
+        int sightRadius;
+        public int GetSightRadius()
+        {
+            return sightRadius;
+        }
+
         CommandState commandState;
         public void SetCommandState(CommandState myState)
         {
             commandState = myState;
         }
 
-        public UnitComponent(Entity myParent, HexComponent myHex, bool mySelectable)
+        public UnitComponent(Entity myParent, int mySightRadius, HexComponent myHex, bool mySelectable)
             : base(myParent)
         {
             this.name = "UnitComponent";
         }
+
+        public override void Update(GameTime gameTime)
+        {
+            UpdateVisibility();
+            base.Update(gameTime);
+        }
+
+        public void UpdateVisibility()
+        {
+
+            visibility = hex.GetVisibility();
+            SpriteComponent sprite = _parent.getDrawable("SpriteComponent") as SpriteComponent;
+
+            if (visibility == Visibility.Visible)
+            {
+                sprite.setColor(Color.White);
+                sprite._visible = true;
+            }
+
+            if (visibility == Visibility.Explored)
+            {
+                sprite.setColor(Color.SlateGray);
+                sprite._visible = true;
+            }
+
+            if (visibility == Visibility.Unexplored)
+            {
+
+                sprite._visible = false;
+            }
+        }
+
 
         //public void moveDirection(Orientation myOar)
         //{
