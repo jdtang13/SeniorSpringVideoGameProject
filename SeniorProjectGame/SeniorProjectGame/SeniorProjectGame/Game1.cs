@@ -93,6 +93,16 @@ namespace SeniorProjectGame
             UnitComponent myUnitComponent = new UnitComponent(unitEntity,
                 boardComp.getHex(new Vector2(3, 3)), true);
 
+            //unitEntity.AddComponent(new AnimatedSpriteComponent(unitEntity, false, 
+            //    new Vector2(3,3), unitTexture, 4, 50, 50));
+
+            unitEntity.AddComponent(new SpriteComponent(unitEntity, false, new Vector2(3, 3), unitTexture));
+
+            unitEntity.AddComponent(myUnitComponent);
+            //unitEntity.AddComponent(boardComp.getHex(new Vector2(3, 3)));
+
+            EntityManager.AddEntity(unitEntity);
+
             base.Initialize();
         }
 
