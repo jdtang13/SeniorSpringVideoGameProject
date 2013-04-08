@@ -26,15 +26,17 @@ namespace SeniorProjectGame
 
         Random rand;
 
-        Texture2D hexBaseTexture, hexDirtTexture,hexGrassTexture;
+        Texture2D hexBaseTexture, hexDirtTexture, hexGrassTexture;
         Texture2D unitTexture;
 
         SpriteFont font;
 
-        InputAction mouseSingleLeftClick, mouseSingleRightClick,mouseSingleMiddleClick, escapeAction;
+        InputAction mouseSingleLeftClick, mouseSingleRightClick, mouseSingleMiddleClick, escapeAction;
 
         BoardComponent boardComp;
 
+        float framesPerSecond, numberOfFrames;
+        TimeSpan elapsedTime = TimeSpan.Zero;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -54,7 +56,7 @@ namespace SeniorProjectGame
             rand = new Random();
             escapeAction = new InputAction(new Keys[] { Keys.Escape }, true);
             mouseSingleLeftClick = new InputAction(MouseButton.left, true);
-            mouseSingleRightClick = new InputAction(MouseButton.right, true);
+            mouseSingleRightClick = new InputAction(MouseButton.right, false);
             mouseSingleMiddleClick = new InputAction(MouseButton.middle, true);
 
             #region stateInit
@@ -74,7 +76,7 @@ namespace SeniorProjectGame
             State.currentDialogueMessage = new List<string>();
             #endregion
 
-            
+
 
             base.Initialize();
         }
@@ -98,7 +100,7 @@ namespace SeniorProjectGame
             hexGrassTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\hexGrass");
             hexDirtTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\hexDirt");
 
-            unitTexture = Content.Load<Texture2D>("Graphics\\UnitTextures\\unitSample"); 
+            unitTexture = Content.Load<Texture2D>("Graphics\\UnitTextures\\unitSample");
         }
 
         protected override void Update(GameTime gameTime)
@@ -106,6 +108,15 @@ namespace SeniorProjectGame
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
+
+            elapsedTime += gameTime.ElapsedGameTime;
+
+            if (elapsedTime > TimeSpan.FromSeconds(1))
+            {
+                elapsedTime -= TimeSpan.FromSeconds(1);
+                framesPerSecond = numberOfFrames;
+                numberOfFrames = 0;
+            }
 
             if (escapeAction.Evaluate())
             {
@@ -259,7 +270,7 @@ namespace SeniorProjectGame
                         boardComp.CreateTerrain(hexComp.getCoordPosition(), hexDirtTexture, false);
                     }
                     break;
-                    
+
 
                 //As of now, we will not be using the states below
                 case State.ScreenState.BATTLE_FORECAST:
@@ -288,6 +299,8 @@ namespace SeniorProjectGame
         {
             GraphicsDevice.Clear(Color.Black);
 
+            numberOfFrames++;
+
             // TODO: Add your drawing code here
 
             spriteBatch.Begin();
@@ -299,6 +312,12 @@ namespace SeniorProjectGame
             {
                 EntityManager.Draw(spriteBatch);
             }
+            string fps = string.Format("fps: {0}", framesPerSecond);
+
+
+            spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);
+
+
             spriteBatch.End();
 
             base.Draw(gameTime);
