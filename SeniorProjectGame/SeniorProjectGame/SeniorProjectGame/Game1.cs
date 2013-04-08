@@ -56,7 +56,7 @@ namespace SeniorProjectGame
 
             escapeAction = new InputAction(new Keys[] { Keys.Escape }, true);
             mouseSingleLeftClick = new InputAction(MouseButton.left, true);
-            mouseSingleRightClick = new InputAction(MouseButton.right, true);
+            mouseSingleRightClick = new InputAction(MouseButton.right, false);
             mouseSingleMiddleClick = new InputAction(MouseButton.middle, true);
 
             #region stateInit

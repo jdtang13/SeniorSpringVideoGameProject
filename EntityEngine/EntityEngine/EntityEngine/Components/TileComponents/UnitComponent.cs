@@ -42,7 +42,7 @@ namespace EntityEngine.Components.TileComponents
 
 
         //TODO: Somehow set this
-        Visibility visibility;
+        Visibility visibility = Visibility.Unexplored;
         public void SetVisbility(Visibility myVis)
         {
             visibility = myVis;

@@ -17,7 +17,7 @@ namespace EntityEngine
         //At the start, an entity is a blank slate. In order to get it to do things, we add components to it. Components hold all
         //the functionality of an entity. For instance, a spaceship would have a spritecomponent, a physicscomponent, and a camera
         //component to describe it.
-        
+
         //Each component is named in the constructor of the component. You call one of these methods method and pass the name string.
         //For instance, a sprite component is named "SpriteComponenent" in its code
 
@@ -27,6 +27,17 @@ namespace EntityEngine
         //So since the function getDrawable(string) returns a DrawableComponent (DrawableComponent is the parent of SpriteComponent) 
         //we have to use it AS a SpriteComponent
 
+        public IEntityComponent GetComponent(string myComponentName)
+        {
+            if (this.ComponentsDictionary.ContainsKey(myComponentName))
+            {
+                return ComponentsDictionary[myComponentName] as IEntityComponent;
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException(myComponentName);
+            }
+        }
         public Component getComponent(string myComponentName)
         {
             if (this.ComponentsDictionary.ContainsKey(myComponentName))
@@ -65,10 +76,6 @@ namespace EntityEngine
         public List<IEntityComponent> componentList = new List<IEntityComponent>();
         public List<IEntityUpdateable> updateableComponentList = new List<IEntityUpdateable>();
         public List<IEntityDrawable> drawableComponentList = new List<IEntityDrawable>();
-
-        private List<IEntityComponent> tempComponentList = new List<IEntityComponent>();
-        private List<IEntityUpdateable> tempUpdateableComponentList = new List<IEntityUpdateable>();
-        private List<IEntityDrawable> tempDrawableComponentList = new List<IEntityDrawable>();
 
         public void AddComponent(IEntityComponent myComponent)
         {
@@ -125,13 +132,9 @@ namespace EntityEngine
             }
             return false;
         }
-        
+
         //Layer is used so that certain entities are drawn before others, background objects before foreground etc
         public int layer;
-
-        //Some components have to update before others so we have an order system that can be set within the components
-        //At max there are 100 different selections for priority for a component as detailed in this var
-        private const int ORDER_THRESHOLD = 100;
 
         public Entity(int myLayer)
         {
@@ -140,30 +143,19 @@ namespace EntityEngine
 
         public void Update(GameTime gameTime)
         {
-            tempUpdateableComponentList.Clear();
-            tempUpdateableComponentList.AddRange(updateableComponentList);
-
-            //Cycle through the differnt update priorities, 0 being the msot importatn to update
-            for (int q = 0; q < ORDER_THRESHOLD; q++)
+            for (int p = 0; p < updateableComponentList.Count; p++)
             {
-                for (int p = 0; p < tempUpdateableComponentList.Count; p++)
-                {
-                    //Check to see if it is indeed enabled and if it matches the priority
-                    if (tempUpdateableComponentList[p].enabled && tempUpdateableComponentList[p].updateOrder == q)
-                        tempUpdateableComponentList[p].Update(gameTime);
-                }
+                if (updateableComponentList[p].enabled)
+                    updateableComponentList[p].Update(gameTime);
             }
         }
 
         public void Draw(SpriteBatch batch)
         {
-            tempDrawableComponentList.Clear();
-            tempDrawableComponentList.AddRange(drawableComponentList);
-
-            for (int p = 0; p < tempDrawableComponentList.Count; p++)
+            for (int p = 0; p < drawableComponentList.Count; p++)
             {
-                if (tempDrawableComponentList[p].visible)
-                    tempDrawableComponentList[p].Draw(batch);
+                if (drawableComponentList[p].visible)
+                    drawableComponentList[p].Draw(batch);
             }
         }
     }
