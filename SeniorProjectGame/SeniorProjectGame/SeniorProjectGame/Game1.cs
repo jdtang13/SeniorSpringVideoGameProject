@@ -30,12 +30,11 @@ namespace SeniorProjectGame
 
         Random rand;
 
-        Texture2D hexTexture;
-        Texture2D unitTexture;
+        Texture2D hexBaseTexture, hexDirtTexture,hexGrassTexture;
 
         SpriteFont font;
 
-        InputAction mouseSingleLeftClick, mouseSingleRightClick, escapeAction;
+        InputAction mouseSingleLeftClick, mouseSingleRightClick,mouseSingleMiddleClick, escapeAction;
 
         BoardComponent boardComp;
 
@@ -51,18 +50,15 @@ namespace SeniorProjectGame
 
         protected override void Initialize()
         {
-            
-
             IsMouseVisible = true;
             LoadContent();
             CreateBoard();
-
-            //boardComp.CreateUnit(new Vector2(5, 5), hexPiece);
 
             rand = new Random();
             escapeAction = new InputAction(new Keys[] { Keys.Escape }, true);
             mouseSingleLeftClick = new InputAction(MouseButton.left, true);
             mouseSingleRightClick = new InputAction(MouseButton.right, true);
+            mouseSingleMiddleClick = new InputAction(MouseButton.middle, true);
 
             #region stateInit
             State.screenState = State.ScreenState.SKIRMISH;
@@ -81,7 +77,7 @@ namespace SeniorProjectGame
             State.currentDialogueMessage = new List<string>();
             #endregion
 
-            Globals.font = Content.Load<SpriteFont>("font");
+            Globals.font = font;
 
             base.Initialize();
         }
@@ -89,30 +85,22 @@ namespace SeniorProjectGame
         void CreateBoard()
         {
             Entity board = new Entity(0);
-            boardComp = new BoardComponent(board, hexTexture, font, new Vector2(27, 12));
+            boardComp = new BoardComponent(board, hexBaseTexture, font, new Vector2(27, 12));
             board.AddComponent(boardComp);
             EntityManager.AddEntity(board);
         }
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            font = Content.Load<SpriteFont>("Debug");
-            hexTexture = Content.Load<Texture2D>("hex");
-            unitTexture = Content.Load<Texture2D>("hexPiece");
+            font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
 
+            hexBaseTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\hexBase");
+            hexGrassTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\hexGrass");
+            hexDirtTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\hexDirt"); 
         }
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
         protected override void Update(GameTime gameTime)
         {
             // Allows the game to exit
@@ -135,6 +123,69 @@ namespace SeniorProjectGame
                 case State.ScreenState.SHOP:
                     break;
                 case State.ScreenState.DIALOGUE:
+
+                    if (State.firstDialogueWord == "")
+                    {
+                        string line = string.Empty;
+                        using (StreamReader sr = new StreamReader("dialogue1.txt"))
+                        {
+                            while ((line = sr.ReadLine()) != null)
+                            {
+                                State.currentDialogueMessage.Add(line);
+
+                                if (State.firstDialogueWord == "")
+                                {
+                                    State.firstDialogueWord = line.Split(' ')[0];
+                                    State.dialogueWordPosition = 1;
+                                }
+                            }
+                        }
+                    }
+                    else if (gameTime.TotalGameTime.TotalMilliseconds - State.lastTimeDialogueChecked > Globals.dialogueDisplayRate)
+                    {
+                        string line = State.currentDialogueMessage[State.dialogueLinePosition];
+                        string[] words = line.Split(' ');
+
+                        string curWord = words[State.dialogueWordPosition];
+                        char curChar = curWord[State.dialogueCharacterPosition];
+
+                        State.dialogueCharacterPosition++;
+
+                        if (State.messageBegin)
+                        {
+                            if (curWord == "]")
+                            {
+                                State.messageBegin = false;
+                                State.displayedDialogueMessage += "\n"; // newlines for new messages
+
+                                State.dialogueLinePosition++;
+                                State.dialogueWordPosition = 0;
+                            }
+                            else
+                            {
+                                State.displayedDialogueMessage += curChar;
+                                //  add chars blipping onto the screen
+                            }
+
+                        }
+                        else
+                        {
+                            State.messageBegin = (curWord == "[");
+                        }
+
+                        if (State.dialogueCharacterPosition == curWord.Count())
+                        {
+                            if (State.dialogueWordPosition != 0)
+                            {
+                                State.displayedDialogueMessage += " ";
+                            }
+                            State.dialogueCharacterPosition = 0;
+                            State.dialogueWordPosition++;
+                        }
+
+                        State.lastTimeDialogueChecked = (int)gameTime.TotalGameTime.TotalMilliseconds;
+                    }
+
                     break;
                 case State.ScreenState.SKIRMISH:
 
@@ -142,8 +193,73 @@ namespace SeniorProjectGame
 
                     if (mouseSingleLeftClick.Evaluate())
                     {
+                        //HexComponent hexComp = boardComp.GetCurrentHexAtMouse();
+                        //Entity hexEntity = hexComp._parent;
+
+                        //// PSEUDO-CODE OUTLINE BELOW. DO NOT ERASE! t.Jon
+
+
+                        ////if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection)
+                        ////{
+                        ////    UnitComponent unit = hexComp.GetUnit();
+                        ////    State.selectionState = State.SelectionState.SelectingUnit;
+
+                        ////    State.originalHexClicked = hexComp;
+                        ////}
+
+
+
+                        ////else if (State.selectionState == State.SelectionState.SelectingUnit)
+                        ////{
+                        ////    State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
+                        ////}
+                        ////else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits) {
+
+                        ////    if (ButtonPressed == "Back")
+                        ////    {
+                        ////        State.selectionState = State.SelectionState.NoSelection;
+                        ////    }
+                        ////    else if (OptionSelected == "Wait" || OptionSelected == "Item")
+                        ////    {
+                        ////        UnitComponent unit = State.originalHexClicked.GetUnit();
+                        ////        State.originalHexClicked.RemoveUnit();
+
+                        ////        hexComp.SetUnit(unit);
+
+                        ////        State.SelectionState.NoSelection;
+                        ////    }
+
+                        ////}
+                        ////*/
+
+                        //SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
+
+                        //sprite.setColor(Color.BurlyWood);
+
+                        //List<HexComponent> hexRing = boardComp.GetAllRings(3);
+                        //for (int p = 0; p < hexRing.Count; p++)
+                        //{
+                        //    Entity hexParent = hexRing[p]._parent;
+                        //    SpriteComponent spriteParent = hexParent.getDrawable("SpriteComponent") as SpriteComponent;
+                        //    spriteParent.setColor(Color.CadetBlue);
+                        //}
+                    }
+                    if (mouseSingleRightClick.Evaluate())
+                    {
+                        HexComponent hexComp = boardComp.GetCurrentHexAtMouse();
+                        Entity hexEntity = hexComp._parent;
+                        SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
+
+
+                        boardComp.CreateTerrain(hexComp.getCoordPosition(), hexGrassTexture, false);
+                    }
+                    if (mouseSingleMiddleClick.Evaluate())
+                    {
+                        HexComponent hexComp = boardComp.GetCurrentHexAtMouse();
+                        boardComp.CreateTerrain(hexComp.getCoordPosition(), hexDirtTexture, false);
                     }
                     break;
+                    
 
                 //As of now, we will not be using the states below
                 case State.ScreenState.BATTLE_FORECAST:
@@ -153,150 +269,13 @@ namespace SeniorProjectGame
                 case State.ScreenState.BATTLE_RESOLUTION:
                     break;
 
-                
+
 
                 default:
                     //This should nevr happen
                     break;
             }
 
-            if (State.screenState == State.ScreenState.DIALOGUE)
-            {
-                if (State.firstDialogueWord == "")
-                {
-                    string line = string.Empty;
-                    using (StreamReader sr = new StreamReader("dialogue1.txt"))
-                    {
-                        while ((line = sr.ReadLine()) != null)
-                        {
-                            State.currentDialogueMessage.Add(line);
-
-                            if (State.firstDialogueWord == "")
-                            {
-                                State.firstDialogueWord = line.Split(' ')[0];
-                                State.dialogueWordPosition = 1;
-                            }
-                        }
-                    }
-                }
-                else if (gameTime.TotalGameTime.TotalMilliseconds - State.lastTimeDialogueChecked > Globals.dialogueDisplayRate)
-                {
-                    string line = State.currentDialogueMessage[State.dialogueLinePosition];
-                    string[] words = line.Split(' ');
-
-                    string curWord = words[State.dialogueWordPosition];
-                    char curChar = curWord[State.dialogueCharacterPosition];
-
-                    State.dialogueCharacterPosition++;
-
-                    if (State.messageBegin)
-                    {
-                        if (curWord == "]")
-                        {
-                            State.messageBegin = false;
-                            State.displayedDialogueMessage += "\n"; // newlines for new messages
-
-                            State.dialogueLinePosition++;
-                            State.dialogueWordPosition = 0;
-                        }
-                        else
-                        {
-                            State.displayedDialogueMessage += curChar;
-                            //  add chars blipping onto the screen
-                        }
-
-                    }
-                    else
-                    {
-                        State.messageBegin = (curWord == "[");
-                    }
-
-                    if (State.dialogueCharacterPosition == curWord.Count())
-                    {
-                        if (State.dialogueWordPosition != 0)
-                        {
-                            State.displayedDialogueMessage += " ";
-                        }
-                        State.dialogueCharacterPosition = 0;
-                        State.dialogueWordPosition++;
-                    }
-
-                    State.lastTimeDialogueChecked = (int)gameTime.TotalGameTime.TotalMilliseconds;
-
-                }
-            }
-            else if (State.screenState == State.ScreenState.SKIRMISH)
-            {
-
-                EntityManager.Update(gameTime);
-
-                
-                if (mouseSingleLeftClick.Evaluate())
-                {
-                    HexComponent hexComp = boardComp.GetCurrentHexAtMouse();
-                    Entity hexEntity = hexComp._parent;
-
-                    // PSEUDO-CODE OUTLINE BELOW. DO NOT ERASE! t.Jon
-
-                    
-                    if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection) 
-                    {
-                        UnitComponent unit = hexComp.GetUnit();
-                        State.selectionState = State.SelectionState.SelectingUnit;
-
-                        State.originalHexClicked = hexComp;
-                    }
-
-
-
-                    //else if (State.selectionState == State.SelectionState.SelectingUnit)
-                    //{
-                    //    State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
-                    //}
-                    //else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits) {
-
-                    //    if (ButtonPressed == "Back")
-                    //    {
-                    //        State.selectionState = State.SelectionState.NoSelection;
-                    //    }
-                    //    else if (OptionSelected == "Wait" || OptionSelected == "Item")
-                    //    {
-                    //        UnitComponent unit = State.originalHexClicked.GetUnit();
-                    //        State.originalHexClicked.RemoveUnit();
-
-                    //        hexComp.SetUnit(unit);
-
-                    //        State.SelectionState.NoSelection;
-                    //    }
-
-                    //}
-                    //*/
-
-                    SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
-
-                    sprite.setColor(Color.BurlyWood);
-
-                    //List<HexComponent> hexRing = boardComp.GetAllRings(3);
-                    //for (int p = 0; p < hexRing.Count; p++)
-                    //{
-                    //    Entity hexParent = hexRing[p]._parent;
-                    //    SpriteComponent spriteParent = hexParent.getDrawable("SpriteComponent") as SpriteComponent;
-                    //    spriteParent.setColor(Color.CadetBlue);
-                    //}
-
-                }
-                if (mouseSingleRightClick.Evaluate())
-                {
-                    HexComponent hexComp = boardComp.GetCurrentHexAtMouse();
-                    Entity hexEntity = hexComp._parent;
-                    SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
-
-                    sprite.setColor(Color.White);
-                }
-
-            }
-
-            // TODO: Add your update logic here
 
             base.Update(gameTime);
         }

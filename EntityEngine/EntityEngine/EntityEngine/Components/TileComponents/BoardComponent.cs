@@ -305,6 +305,8 @@ namespace EntityEngine.Components.TileComponents
             return allRings;
         }
 
+        //public void SelectUnit
+
         public void CreateUnit(Vector2 myCoordinate, Texture2D myTexture,int mySpriteFrameWidth,int mySpriteFrameHeight)
         {
             HexComponent hexComp = getHex(myCoordinate);

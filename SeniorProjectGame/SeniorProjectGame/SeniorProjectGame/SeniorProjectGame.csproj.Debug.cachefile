@@ -1,4 +1,5 @@
-Content\font.xnb
-Content\Debug.xnb
-Content\hex.xnb
-Content\hexPiece.xnb
+Content\Graphics\Fonts\font.xnb
+Content\Graphics\Fonts\Debug.xnb
+Content\Graphics\TileTextures\hexDirt.xnb
+Content\Graphics\TileTextures\hexGrass.xnb
+Content\Graphics\TileTextures\hexBase.xnb

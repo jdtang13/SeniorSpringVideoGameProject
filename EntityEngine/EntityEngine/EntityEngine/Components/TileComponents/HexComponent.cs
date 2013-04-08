@@ -68,15 +68,25 @@ namespace EntityEngine.Components.TileComponents
             return (unit!=null);
         }
 
+        Visibility visibility;
+        public Visibility GetVisibility()
+        {
+            return visibility;
+        }
+        public void SetVisibility(Visibility myVis)
+        {
+            visibility = myVis;
+        }
+
         //List of counters on top of the hex.
         List<TerrainComponent> terrainList = new List<TerrainComponent>();
-        public void AddTerrain(TerrainComponent myPlaceable)
+        public void AddTerrain(TerrainComponent myTerrain)
         {
-            terrainList.Add(myPlaceable);
+            terrainList.Add(myTerrain);
         }
-        public void RemoveTerrain(TerrainComponent myPlaceable)
+        public void RemoveTerrain(TerrainComponent myTerrain)
         {
-            terrainList.Remove(myPlaceable);
+            terrainList.Remove(myTerrain);
         }
         public List<TerrainComponent> GetTerrain()
         {
@@ -96,32 +106,25 @@ namespace EntityEngine.Components.TileComponents
 
         public void SetFog(Visibility myVis)
         {
+            visibility = myVis;
+            HexComponent hexComp = this;
+            Entity hexEntity = hexComp._parent;
+            SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
+
             if (myVis == Visibility.Visible)
             {
-                HexComponent hexComp = this;
-                Entity hexEntity = hexComp._parent;
-                SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
-
                 sprite.setColor(Color.White);
-                sprite._visible = true;
+                sprite._visible = true;                
             }
 
             if (myVis == Visibility.Explored)
             {
-                HexComponent hexComp = this;
-                Entity hexEntity = hexComp._parent;
-                SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
-
-                sprite.setColor(Color.Gray);
+                sprite.setColor(Color.SlateGray);
                 sprite._visible = true;
             }
 
             if (myVis == Visibility.Unexplored)
             {
-                HexComponent hexComp = this;
-                Entity hexEntity = hexComp._parent;
-                SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
-
                 sprite.setColor(Color.White);
                 sprite._visible = false;
             }
