@@ -74,7 +74,7 @@ namespace SeniorProjectGame
             State.currentDialogueMessage = new List<string>();
             #endregion
 
-            boardComp.CreateUnit(playerTeam,5, new Vector2(5, 5) unitTexture, 50, 50);
+            
 
             base.Initialize();
         }

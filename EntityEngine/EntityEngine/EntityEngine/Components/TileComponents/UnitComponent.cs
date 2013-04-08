@@ -39,6 +39,8 @@ namespace EntityEngine.Components.TileComponents
             orientation = myOar;
         }
 
+
+        //TODO: Somehow set this
         Visibility visibility;
         public void SetVisbility(Visibility myVis)
         {
@@ -57,7 +59,7 @@ namespace EntityEngine.Components.TileComponents
             commandState = myState;
         }
 
-        public UnitComponent(Entity myParent, int mySightRadius, HexComponent myHex, bool mySelectable)
+        public UnitComponent(Entity myParent, HexComponent myHex, bool mySelectable)
             : base(myParent)
         {
             this.name = "UnitComponent";
