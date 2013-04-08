@@ -76,7 +76,18 @@ namespace SeniorProjectGame
             State.currentDialogueMessage = new List<string>();
             #endregion
 
+            Dictionary<String, Role> classes = new Dictionary<String, Role>();
+            Role lordClass = new Role(3,2,4,4,2,0,3,
+                .1f,.2f,.2f,.3f,.4f,.1f,.3f,
+                4,2,3,5,3,2,4,
+                true, false, false, false, false, false, false, 3);
 
+            classes["lord"] = lordClass;
+
+            Unit myUnit = new Unit(5,5,4,3,7,2,5,
+                .6f,.5f,.4f,.5f,.7f,.3f,.6f,
+                40,40,40,35,45,35,45, "myUnit",
+                Alignment.PLAYER, classes["lord"], 1, 0);
 
             base.Initialize();
         }

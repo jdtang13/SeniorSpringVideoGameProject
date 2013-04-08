@@ -10,7 +10,7 @@ namespace SeniorProjectGame
         PLAYER, ENEMY, NEUTRAL       // declares what allighments this unit can be 
     }
 
-    class Unit
+    public class Unit
     {
         string name;
         Alignment alignment = Alignment.ENEMY;
@@ -19,12 +19,12 @@ namespace SeniorProjectGame
         Dictionary<string, float> growths; // growth of attributes with each level
         Dictionary<string, int> caps;  // attribute cap for units
 
-        int level = 1;
+        int level;// = 1;
 
-        int health = 20;
-        int mana = 10;
+        //int health = 20;
+        //int mana = 10;
         int exp = 0;
-        int movement = 2;
+        int movement;// = 2;
 
         Role role;
         
@@ -34,11 +34,14 @@ namespace SeniorProjectGame
 
 
         public Unit(int str, int mag, int dex, int agi, int def, int res, int spd,
-            int strGrowth, int magGrowth, int dexGrowth, int agiGrowth, int defGrowth, int resGrowth, int spdGrowth,
+            float strGrowth, float magGrowth, float dexGrowth, float agiGrowth, float defGrowth, float resGrowth, float spdGrowth,
             int strCap, int magCap, int dexCap, int agiCap, int defCap, int resCap, int spdCap,
-            string name, Alignment ali, Role role)
+            string name, Alignment ali, Role role, int level, int movement)
         {
             attributes = new Dictionary<string, int>();
+
+            this.level = level;
+            this.movement = movement;
 
             attributes["strength"] = str;
             attributes["magic"] = mag; 
@@ -71,7 +74,9 @@ namespace SeniorProjectGame
         //health, manna, and movement calculated by adding the attributed based on the characters role with the 
         public int Health()
         {
-            return health + role.health;   
+            // health = 2 * strength
+
+            return 2*attributes["strength"] + role.health;   
         }
 
         public int Movement()
@@ -80,7 +85,8 @@ namespace SeniorProjectGame
         }
         public int Mana()
         {
-            return mana + role.mana;
+            //  mana = 2 * magic
+            return 2*attributes["magic"] + role.mana;
         }
 
         public int Strength()

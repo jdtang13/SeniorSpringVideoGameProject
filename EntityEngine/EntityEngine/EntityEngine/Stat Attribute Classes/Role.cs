@@ -19,11 +19,12 @@ namespace SeniorProjectGame
         public int movement;
 
         public Role(int str, int mag, int dex, int agi, int def, int res, int spd,
-             int strGrowth, int magGrowth, int dexGrowth, int agiGrowth, int defGrowth, int resGrowth, int spdGrowth,
+             float strGrowth, float magGrowth, float dexGrowth, float agiGrowth, float defGrowth, float resGrowth, float spdGrowth,
              int strCap, int magCap, int dexCap, int agiCap, int defCap, int resCap, int spdCap,
-                    bool sword, bool lance, bool axe, bool light, bool anima, bool dark, bool bow)
+                    bool sword, bool lance, bool axe, bool light, bool anima, bool dark, bool bow, int movement)
         {
             attributes = new Dictionary<string, int>();
+            this.movement = movement;
 
             attributes["strength"] = str;
             attributes["magic"] = mag;

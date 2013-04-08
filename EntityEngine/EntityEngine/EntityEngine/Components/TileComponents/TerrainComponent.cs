@@ -56,13 +56,12 @@ namespace EntityEngine.Components.TileComponents
 
         public override void Update(GameTime gameTime)
         {
-            UpdateVisibility();
+            //UpdateVisibility();
             base.Update(gameTime);
         }
 
         public void UpdateVisibility()
-        {
-           
+        {  
             visibility = hex.GetVisibility();
             SpriteComponent sprite = _parent.getDrawable("SpriteComponent") as SpriteComponent;
 
@@ -79,7 +78,7 @@ namespace EntityEngine.Components.TileComponents
             }
 
             if (visibility == Visibility.Unexplored)
-            {
+            { 
 
                 sprite._visible = false;
             }
