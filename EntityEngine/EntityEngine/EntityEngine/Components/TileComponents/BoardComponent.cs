@@ -14,7 +14,6 @@ namespace EntityEngine.Components.TileComponents
     {
         //Use this component to make an entity into a board. This component handles the creation of the other hex entities.
 
-
         List<HexComponent> oldVisible;
         List<HexComponent> newVisible;
 
