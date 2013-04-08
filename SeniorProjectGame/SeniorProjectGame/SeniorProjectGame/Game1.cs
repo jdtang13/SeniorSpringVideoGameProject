@@ -99,6 +99,7 @@ namespace SeniorProjectGame
             unitEntity.AddComponent(new SpriteComponent(unitEntity, false, new Vector2(3, 3), unitTexture));
 
             unitEntity.AddComponent(myUnitComponent);
+            unitEntity.AddComponent(new CameraComponent(unitEntity, new Vector2(3, 3)));
             //unitEntity.AddComponent(boardComp.getHex(new Vector2(3, 3)));
 
             EntityManager.AddEntity(unitEntity);

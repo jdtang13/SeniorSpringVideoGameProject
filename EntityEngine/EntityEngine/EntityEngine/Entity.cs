@@ -58,7 +58,7 @@ namespace EntityEngine
             }
             else
             {
-                throw new ArgumentOutOfRangeException(myComponentName);
+                 throw new ArgumentOutOfRangeException(myComponentName);
             }
         }
 
