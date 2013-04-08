@@ -29,52 +29,104 @@ namespace EntityEngine.Components.TileComponents
             }
         }
 
+        public HexComponent n, ne, se, s, sw, nw;
+        public HexComponent getAdjacent(Orient myOar)
+        {
+            switch (myOar)
+            {
+                case Orient.n:
+                    return n;
+                case Orient.ne:
+                    return ne;
+                case Orient.se:
+                    return se;
+                case Orient.s:
+                    return s;
+                case Orient.sw:
+                    return sw;
+                case Orient.nw:
+                    return nw;
 
-        public HexComponent n , ne, se, s , sw, nw;
+                default:
+                    return this;
+
+            }
+        }
+
+        //As there can only be one unit per tile, there is but one unit var
+        UnitComponent unit;
+        public UnitComponent GetUnit()
+        {
+            return unit;
+        }
+        public void SetUnit(UnitComponent myUnit)
+        {
+            unit = myUnit;   
+        }
+        public Boolean HasUnit()
+        {
+            return (unit!=null);
+        }
+
+        Visibility visibility;
+        public Visibility GetVisibility()
+        {
+            return visibility;
+        }
+        public void SetVisibility(Visibility myVis)
+        {
+            visibility = myVis;
+        }
 
         //List of counters on top of the hex.
-        List<PlaceableComponent> placeableList = new List<PlaceableComponent>();
-        public void addPlaceable(PlaceableComponent myPlaceable)
+        List<TerrainComponent> terrainList = new List<TerrainComponent>();
+        public void AddTerrain(TerrainComponent myTerrain)
         {
-            placeableList.Add(myPlaceable);
+            terrainList.Add(myTerrain);
         }
-        public void removePlaceable(PlaceableComponent myPlaceable)
+        public void RemoveTerrain(TerrainComponent myTerrain)
         {
-            placeableList.Remove(myPlaceable);
+            terrainList.Remove(myTerrain);
+        }
+        public List<TerrainComponent> GetTerrain()
+        {
+            return terrainList;
         }
 
-    
         public HexComponent(Entity myParent, Vector2 myCoordPosition) : base(myParent)
         {
             this.name = "HexComponent";
             coordPosition = myCoordPosition;
         }
 
-        public void setAdjacent(HexComponent N, HexComponent NE, HexComponent SE , HexComponent S, HexComponent SW, HexComponent NW)
+        public void setAdjacent(HexComponent N, HexComponent NE, HexComponent SE, HexComponent S, HexComponent SW, HexComponent NW)
         {
             n = N; ne = NE; se = SE; s = S; sw = SW; nw = NW;
         }
 
-        //Returns the hex component of the hex entity in a certain direction
-        public HexComponent getAdjacent(Orientation myOar)
+        public void SetFog(Visibility myVis)
         {
-            switch (myOar)
+            visibility = myVis;
+            HexComponent hexComp = this;
+            Entity hexEntity = hexComp._parent;
+            SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
+
+            if (myVis == Visibility.Visible)
             {
-                case Orientation.n:
-                    return n;
-                case Orientation.ne:
-                    return ne;                   
-                case Orientation.se:
-                    return se;                    
-                case Orientation.s:
-                    return s;                    
-                case Orientation.sw:
-                    return sw;                   
-                case Orientation.nw:
-                    return nw;                    
-                default:
-                    return this;
-           
+                sprite.setColor(Color.White);
+                sprite._visible = true;                
+            }
+
+            if (myVis == Visibility.Explored)
+            {
+                sprite.setColor(Color.SlateGray);
+                sprite._visible = true;
+            }
+
+            if (myVis == Visibility.Unexplored)
+            {
+                sprite.setColor(Color.White);
+                sprite._visible = false;
             }
         }
     }

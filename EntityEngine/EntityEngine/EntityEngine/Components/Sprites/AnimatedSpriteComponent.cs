@@ -33,7 +33,7 @@ namespace EntityEngine.Components.Sprites
         int numberFrames;
 
         bool animating;//Turns the animating on and off
-        public void setAnimated(bool myTruth)
+        public void SetAnimated(bool myTruth)
         {
             animating = myTruth;
         }
@@ -51,7 +51,22 @@ namespace EntityEngine.Components.Sprites
             spriteWidth = mySpriteWidth;
             spriteHeight = mySpriteHeight;
 
-            numberFrames = this.texture.Width / spriteWidth;
+            numberFrames = this.texture.Width / spriteWidth -1;
+            interval = myInterval;
+            animating = true;
+        }
+        public AnimatedSpriteComponent(Entity myParent, bool myMain, Vector2 myPosition, Texture2D myTex,
+                float myInterval, int mySpriteWidth, int mySpriteHeight, int myXOffset, int myYOffset)
+            : base(myParent, myMain)
+        {
+            this.name = "AnimatedSpriteComponent";
+            this.position = myPosition;
+
+            this.texture = myTex;
+            spriteWidth = mySpriteWidth;
+            spriteHeight = mySpriteHeight;
+
+            numberFrames = this.texture.Width / spriteWidth -1;
             interval = myInterval;
             animating = true;
         }

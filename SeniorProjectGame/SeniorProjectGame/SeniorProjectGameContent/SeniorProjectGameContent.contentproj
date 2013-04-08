@@ -42,27 +42,46 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="font.spritefont">
+    <Compile Include="Graphics\Fonts\font.spritefont">
       <Name>font</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Debug.spritefont">
+    <Compile Include="Graphics\Fonts\Debug.spritefont">
       <Name>Debug</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="hex.png">
-      <Name>hex</Name>
+    <Compile Include="Graphics\TileTextures\hexDirt.png">
+      <Name>hexDirt</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="hexPiece.png">
-      <Name>hexPiece</Name>
+    <Compile Include="Graphics\TileTextures\hexGrass.png">
+      <Name>hexGrass</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Audio\Music\" />
+    <Folder Include="Audio\Sounds\" />
+    <Folder Include="Graphics\Animations\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Graphics\TileTextures\hexBase.png">
+      <Name>hexBase</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Graphics\UnitTextures\unitSample.png">
+      <Name>unitSample</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
