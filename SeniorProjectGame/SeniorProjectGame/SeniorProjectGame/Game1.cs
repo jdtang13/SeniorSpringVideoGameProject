@@ -107,6 +107,12 @@ namespace SeniorProjectGame
             base.Initialize();
         }
 
+        // TODO:
+        Unit GetUnitAtLocation(int x, int y)
+        {
+            return null;
+        }
+
         void CreateBoard()
         {
             Entity board = new Entity(0);
