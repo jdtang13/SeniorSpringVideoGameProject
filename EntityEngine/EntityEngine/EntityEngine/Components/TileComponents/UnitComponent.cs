@@ -9,7 +9,7 @@ using EntityEngine.Components.Sprites;
 
 namespace EntityEngine.Components.TileComponents
 {
-    public class UnitComponent : UpdateableComponent
+    public class UnitComponent : Component
     {
         HexComponent hex;
         public HexComponent GetHex()
@@ -33,6 +33,7 @@ namespace EntityEngine.Components.TileComponents
             selected = myTruth;
         }
 
+
         Orient orientation = Orient.s;
         public void changeOrientation(Orient myOar)
         {
@@ -47,6 +48,16 @@ namespace EntityEngine.Components.TileComponents
             visibility = myVis;
         }
 
+        bool isAlly;
+        public void SetAlly(bool myTruth)
+        {
+            isAlly = myTruth;
+        }
+        public bool GetAlly()
+        {
+            return isAlly;
+        }
+
         int sightRadius;
         public int GetSightRadius()
         {
@@ -59,37 +70,39 @@ namespace EntityEngine.Components.TileComponents
             commandState = myState;
         }
 
-        public UnitComponent(Entity myParent, HexComponent myHex, bool mySelectable)
+        public UnitComponent(Entity myParent,bool myIsAlly, int mySightRadius, HexComponent myHex, bool mySelectable)
             : base(myParent)
         {
             this.name = "UnitComponent";
+            sightRadius = mySightRadius;
+            hex = myHex;
+            isAlly = myIsAlly;
         }
 
-        public override void Update(GameTime gameTime)
-        {
-            UpdateVisibility();
-            base.Update(gameTime);
-        }
 
-        public void UpdateVisibility()
+        public void UpdateVisibility(Visibility myVis)
         {
-
-            visibility = hex.GetVisibility();
+            visibility = myVis;
             SpriteComponent sprite = _parent.getDrawable("SpriteComponent") as SpriteComponent;
 
-            if (visibility == Visibility.Visible)
+            if (isAlly)
+            {
+                sprite.setColor(Color.White);
+                sprite._visible = true;
+            }
+            else if (visibility == Visibility.Visible)
             {
                 sprite.setColor(Color.White);
                 sprite._visible = true;
             }
 
-            if (visibility == Visibility.Explored)
+            else if (visibility == Visibility.Explored)
             {
                 sprite.setColor(Color.SlateGray);
                 sprite._visible = true;
             }
 
-            if (visibility == Visibility.Unexplored)
+            else if (visibility == Visibility.Unexplored)
             {
 
                 sprite._visible = false;

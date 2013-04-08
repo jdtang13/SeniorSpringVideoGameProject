@@ -9,19 +9,12 @@ using EntityEngine.Components.Sprites;
 
 namespace EntityEngine.Components.TileComponents
 {
-    public class TerrainComponent : UpdateableComponent
+    public class TerrainComponent : Component
     {
         HexComponent hex;
         public HexComponent GetHex()
         {
             return hex;
-        }
-        public void SetHex(HexComponent myHex)
-        {
-            hex.RemoveTerrain(this);
-            myHex.AddTerrain(this);
-            hex = myHex;
-            
         }
 
         Visibility visibility;
@@ -31,17 +24,17 @@ namespace EntityEngine.Components.TileComponents
         }
 
         Boolean impassable;
-        public Boolean getImpassable()
+        public Boolean GetImpassable()
         {
             return impassable;
         }
 
         float movementRestriction;
-        public float getMovementRestriction()
+        public float GetMovementRestriction()
         {
             return movementRestriction;
         }
-        public void setMovementRestriction(float myMoveRes)
+        public void SetMovementRestriction(float myMoveRes)
         {
             movementRestriction = myMoveRes;
         }
@@ -54,22 +47,16 @@ namespace EntityEngine.Components.TileComponents
             impassable = myImpassable;
         }
 
-        public override void Update(GameTime gameTime)
+        public void UpdateVisibility(Visibility myVisibility)
         {
-            UpdateVisibility();
-            base.Update(gameTime);
-        }
-
-        public void UpdateVisibility()
-        {
-           
-            visibility = hex.GetVisibility();
+            visibility = myVisibility;
+            
             SpriteComponent sprite = _parent.getDrawable("SpriteComponent") as SpriteComponent;
 
             if (visibility == Visibility.Visible)
             {
                 sprite.setColor(Color.White);
-                sprite._visible = true;                
+                sprite._visible = true;
             }
 
             if (visibility == Visibility.Explored)
@@ -80,7 +67,6 @@ namespace EntityEngine.Components.TileComponents
 
             if (visibility == Visibility.Unexplored)
             {
-
                 sprite._visible = false;
             }
         }

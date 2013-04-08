@@ -49,7 +49,6 @@
     <Compile Include="Components\Sprites\SpriteSheetComponent.cs" />
     <Compile Include="Components\Sprites\TextSpriteComponent.cs" />
     <Compile Include="Components\TileComponents\BoardComponent.cs" />
-    <Compile Include="Components\TileComponents\TeamComponent.cs" />
     <Compile Include="Components\TileComponents\Orient.cs" />
     <Compile Include="Components\TileComponents\HexComponent.cs" />
     <Compile Include="Components\TileComponents\TerrainComponent.cs" />

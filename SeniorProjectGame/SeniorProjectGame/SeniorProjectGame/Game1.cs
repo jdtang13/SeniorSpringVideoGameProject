@@ -17,12 +17,10 @@ using EntityEngine.Input;
 
 namespace SeniorProjectGame
 {
-
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        //State.ScreenState screenState;
 
         Random rand;
 
@@ -37,6 +35,7 @@ namespace SeniorProjectGame
 
         float framesPerSecond, numberOfFrames;
         TimeSpan elapsedTime = TimeSpan.Zero;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -54,9 +53,10 @@ namespace SeniorProjectGame
             CreateBoard();
 
             rand = new Random();
+
             escapeAction = new InputAction(new Keys[] { Keys.Escape }, true);
             mouseSingleLeftClick = new InputAction(MouseButton.left, true);
-            mouseSingleRightClick = new InputAction(MouseButton.right, false);
+            mouseSingleRightClick = new InputAction(MouseButton.right, true);
             mouseSingleMiddleClick = new InputAction(MouseButton.middle, true);
 
             #region stateInit
@@ -76,7 +76,9 @@ namespace SeniorProjectGame
             State.currentDialogueMessage = new List<string>();
             #endregion
 
-
+            boardComp.CreateUnit(true, 2, new Vector2(5, 5), unitTexture, 50, 50);
+            boardComp.CreateUnit(true, 2, new Vector2(16,13), unitTexture, 50, 50);
+            boardComp.CreateUnit(true, 2, new Vector2(10, 9), unitTexture, 50, 50);
 
             base.Initialize();
         }
@@ -204,6 +206,10 @@ namespace SeniorProjectGame
 
                     if (mouseSingleLeftClick.Evaluate())
                     {
+                        boardComp.UpdateFog();
+                    }
+                    //if (mouseSingleLeftClick.Evaluate())
+                    //{
                         //HexComponent hexComp = boardComp.GetCurrentHexAtMouse();
                         //Entity hexEntity = hexComp._parent;
 
@@ -254,13 +260,12 @@ namespace SeniorProjectGame
                         //    SpriteComponent spriteParent = hexParent.getDrawable("SpriteComponent") as SpriteComponent;
                         //    spriteParent.setColor(Color.CadetBlue);
                         //}
-                    }
+                    //}
                     if (mouseSingleRightClick.Evaluate())
                     {
                         HexComponent hexComp = boardComp.GetCurrentHexAtMouse();
                         Entity hexEntity = hexComp._parent;
                         SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
-
 
                         boardComp.CreateTerrain(hexComp.getCoordPosition(), hexGrassTexture, false);
                     }
@@ -291,19 +296,15 @@ namespace SeniorProjectGame
             base.Update(gameTime);
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
 
             numberOfFrames++;
 
-            // TODO: Add your drawing code here
-
             spriteBatch.Begin();
+
+
             if (State.screenState == State.ScreenState.DIALOGUE)
             {
                 spriteBatch.DrawString(Globals.font, State.displayedDialogueMessage, new Vector2(0, 0), Color.White);
