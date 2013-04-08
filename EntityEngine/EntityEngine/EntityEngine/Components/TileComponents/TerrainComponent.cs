@@ -56,7 +56,7 @@ namespace EntityEngine.Components.TileComponents
 
         public override void Update(GameTime gameTime)
         {
-            //UpdateVisibility();
+            UpdateVisibility();
             base.Update(gameTime);
         }
 
