@@ -68,7 +68,7 @@ namespace EntityEngine.Components.TileComponents
             if (visibility == Visibility.Visible)
             {
                 sprite.setColor(Color.White);
-                sprite._visible = true;                
+                sprite._visible = true;
             }
 
             else if (visibility == Visibility.Explored)

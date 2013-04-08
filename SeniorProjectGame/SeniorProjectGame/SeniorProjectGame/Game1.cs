@@ -89,6 +89,10 @@ namespace SeniorProjectGame
                 40,40,40,35,45,35,45, "myUnit",
                 Alignment.PLAYER, classes["lord"], 1, 0);
 
+            Entity unitEntity = new Entity(5);
+            UnitComponent myUnitComponent = new UnitComponent(unitEntity,
+                boardComp.getHex(new Vector2(3, 3)), true);
+
             base.Initialize();
         }
 

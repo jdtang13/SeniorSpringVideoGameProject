@@ -39,6 +39,8 @@ namespace SeniorProjectGame
             string name, Alignment ali, Role role, int level, int movement)
         {
             attributes = new Dictionary<string, int>();
+            caps = new Dictionary<string, int>();
+            growths = new Dictionary<string, float>();
 
             this.level = level;
             this.movement = movement;

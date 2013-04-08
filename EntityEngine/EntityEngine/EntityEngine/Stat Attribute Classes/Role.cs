@@ -24,6 +24,10 @@ namespace SeniorProjectGame
                     bool sword, bool lance, bool axe, bool light, bool anima, bool dark, bool bow, int movement)
         {
             attributes = new Dictionary<string, int>();
+            growths = new Dictionary<string, float>();
+            caps = new Dictionary<string, int>();
+            weapons = new Dictionary<string, bool>();
+
             this.movement = movement;
 
             attributes["strength"] = str;
