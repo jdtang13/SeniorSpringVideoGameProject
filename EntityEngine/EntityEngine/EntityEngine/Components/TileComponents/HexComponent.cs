@@ -63,7 +63,7 @@ namespace EntityEngine.Components.TileComponents
         {
             unit = myUnit;   
         }
-        public Boolean HasUnit()
+        public bool HasUnit()
         {
             return (unit!=null);
         }

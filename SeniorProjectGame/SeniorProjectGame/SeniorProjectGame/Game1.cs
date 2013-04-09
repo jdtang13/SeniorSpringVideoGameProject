@@ -247,36 +247,36 @@ namespace SeniorProjectGame
 
                         //// PSEUDO-CODE OUTLINE BELOW. DO NOT ERASE! t.Jon
 
-                        ////if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection)
-                        ////{
-                        ////    UnitComponent unit = hexComp.GetUnit();
-                        ////    State.selectionState = State.SelectionState.SelectingUnit;
+                        if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection)
+                        {
+                            UnitComponent unit = hexComp.GetUnit();
+                            State.selectionState = State.SelectionState.SelectingUnit;
 
-                        ////    State.originalHexClicked = hexComp;
-                        ////}
+                            //State.originalHexClicked = hexComp;
+                        }
 
-                        ////else if (State.selectionState == State.SelectionState.SelectingUnit)
-                        ////{
-                        ////    State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
-                        ////}
-                        ////else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits) {
+                        else if (State.selectionState == State.SelectionState.SelectingUnit)
+                        {
+                            State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
+                        }
+                        else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits)
+                        {
+                            //if (ButtonPressed == "Back")
+                            //{
+                            //    State.selectionState = State.SelectionState.NoSelection;
+                            //}
+                            //else if (OptionSelected == "Wait" || OptionSelected == "Item")
+                            //{
+                            //    UnitComponent unit = State.originalHexClicked.GetUnit();
+                            //    State.originalHexClicked.RemoveUnit();
 
-                        ////    if (ButtonPressed == "Back")
-                        ////    {
-                        ////        State.selectionState = State.SelectionState.NoSelection;
-                        ////    }
-                        ////    else if (OptionSelected == "Wait" || OptionSelected == "Item")
-                        ////    {
-                        ////        UnitComponent unit = State.originalHexClicked.GetUnit();
-                        ////        State.originalHexClicked.RemoveUnit();
+                            //    hexComp.SetUnit(unit);
 
-                        ////        hexComp.SetUnit(unit);
+                            //    State.SelectionState.NoSelection;
+                            //}
 
-                        ////        State.SelectionState.NoSelection;
-                        ////    }
-
-                        ////}
-                        ////*/
+                        }
+                        
 
                         //SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
 
