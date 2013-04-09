@@ -171,7 +171,7 @@ namespace SeniorProjectGame
                 case State.ScreenState.SHOP:
                     break;
                 case State.ScreenState.DIALOGUE:
-
+# region dialogue
                     if (State.firstDialogueWord == "")
                     {
                         string line = string.Empty;
@@ -235,17 +235,17 @@ namespace SeniorProjectGame
                     }
 
                     break;
+#endregion
                 case State.ScreenState.SKIRMISH:
 
                     EntityManager.Update(gameTime);
 
                     if (mouseSingleLeftClick.Evaluate())
                     {
-                        //HexComponent hexComp = boardComp.GetCurrentHexAtMouse();
-                        //Entity hexEntity = hexComp._parent;
+                        HexComponent hexComp = boardComp.GetCurrentHexAtMouse();
+                        Entity hexEntity = hexComp._parent;
 
                         //// PSEUDO-CODE OUTLINE BELOW. DO NOT ERASE! t.Jon
-
 
                         ////if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection)
                         ////{
@@ -254,8 +254,6 @@ namespace SeniorProjectGame
 
                         ////    State.originalHexClicked = hexComp;
                         ////}
-
-
 
                         ////else if (State.selectionState == State.SelectionState.SelectingUnit)
                         ////{
