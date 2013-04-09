@@ -13,6 +13,7 @@ using EntityEngine;
 using EntityEngine.Components.TileComponents;
 using EntityEngine.Components.Sprites;
 using EntityEngine.Input;
+using EntityEngine.Components.World_Map;
 
 
 namespace SeniorProjectGame
@@ -20,9 +21,13 @@ namespace SeniorProjectGame
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
+        int screenWidth = 1280;
+        int screenHeight = 680;
         SpriteBatch spriteBatch;
 
         Random rand;
+
+        Texture2D worldMapTexture, nodeTexture, pointerTexture;
 
         Texture2D hexBaseTexture, hexDirtTexture, hexGrassTexture;
         Texture2D unitTexture;
@@ -35,7 +40,7 @@ namespace SeniorProjectGame
 
         float framesPerSecond = 60; 
         float numberOfFrames;
-        TimeSpan elapsedTime = TimeSpan.Zero;
+        TimeSpan elapsedTime;
 
         public Game1()
         {
@@ -43,16 +48,15 @@ namespace SeniorProjectGame
             Content.RootDirectory = "Content";
 
             //1280x720
-            graphics.PreferredBackBufferHeight = 680;
-            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = screenHeight;
+            graphics.PreferredBackBufferWidth = screenWidth;
         }
 
         protected override void Initialize()
         {
             IsMouseVisible = true;
             LoadContent();
-            CreateBoard(new Vector2(27,12));
-
+            
             rand = new Random();
 
             escapeAction = new InputAction(new Keys[] { Keys.Escape }, true);
@@ -60,8 +64,27 @@ namespace SeniorProjectGame
             mouseSingleRightClick = new InputAction(MouseButton.right, false);
             mouseSingleMiddleClick = new InputAction(MouseButton.middle, true);
 
-            #region stateInit
-            State.screenState = State.ScreenState.SKIRMISH;
+            InitializeState();
+
+            InitializeWorldMap();
+
+            InitializeHexMap();
+
+            base.Initialize();
+        }
+
+        void InitializeWorldMap()
+        {
+            Entity worldMapEntity = new Entity(0, State.ScreenState.WORLD_MAP);
+            worldMapEntity.AddComponent(new SpriteComponent(true, new Vector2(screenWidth/2,screenHeight/2), worldMapTexture));
+            worldMapEntity.AddComponent(new CameraComponent(new Vector2(screenWidth/2,screenHeight/2)));
+            worldMapEntity.AddComponent(new WorldMapComponent());
+            EntityManager.AddEntity(worldMapEntity);
+        }
+
+        void InitializeState()
+        {
+            State.screenState = State.ScreenState.WORLD_MAP;
             State.selectionState = State.SelectionState.NoSelection;
             State.dialoguePosition = 0;
             State.dialogueChoicePosition = 0;
@@ -75,13 +98,15 @@ namespace SeniorProjectGame
             State.lastTimeDialogueChecked = 0;
             State.messageBegin = false;
             State.currentDialogueMessage = new List<string>();
-            #endregion
+        }
+
+        void InitializeHexMap()
+        {
+            CreateBoard(new Vector2(27, 12));
 
             boardComp.CreateUnit(true, 2, new Vector2(5, 5), unitTexture, 50, 50);
-            boardComp.CreateUnit(true, 2, new Vector2(16,13), unitTexture, 50, 50);
+            boardComp.CreateUnit(true, 2, new Vector2(16, 13), unitTexture, 50, 50);
             boardComp.CreateUnit(true, 2, new Vector2(10, 9), unitTexture, 50, 50);
-
-            base.Initialize();
         }
 
         void CreateBoard(Vector2 myDimensions)
@@ -104,6 +129,10 @@ namespace SeniorProjectGame
             hexDirtTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\hexDirt");
 
             unitTexture = Content.Load<Texture2D>("Graphics\\UnitTextures\\unitSample");
+
+            worldMapTexture = Content.Load<Texture2D>("Graphics\\Backgrounds\\island");
+            pointerTexture = Content.Load<Texture2D>("Graphics\\Other\\pointer");
+            nodeTexture = Content.Load<Texture2D>("Graphics\\Other\\node");
         }
 
         protected override void Update(GameTime gameTime)
@@ -126,6 +155,8 @@ namespace SeniorProjectGame
                 this.Exit();
             }
 
+            EntityManager.Update(gameTime);
+
             switch (State.screenState)
             {
                 case State.ScreenState.MAIN_PAGE:
@@ -133,7 +164,10 @@ namespace SeniorProjectGame
                 case State.ScreenState.SETTINGS_MENU:
                     break;
                 case State.ScreenState.WORLD_MAP:
-
+                    if (mouseSingleLeftClick.Evaluate())
+                    {
+                        State.screenState = State.ScreenState.SKIRMISH;
+                    }
 
                     break;
                 case State.ScreenState.SHOP:
@@ -205,7 +239,7 @@ namespace SeniorProjectGame
                     break;
                 case State.ScreenState.SKIRMISH:
 
-                    EntityManager.Update(gameTime);
+                    
 
                     
 
@@ -305,19 +339,20 @@ namespace SeniorProjectGame
         {
             GraphicsDevice.Clear(Color.Black);
 
-            numberOfFrames++;
-
             spriteBatch.Begin();
 
+            numberOfFrames++;
 
-            if (State.screenState == State.ScreenState.DIALOGUE)
-            {
-                spriteBatch.DrawString(Globals.font, State.displayedDialogueMessage, new Vector2(0, 0), Color.White);
-            }
-            else if (State.screenState == State.ScreenState.SKIRMISH)
-            {
-                EntityManager.Draw(spriteBatch);
-            }
+            EntityManager.Draw(spriteBatch);
+
+            //if (State.screenState == State.ScreenState.DIALOGUE)
+            //{
+            //    spriteBatch.DrawString(Globals.font, State.displayedDialogueMessage, new Vector2(0, 0), Color.White);
+            //}
+            //else if (State.screenState == State.ScreenState.SKIRMISH)
+            //{
+
+            //}
 
             string fps = string.Format("fps: {0}", framesPerSecond);
             spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);

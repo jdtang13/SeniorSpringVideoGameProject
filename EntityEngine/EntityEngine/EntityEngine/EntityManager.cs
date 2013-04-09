@@ -89,7 +89,10 @@ namespace EntityEngine
                 {
                     if (masterList[p].layer == q)
                     {
-                        masterList[p].Draw(myBatch);
+                        if (masterList[p].GetAssociatedState() == State.screenState)
+                        {
+                            masterList[p].Draw(myBatch);
+                        }
                     }
                 }
             }

@@ -26,7 +26,7 @@ namespace EntityEngine
 
         public static int menuPosition = 0;
 
-        public static ScreenState screenState;// default = ScreenState.MAIN_PAGE;
+        public static ScreenState screenState;
         public static SelectionState selectionState;
 
         //public Node currentNode;

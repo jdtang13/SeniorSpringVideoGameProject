@@ -18,7 +18,6 @@ namespace EntityEngine.Components.World_Map
             nodeList.Add(myNode);
         }
         
-
         NodeComponent selectedNode;
         public void SetSelectedNode(NodeComponent myNode)
         {
