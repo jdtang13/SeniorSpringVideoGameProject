@@ -58,8 +58,7 @@ namespace EntityEngine.Components.TileComponents
             movementRestriction = myMoveRes;
         }
 
-        public TerrainComponent(Entity myParent, HexComponent myHex, bool myImpassable)
-            : base(myParent)
+        public TerrainComponent(HexComponent myHex, bool myImpassable)
         {
             this.name = "TerrainComponent";
             hex = myHex;

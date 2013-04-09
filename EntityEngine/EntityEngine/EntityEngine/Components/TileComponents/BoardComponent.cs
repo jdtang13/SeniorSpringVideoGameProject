@@ -74,6 +74,17 @@ namespace EntityEngine.Components.TileComponents
 
         }
 
+        public BoardComponent(Texture2D myTexture, SpriteFont myFont, Vector2 mySize)
+        {
+            this.name = "BoardComponent";
+
+            gridSize = mySize;
+            gridTexture = myTexture;
+            gridFont = myFont;
+
+
+        }
+
         public override void Initialize()
         {
             hexEntityGrid = new Entity[(int)gridSize.X, (int)gridSize.Y];
@@ -107,7 +118,7 @@ namespace EntityEngine.Components.TileComponents
                         coordPosition.Y = (coordPosition.X + 1f) / 2f + y;
                     }
 
-                    HexComponent hexComp = new HexComponent(hexEntity, coordPosition);
+                    HexComponent hexComp = new HexComponent(coordPosition);
                     hexEntity.AddComponent(hexComp);
                     HexDictionary.Add(coordPosition, hexComp);
                     HexEntityDictionary.Add(coordPosition, hexEntity);
@@ -124,9 +135,9 @@ namespace EntityEngine.Components.TileComponents
                     }
                     screenPosition.X = x * (gridTexture.Width / 4f * 3f) + gridTexture.Width / 2f;
 
-                    SpriteComponent hexSprite = new SpriteComponent(hexEntity, true, screenPosition, gridTexture);
+                    SpriteComponent hexSprite = new SpriteComponent( true, screenPosition, gridTexture);
                     hexEntity.AddComponent(hexSprite);
-                    hexEntity.AddComponent(new CameraComponent(hexEntity, screenPosition));
+                    hexEntity.AddComponent(new CameraComponent(screenPosition));
 
 
                     EntityManager.AddEntity(hexEntity);
@@ -136,7 +147,7 @@ namespace EntityEngine.Components.TileComponents
 
                     //Adding text to label the coordinates of the hex entity
                     Vector2 debugTextPosition = new Vector2(hexSprite.getCenterPosition().X, hexSprite.getCenterPosition().Y);
-                    hexEntity.AddComponent(new TextSpriteComponent(hexEntity, false, coordPosition.X.ToString() + "," + coordPosition.Y.ToString(), Color.Black, debugTextPosition, gridFont));
+                    hexEntity.AddComponent(new TextSpriteComponent(false, coordPosition.X.ToString() + "," + coordPosition.Y.ToString(), Color.Black, debugTextPosition, gridFont));
                 }
             }
 
@@ -180,10 +191,10 @@ namespace EntityEngine.Components.TileComponents
                 Entity unitEntity = new Entity(5, State.ScreenState.SKIRMISH);
 
                 SpriteComponent hexSprite = getHex(myCoordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
-                unitEntity.AddComponent(new AnimatedSpriteComponent(unitEntity, true, hexSprite.getCenterPosition(), myTexture, 75f, mySpriteFrameWidth, mySpriteFrameHeight));
-                unitEntity.AddComponent(new CameraComponent(unitEntity, hexSprite.getCenterPosition()));
+                unitEntity.AddComponent(new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), myTexture, 75f, mySpriteFrameWidth, mySpriteFrameHeight));
+                unitEntity.AddComponent(new CameraComponent( hexSprite.getCenterPosition()));
 
-                UnitComponent unitComp = new UnitComponent(unitEntity, myIsAlly, mySightRadius, getHex(myCoordinate), true);
+                UnitComponent unitComp = new UnitComponent( myIsAlly, mySightRadius, getHex(myCoordinate), true);
                 unitEntity.AddComponent(unitComp);
 
                 getHex(myCoordinate).SetUnit(unitComp);
@@ -213,10 +224,10 @@ namespace EntityEngine.Components.TileComponents
             Entity terrainEntity = new Entity(4, State.ScreenState.SKIRMISH);
 
             SpriteComponent hexSprite = getHex(myCoordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
-            terrainEntity.AddComponent(new SpriteComponent(terrainEntity, true, hexSprite.getCenterPosition(), myTexture));
-            terrainEntity.AddComponent(new CameraComponent(terrainEntity, hexSprite.getCenterPosition()));
+            terrainEntity.AddComponent(new SpriteComponent(true, hexSprite.getCenterPosition(), myTexture));
+            terrainEntity.AddComponent(new CameraComponent(hexSprite.getCenterPosition()));
 
-            TerrainComponent terrainComp = new TerrainComponent(terrainEntity, hexComp, myImpassable);
+            TerrainComponent terrainComp = new TerrainComponent(hexComp, myImpassable);
             terrainEntity.AddComponent(terrainComp);
 
             EntityManager.AddEntity(terrainEntity);

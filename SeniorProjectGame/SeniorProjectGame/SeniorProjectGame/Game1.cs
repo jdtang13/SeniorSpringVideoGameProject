@@ -37,8 +37,6 @@ namespace SeniorProjectGame
         float numberOfFrames;
         TimeSpan elapsedTime = TimeSpan.Zero;
 
-        int numberHex = 0; 
-
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -270,7 +268,6 @@ namespace SeniorProjectGame
                     //}
                     if (mouseSingleRightClick.Evaluate())
                     {
-                        numberHex++;
                         HexComponent hexComp = boardComp.GetCurrentHexAtMouse();
                         Entity hexEntity = hexComp._parent;
                         SpriteComponent sprite = hexEntity.GetDrawable("SpriteComponent") as SpriteComponent;

@@ -93,8 +93,7 @@ namespace EntityEngine.Components.TileComponents
             commandState = myState;
         }
 
-        public UnitComponent(Entity myParent,bool myIsAlly, int mySightRadius, HexComponent myHex, bool mySelectable)
-            : base(myParent)
+        public UnitComponent(bool myIsAlly, int mySightRadius, HexComponent myHex, bool mySelectable)
         {
             this.name = "UnitComponent";
             sightRadius = mySightRadius;

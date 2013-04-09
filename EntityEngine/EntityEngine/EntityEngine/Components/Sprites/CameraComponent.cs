@@ -41,7 +41,7 @@ namespace EntityEngine.Components.Sprites
         }
 
         //Pass in the position of the sprite for teh vector
-        public CameraComponent(Entity myParent, Vector2 myVector):base(myParent)
+        public CameraComponent( Vector2 myVector)
         {
             this.name = "CameraComponent";
             followedPosition = new Vector2(400, 300);

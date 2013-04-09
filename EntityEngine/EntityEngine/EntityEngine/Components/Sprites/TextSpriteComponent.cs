@@ -27,8 +27,8 @@ namespace EntityEngine.Components.Sprites
             text = myText;
         }
 
-        public TextSpriteComponent(Entity myParent, bool myMain,string myText,Color myColor,  Vector2 myPosition, SpriteFont myFont)
-            : base(myParent,myMain)
+        public TextSpriteComponent( bool myMain,string myText,Color myColor,  Vector2 myPosition, SpriteFont myFont)
+            : base(myMain)
         {
             this.name = "TextSpriteComponent";
             this.position = myPosition;

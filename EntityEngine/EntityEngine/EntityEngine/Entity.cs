@@ -74,10 +74,16 @@ namespace EntityEngine
                 throw new ArgumentNullException("Componenet is null");
             }
 
+            //take this code out if you want to have two of each component
             if (componentList.Contains(myComponent))
             {
                 return;
-                //take this code out if you want to have two of each component
+            }
+
+            //Setting the parent
+            if (myComponent.Parent == null)
+            {
+                myComponent.Parent = this;
             }
 
             componentList.Add(myComponent);

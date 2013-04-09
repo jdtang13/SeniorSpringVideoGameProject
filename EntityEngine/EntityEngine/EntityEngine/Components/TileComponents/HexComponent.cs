@@ -116,7 +116,7 @@ namespace EntityEngine.Components.TileComponents
             return terrainList;
         }
 
-        public HexComponent(Entity myParent, Vector2 myCoordPosition) : base(myParent)
+        public HexComponent(Vector2 myCoordPosition) 
         {
             this.name = "HexComponent";
             coordPosition = myCoordPosition;

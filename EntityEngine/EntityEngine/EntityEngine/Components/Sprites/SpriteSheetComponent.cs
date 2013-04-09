@@ -36,8 +36,8 @@ namespace EntityEngine.Components.Sprites
             color = myColor;
         }
 
-        public SpriteSheetComponent(Entity myParent, bool myMain, Vector2 myPosition, Texture2D myTex, int mySpriteWidth, int mySpriteHeight)
-            : base(myParent,myMain)
+        public SpriteSheetComponent( bool myMain, Vector2 myPosition, Texture2D myTex, int mySpriteWidth, int mySpriteHeight)
+            : base(myMain)
         {
             this.name = "SpriteSheetComponent";
             this.position = myPosition;
