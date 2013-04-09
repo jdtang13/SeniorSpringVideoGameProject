@@ -6,6 +6,7 @@ using EntityEngine.Components.Component_Parents;
 using Microsoft.Xna.Framework;
 using EntityEngine.Components.TileComponents;
 using EntityEngine.Components.Sprites;
+using EntityEngine;
 
 namespace EntityEngine.Components.TileComponents
 {
@@ -59,11 +60,26 @@ namespace EntityEngine.Components.TileComponents
             commandState = myState;
         }
 
+        UnitData unitData;
+        public UnitData GetUnitData()
+        {
+            return unitData;
+        }
+        public void SetUnitData(UnitData u) { unitData = u; }
+
         public UnitComponent(Entity myParent, HexComponent myHex, bool mySelectable)
             : base(myParent)
         {
             hex = myHex;
             this.name = "UnitComponent";
+        }
+
+        public UnitComponent(Entity myParent, HexComponent myHex, bool mySelectable, UnitData unitData)
+            : base(myParent)
+        {
+            hex = myHex;
+            this.name = "UnitComponent";
+            this.unitData = unitData;
         }
 
         public override void Update(GameTime gameTime)

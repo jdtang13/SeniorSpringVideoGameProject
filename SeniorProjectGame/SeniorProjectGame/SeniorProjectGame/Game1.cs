@@ -59,22 +59,7 @@ namespace SeniorProjectGame
             mouseSingleRightClick = new InputAction(MouseButton.right, false);
             mouseSingleMiddleClick = new InputAction(MouseButton.middle, true);
 
-            #region stateInit
-            State.screenState = State.ScreenState.SKIRMISH;
-            State.selectionState = State.SelectionState.NoSelection;
-            State.dialoguePosition = 0;
-            State.dialogueChoicePosition = 0;
-            State.displayedDialogueMessage = "";
-
-            State.dialogueLinePosition = 0;
-            State.dialogueWordPosition = 0;
-            State.dialogueCharacterPosition = 0;
-
-            State.firstDialogueWord = "";
-            State.lastTimeDialogueChecked = 0;
-            State.messageBegin = false;
-            State.currentDialogueMessage = new List<string>();
-            #endregion
+            State.Initialize();
 
             Dictionary<String, Role> classes = new Dictionary<String, Role>();
             Role lordClass = new Role(3,2,4,4,2,0,3,
@@ -84,14 +69,14 @@ namespace SeniorProjectGame
 
             classes["lord"] = lordClass;
 
-            Unit myUnit = new Unit(5,5,4,3,7,2,5,
+            UnitData myUnitData = new UnitData(5,5,4,3,7,2,5,
                 .6f,.5f,.4f,.5f,.7f,.3f,.6f,
                 40,40,40,35,45,35,45, "myUnit",
                 Alignment.PLAYER, classes["lord"], 1, 0);
 
             Entity unitEntity = new Entity(5);
             UnitComponent myUnitComponent = new UnitComponent(unitEntity,
-                boardComp.getHex(new Vector2(3, 3)), true);
+                boardComp.getHex(new Vector2(3, 3)), true, myUnitData);
 
             //unitEntity.AddComponent(new AnimatedSpriteComponent(unitEntity, false, 
             //    new Vector2(3,3), unitTexture, 4, 50, 50));
@@ -113,7 +98,7 @@ namespace SeniorProjectGame
         }
 
         // TODO:
-        Unit GetUnitAtLocation(int x, int y)
+        UnitComponent GetUnitAtLocation(int x, int y)
         {
             return null;
         }
@@ -252,7 +237,7 @@ namespace SeniorProjectGame
                             UnitComponent unit = hexComp.GetUnit();
                             State.selectionState = State.SelectionState.SelectingUnit;
 
-                            //State.originalHexClicked = hexComp;
+                            State.originalHexClicked = hexComp;
                         }
 
                         else if (State.selectionState == State.SelectionState.SelectingUnit)
@@ -265,8 +250,12 @@ namespace SeniorProjectGame
                             //{
                             //    State.selectionState = State.SelectionState.NoSelection;
                             //}
+
                             //else if (OptionSelected == "Wait" || OptionSelected == "Item")
                             //{
+
+                            //////MoveUnit(x1, y1, x2, y2);
+
                             //    UnitComponent unit = State.originalHexClicked.GetUnit();
                             //    State.originalHexClicked.RemoveUnit();
 
