@@ -55,6 +55,10 @@
     <Compile Include="Components\TileComponents\CommandState.cs" />
     <Compile Include="Components\TileComponents\UnitComponent.cs" />
     <Compile Include="Components\TileComponents\Visibility.cs" />
+    <Compile Include="Components\World Map\ClickableComponent.cs" />
+    <Compile Include="Components\World Map\NodeState.cs" />
+    <Compile Include="Components\World Map\WorldMapComponent.cs" />
+    <Compile Include="Components\World Map\NodeComponent.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EntityManager.cs" />
     <Compile Include="Globals.cs" />
@@ -84,9 +88,7 @@
     <Reference Include="Microsoft.Xna.Framework.Xact, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="System" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Components\World Map\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
