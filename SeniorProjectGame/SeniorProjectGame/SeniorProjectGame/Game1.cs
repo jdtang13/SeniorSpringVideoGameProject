@@ -96,11 +96,16 @@ namespace SeniorProjectGame
             //unitEntity.AddComponent(new AnimatedSpriteComponent(unitEntity, false, 
             //    new Vector2(3,3), unitTexture, 4, 50, 50));
 
-            unitEntity.AddComponent(new SpriteComponent(unitEntity, false, new Vector2(3, 3), unitTexture));
+            Texture2D debugTexture = Content.Load<Texture2D>("Graphics\\UnitTextures\\debugUnitOneFrame");
+
+            unitEntity.AddComponent(new SpriteComponent(unitEntity, false, boardComp.getHex(new Vector2(3,3))
+                ._parent.getDrawable("SpriteComponent").position, debugTexture));
 
             unitEntity.AddComponent(myUnitComponent);
             unitEntity.AddComponent(new CameraComponent(unitEntity, new Vector2(3, 3)));
-            //unitEntity.AddComponent(boardComp.getHex(new Vector2(3, 3)));
+
+            boardComp.getHex(3, 3).SetUnit(myUnitComponent);
+            //boardComp.CreateUnit();
 
             EntityManager.AddEntity(unitEntity);
 

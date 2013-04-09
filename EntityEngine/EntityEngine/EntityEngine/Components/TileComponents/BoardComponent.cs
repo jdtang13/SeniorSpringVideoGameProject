@@ -34,6 +34,11 @@ namespace EntityEngine.Components.TileComponents
             selectedUnit = myUnit;
         }
 
+        public HexComponent getHex(int x, int y)
+        {
+            return getHex(new Vector2(x, y));
+        }
+
         //You must handle nulls for this dictionary
         Dictionary<Vector2, HexComponent> HexDictionary = new Dictionary<Vector2, HexComponent>();
         public HexComponent getHex(Vector2 myVec)
