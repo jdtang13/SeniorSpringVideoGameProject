@@ -106,7 +106,7 @@ namespace SeniorProjectGame
 
             boardComp.getHex(3, 3).SetUnit(myUnitComponent);
             //boardComp.CreateUnit();
-
+            
             EntityManager.AddEntity(unitEntity);
 
             base.Initialize();
