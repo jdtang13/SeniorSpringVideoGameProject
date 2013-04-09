@@ -17,10 +17,29 @@ namespace EntityEngine.Components.TileComponents
             return hex;
         }
 
-        Visibility visibility;
+        Visibility visibility = Visibility.Unexplored;
         public void SetVisbility(Visibility myVis)
         {
             visibility = myVis;
+
+            SpriteComponent sprite = _parent.GetDrawable("SpriteComponent") as SpriteComponent;
+
+            if (visibility == Visibility.Visible)
+            {
+                sprite.setColor(Color.White);
+                sprite._visible = true;
+            }
+
+            if (visibility == Visibility.Explored)
+            {
+                sprite.setColor(Color.SlateGray);
+                sprite._visible = true;
+            }
+
+            if (visibility == Visibility.Unexplored)
+            {
+                sprite._visible = false;
+            }
         }
 
         Boolean impassable;
@@ -45,34 +64,14 @@ namespace EntityEngine.Components.TileComponents
             this.name = "TerrainComponent";
             hex = myHex;
             impassable = myImpassable;
+
         }
 
-        public void UpdateVisibility(Visibility myVisibility)
+        public override void Initialize()
         {
-            visibility = myVisibility;
-            
-            SpriteComponent sprite = _parent.getDrawable("SpriteComponent") as SpriteComponent;
 
-            if (visibility == Visibility.Visible)
-            {
-                sprite.setColor(Color.White);
-                sprite._visible = true;
-            }
-
-            if (visibility == Visibility.Explored)
-            {
-                sprite.setColor(Color.SlateGray);
-                sprite._visible = true;
-            }
-
-            if (visibility == Visibility.Unexplored)
-            {
-                sprite._visible = false;
-            }
+            SetVisbility(hex.GetVisibility());
+            base.Initialize();
         }
-
-        
-
-
     }
 }

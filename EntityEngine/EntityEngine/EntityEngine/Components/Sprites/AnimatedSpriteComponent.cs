@@ -32,6 +32,12 @@ namespace EntityEngine.Components.Sprites
         float interval;
         int numberFrames;
 
+        Color color;
+        public void SetColor(Color myColor)
+        {
+            color = myColor;
+        }
+
         bool animating;//Turns the animating on and off
         public void SetAnimated(bool myTruth)
         {
@@ -103,12 +109,12 @@ namespace EntityEngine.Components.Sprites
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            CameraComponent cam = _parent.getComponent("CameraComponent") as CameraComponent;
+            CameraComponent cam = _parent.GetComponent("CameraComponent") as CameraComponent;
 
             screenPosition = cam.getDrawPosition(position) - offset;
 
             spriteBatch.Draw(texture, screenPosition,
-                new Rectangle(spriteWidth * (int)currentFrame.X, spriteHeight * (int)currentFrame.Y, spriteWidth, spriteHeight), Color.White);
+                new Rectangle(spriteWidth * (int)currentFrame.X, spriteHeight * (int)currentFrame.Y, spriteWidth, spriteHeight), color);
         }
     }
 }

@@ -52,7 +52,7 @@ namespace EntityEngine.Components.Sprites
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            CameraComponent cam = _parent.getComponent("CameraComponent") as CameraComponent;
+            CameraComponent cam = _parent.GetComponent("CameraComponent") as CameraComponent;
 
             screenPosition = cam.getDrawPosition(position) - offset;
 

@@ -22,7 +22,7 @@ namespace EntityEngine
 
 
         public static List<Entity> masterList = new List<Entity>();
-        //private static List<Entity> currentList = new List<Entity>();
+
         
         public static void AddEntity(Entity myEntity)
         {
@@ -41,19 +41,19 @@ namespace EntityEngine
         {
             InputState.Update();
 
-            //currentList.Clear();
-            //currentList.AddRange(masterList);
-
             for (int p = 0; p < masterList.Count; p++)
             {
-                masterList[p].Update(myTime);
+                if (masterList[p].GetAssociatedState() == State.screenState)
+                {
+                    masterList[p].Update(myTime);
+                }
             }
         }
 
         public static void FollowEntity(Entity myEntity)
         {
             //Grab the followed entity's camera so we can edit it later, we assume it has a camera object
-            CameraComponent followedCamera = myEntity.getComponent("CameraComponent") as CameraComponent;
+            CameraComponent followedCamera = myEntity.GetComponent("CameraComponent") as CameraComponent;
 
             //Cycle through every drawable component the followed entity has
             for (int o = 0; o < myEntity.drawableComponentList.Count; o++)
@@ -70,7 +70,7 @@ namespace EntityEngine
             for (int p = 0; p < masterList.Count; p++)
             {
                 //Grab every entities cam object,if it has one, and apply its transformation to all
-                CameraComponent cam = masterList[p].getComponent("CameraComponent") as CameraComponent;
+                CameraComponent cam = masterList[p].GetComponent("CameraComponent") as CameraComponent;
                 if (cam != null)
                 {
                     //Set the camera to following by the followed entity's offset

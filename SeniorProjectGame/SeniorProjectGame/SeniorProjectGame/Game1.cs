@@ -33,8 +33,11 @@ namespace SeniorProjectGame
 
         BoardComponent boardComp;
 
-        float framesPerSecond, numberOfFrames;
+        float framesPerSecond = 60; 
+        float numberOfFrames;
         TimeSpan elapsedTime = TimeSpan.Zero;
+
+        int numberHex = 0; 
 
         public Game1()
         {
@@ -50,7 +53,7 @@ namespace SeniorProjectGame
         {
             IsMouseVisible = true;
             LoadContent();
-            CreateBoard();
+            CreateBoard(new Vector2(27,12));
 
             rand = new Random();
 
@@ -83,10 +86,10 @@ namespace SeniorProjectGame
             base.Initialize();
         }
 
-        void CreateBoard()
+        void CreateBoard(Vector2 myDimensions)
         {
-            Entity board = new Entity(0);
-            boardComp = new BoardComponent(board, hexBaseTexture, font, new Vector2(27, 12));
+            Entity board = new Entity(0,State.ScreenState.SKIRMISH);
+            boardComp = new BoardComponent(board, hexBaseTexture, font, myDimensions);
             board.AddComponent(boardComp);
             EntityManager.AddEntity(board);
         }
@@ -132,6 +135,8 @@ namespace SeniorProjectGame
                 case State.ScreenState.SETTINGS_MENU:
                     break;
                 case State.ScreenState.WORLD_MAP:
+
+
                     break;
                 case State.ScreenState.SHOP:
                     break;
@@ -204,9 +209,11 @@ namespace SeniorProjectGame
 
                     EntityManager.Update(gameTime);
 
+                    
+
                     if (mouseSingleLeftClick.Evaluate())
                     {
-                        boardComp.UpdateFog();
+                        boardComp.UpdateVisibilityAllies();
                     }
                     //if (mouseSingleLeftClick.Evaluate())
                     //{
@@ -249,7 +256,7 @@ namespace SeniorProjectGame
                         ////}
                         ////*/
 
-                        //SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
+                        //SpriteComponent sprite = hexEntity.GetDrawable("SpriteComponent") as SpriteComponent;
 
                         //sprite.setColor(Color.BurlyWood);
 
@@ -257,22 +264,23 @@ namespace SeniorProjectGame
                         //for (int p = 0; p < hexRing.Count; p++)
                         //{
                         //    Entity hexParent = hexRing[p]._parent;
-                        //    SpriteComponent spriteParent = hexParent.getDrawable("SpriteComponent") as SpriteComponent;
+                        //    SpriteComponent spriteParent = hexParent.GetDrawable("SpriteComponent") as SpriteComponent;
                         //    spriteParent.setColor(Color.CadetBlue);
                         //}
                     //}
                     if (mouseSingleRightClick.Evaluate())
                     {
+                        numberHex++;
                         HexComponent hexComp = boardComp.GetCurrentHexAtMouse();
                         Entity hexEntity = hexComp._parent;
-                        SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
+                        SpriteComponent sprite = hexEntity.GetDrawable("SpriteComponent") as SpriteComponent;
 
                         boardComp.CreateTerrain(hexComp.getCoordPosition(), hexGrassTexture, false);
                     }
                     if (mouseSingleMiddleClick.Evaluate())
                     {
-                        HexComponent hexComp = boardComp.GetCurrentHexAtMouse();
-                        boardComp.CreateTerrain(hexComp.getCoordPosition(), hexDirtTexture, false);
+                        boardComp.alliedUnitList[0].MoveDirection(Orient.se);
+                        boardComp.UpdateVisibilityAllies();
                     }
                     break;
 
@@ -313,11 +321,10 @@ namespace SeniorProjectGame
             {
                 EntityManager.Draw(spriteBatch);
             }
+
             string fps = string.Format("fps: {0}", framesPerSecond);
-
-
             spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);
-
+           
 
             spriteBatch.End();
 

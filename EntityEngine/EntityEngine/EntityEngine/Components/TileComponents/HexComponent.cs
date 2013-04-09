@@ -52,6 +52,10 @@ namespace EntityEngine.Components.TileComponents
         {
             unit = myUnit;   
         }
+        public void RemoveUnit()
+        {
+            unit = null;
+        }
         public Boolean HasUnit()
         {
             return (unit!=null);
@@ -65,6 +69,37 @@ namespace EntityEngine.Components.TileComponents
         public void SetVisibility(Visibility myVis)
         {
             visibility = myVis;
+
+            Entity hexEntity = _parent;
+            SpriteComponent sprite = hexEntity.GetDrawable("SpriteComponent") as SpriteComponent;
+
+            if (HasUnit())
+            {
+                unit.SetVisbility(visibility);
+            }
+
+            for (int p = 0; p < terrainList.Count; p++)
+            {
+                terrainList[p].SetVisbility(visibility);
+            }
+
+            if (myVis == Visibility.Visible)
+            {
+                sprite.setColor(Color.White);
+                sprite._visible = true;
+            }
+
+            if (myVis == Visibility.Explored)
+            {
+                sprite.setColor(Color.SlateGray);
+                sprite._visible = true;
+            }
+
+            if (myVis == Visibility.Unexplored)
+            {
+                sprite.setColor(Color.White);
+                sprite._visible = false;
+            }
         }
 
         List<TerrainComponent> terrainList = new List<TerrainComponent>();
@@ -90,37 +125,6 @@ namespace EntityEngine.Components.TileComponents
         public void SetAdjacent(HexComponent N, HexComponent NE, HexComponent SE, HexComponent S, HexComponent SW, HexComponent NW)
         {
             n = N; ne = NE; se = SE; s = S; sw = SW; nw = NW;
-        }
-
-        public void SetFog(Visibility myVis)
-        {
-            visibility = myVis;
-
-            Entity hexEntity = _parent;
-            SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
-
-            for (int p = 0; p < terrainList.Count; p++)
-            {
-                terrainList[p].UpdateVisibility(visibility);
-            }
-
-            if (myVis == Visibility.Visible)
-            {
-                sprite.setColor(Color.White);
-                sprite._visible = true;                
-            }
-
-            if (myVis == Visibility.Explored)
-            {
-                sprite.setColor(Color.SlateGray);
-                sprite._visible = true;
-            }
-
-            if (myVis == Visibility.Unexplored)
-            {
-                sprite.setColor(Color.White);
-                sprite._visible = false;
-            }
         }
     }
 }

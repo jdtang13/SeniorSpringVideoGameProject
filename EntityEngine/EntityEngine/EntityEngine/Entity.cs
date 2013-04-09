@@ -22,23 +22,13 @@ namespace EntityEngine
         //For instance, a sprite component is named "SpriteComponenent" in its code
 
         //So, if you wanted to use the sprite component of an entity named spaceShip(assuming it has one) the code would be:
-        //        SpriteComponent spriteComp = spaceShip.getDrawable("SpriteComponent") as SpriteComponent;
+        //        SpriteComponent spriteComp = spaceShip.GetDrawable("SpriteComponent") as SpriteComponent;
 
-        //So since the function getDrawable(string) returns a DrawableComponent (DrawableComponent is the parent of SpriteComponent) 
+        //So since the function GetDrawable(string) returns a DrawableComponent (DrawableComponent is the parent of SpriteComponent) 
         //we have to use it AS a SpriteComponent
 
-        public IEntityComponent GetComponent(string myComponentName)
-        {
-            if (this.ComponentsDictionary.ContainsKey(myComponentName))
-            {
-                return ComponentsDictionary[myComponentName] as IEntityComponent;
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException(myComponentName);
-            }
-        }
-        public Component getComponent(string myComponentName)
+        
+        public Component GetComponent(string myComponentName)
         {
             if (this.ComponentsDictionary.ContainsKey(myComponentName))
             {
@@ -49,7 +39,7 @@ namespace EntityEngine
                 throw new ArgumentOutOfRangeException(myComponentName);
             }
         }
-        public DrawableComponent getDrawable(string myComponentName)
+        public DrawableComponent GetDrawable(string myComponentName)
         {
             if (this.ComponentsDictionary.ContainsKey(myComponentName))
             {
@@ -61,7 +51,7 @@ namespace EntityEngine
                 return draw;
             }
         }
-        public UpdateableComponent getUpdateable(string myComponentName)
+        public UpdateableComponent GetUpdateable(string myComponentName)
         {
             if (this.ComponentsDictionary.ContainsKey(myComponentName))
             {
@@ -136,9 +126,16 @@ namespace EntityEngine
         //Layer is used so that certain entities are drawn before others, background objects before foreground etc
         public int layer;
 
-        public Entity(int myLayer)
+        State.ScreenState screenState;
+        public State.ScreenState GetAssociatedState()
+        {
+            return screenState;
+        }
+
+        public Entity(int myLayer, State.ScreenState myState)
         {
             layer = myLayer;
+            screenState = myState;
         }
 
         public void Update(GameTime gameTime)
