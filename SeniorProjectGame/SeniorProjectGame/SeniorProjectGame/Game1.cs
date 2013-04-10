@@ -56,8 +56,10 @@ namespace SeniorProjectGame
         {
             IsMouseVisible = true;
             LoadContent();
-            
+        
             rand = new Random();
+
+            
 
             escapeAction = new InputAction(new Keys[] { Keys.Escape }, true);
             mouseSingleLeftClick = new InputAction(MouseButton.left, true);
@@ -80,11 +82,12 @@ namespace SeniorProjectGame
             worldMapEntity.AddComponent(new CameraComponent(new Vector2(screenWidth/2,screenHeight/2)));
             worldMapEntity.AddComponent(new WorldMapComponent());
             EntityManager.AddEntity(worldMapEntity);
-        }
 
+            Entity worldMapEntity
+        }
         void InitializeState()
         {
-            State.screenState = State.ScreenState.WORLD_MAP;
+            State.screenState = State.ScreenState.SKIRMISH;
             State.selectionState = State.SelectionState.NoSelection;
             State.dialoguePosition = 0;
             State.dialogueChoicePosition = 0;
@@ -99,7 +102,6 @@ namespace SeniorProjectGame
             State.messageBegin = false;
             State.currentDialogueMessage = new List<string>();
         }
-
         void InitializeHexMap()
         {
             CreateBoard(new Vector2(27, 12));
@@ -107,6 +109,36 @@ namespace SeniorProjectGame
             boardComp.CreateUnit(true, 2, new Vector2(5, 5), unitTexture, 50, 50);
             boardComp.CreateUnit(true, 2, new Vector2(16, 13), unitTexture, 50, 50);
             boardComp.CreateUnit(true, 2, new Vector2(10, 9), unitTexture, 50, 50);
+        }
+
+        void SaveMap(string myMapName,Entity myEntity)//THIS OVERWRITES WHAT'S THERE
+        {
+            FileStream file = new FileStream("Content/" + myMapName + ".bin", System.IO.FileMode.Create);
+
+            using (BinaryWriter bin = new BinaryWriter(file))
+            {
+                //TODO: SAVE THE BOARD'S STATE W/O UNITS
+                bin.Write("Files man");
+            }
+        }
+        Entity LoadMap(string myMapName)
+        {
+            Entity tempBoardEntity = null;
+
+            if (File.Exists("Content/" + myMapName + ".bin"))
+            {
+                FileStream file = new FileStream("Content/" + myMapName + ".bin", System.IO.FileMode.Open);
+
+                using (BinaryReader bin = new BinaryReader(file))
+                {
+                    //TODO: REBUILD THE BOARD
+                    //bin.ReadByte();
+
+                    return tempBoardEntity;
+                }
+            }
+
+            return tempBoardEntity;
         }
 
         void CreateBoard(Vector2 myDimensions)
