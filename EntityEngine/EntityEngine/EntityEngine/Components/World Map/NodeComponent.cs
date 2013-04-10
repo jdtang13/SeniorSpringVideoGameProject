@@ -27,11 +27,11 @@ namespace EntityEngine.Components.World_Map
             return levelName;
         }
 
-        public NodeComponent(NodeState myNode, string myLevelName)
+        public NodeComponent(NodeState myNodeState, string myLevelName)
         {
             this.name = "NodeComponent";
             levelName = myLevelName;
-            nodeState = myNode;
+            nodeState = myNodeState;
         }
     }
 }

@@ -80,14 +80,19 @@ namespace SeniorProjectGame
             Entity worldMapEntity = new Entity(0, State.ScreenState.WORLD_MAP);
             worldMapEntity.AddComponent(new SpriteComponent(true, new Vector2(screenWidth/2,screenHeight/2), worldMapTexture));
             worldMapEntity.AddComponent(new CameraComponent(new Vector2(screenWidth/2,screenHeight/2)));
-            worldMapEntity.AddComponent(new WorldMapComponent());
+            WorldMapComponent worldMapComp = new WorldMapComponent();
+            worldMapEntity.AddComponent(worldMapComp);
             EntityManager.AddEntity(worldMapEntity);
 
-            Entity worldMapEntity
+            worldMapComp.CreateNode("test", NodeState.unlocked, new Vector2(400, 300), nodeTexture);
+            worldMapComp.CreateNode("test", NodeState.unlocked, new Vector2(450, 270), nodeTexture);
+            worldMapComp.CreateNode("test", NodeState.unlocked, new Vector2(675, 400), nodeTexture);
+            //worldMapComp.CreateNode("test", NodeState.unlocked, new Vector2(300, 300), nodeTexture);
+
         }
         void InitializeState()
         {
-            State.screenState = State.ScreenState.SKIRMISH;
+            State.screenState = State.ScreenState.WORLD_MAP;
             State.selectionState = State.SelectionState.NoSelection;
             State.dialoguePosition = 0;
             State.dialogueChoicePosition = 0;
