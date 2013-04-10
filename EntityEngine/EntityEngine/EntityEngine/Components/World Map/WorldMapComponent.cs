@@ -35,6 +35,12 @@ namespace EntityEngine.Components.World_Map
         public void SetSelectedNode(NodeComponent myNode)
         {
             selectedNode = myNode;
+            SpriteComponent nodeSprite = myNode._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+
+            SpriteComponent pointerSprite = pointerEntity.GetDrawable("SpriteComponent") as SpriteComponent;
+            PointerComponent point = pointerEntity.GetComponent("PointerComponent") as PointerComponent;
+            Vector2 offset = point.GetOffset();
+            pointerSprite.position = nodeSprite.position + offset;
         }
 
         public WorldMapComponent()
@@ -74,7 +80,7 @@ namespace EntityEngine.Components.World_Map
             pointerEntity = new Entity(1, State.ScreenState.WORLD_MAP);
             pointerEntity.AddComponent(new SpriteComponent(true, sprite.position + myOffset, myTexture));
             pointerEntity.AddComponent(new CameraComponent(sprite.position + myOffset));
-            pointerEntity.AddComponent(new PointerComponent(sprite.position + myOffset));
+            pointerEntity.AddComponent(new PointerComponent(myOffset));
 
             EntityManager.AddEntity(pointerEntity);
         }

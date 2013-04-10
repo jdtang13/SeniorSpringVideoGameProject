@@ -32,6 +32,8 @@ namespace SeniorProjectGame
         Texture2D hexBaseTexture, hexDirtTexture, hexGrassTexture;
         Texture2D unitTexture;
 
+        SoundEffect selectSound;
+
         SpriteFont font;
 
         InputAction mouseSingleLeftClick, mouseSingleRightClick, mouseSingleMiddleClick, escapeAction;
@@ -169,6 +171,8 @@ namespace SeniorProjectGame
 
             unitTexture = Content.Load<Texture2D>("Graphics\\UnitTextures\\unitSample");
 
+            selectSound = Content.Load<SoundEffect>("Audio\\Sounds\\select");
+
             worldMapTexture = Content.Load<Texture2D>("Graphics\\Backgrounds\\island");
             pointerTexture = Content.Load<Texture2D>("Graphics\\Other\\pointer");
             nodeTexture = Content.Load<Texture2D>("Graphics\\Other\\node");
@@ -217,10 +221,16 @@ namespace SeniorProjectGame
                             ClickableComponent click = worldMapComponent.GetNodeEntityList()[p].GetComponent("ClickableComponent") as ClickableComponent;
                             if (click.isColliding(new Vector2(Mouse.GetState().X, Mouse.GetState().Y)))
                             {
-                                click.OnClick();
-                                //TODO: Make something happen when mouse clicks node
+                                selectSound.Play(); 
+                                NodeComponent node = click._parent.GetComponent("NodeComponent") as NodeComponent;
+                                worldMapComponent.SetSelectedNode(node);
+                                //LoadMap(node.GetLevelName());
                             }
                         } 
+                    }
+                    if (mouseSingleMiddleClick.Evaluate())
+                    {
+                        State.screenState = State.ScreenState.SKIRMISH;
                     }
 
                     break;

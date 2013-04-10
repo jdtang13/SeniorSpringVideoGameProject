@@ -23,10 +23,5 @@ namespace EntityEngine.Components.World_Map
             collisionRectangle = new Rectangle((int)myCenterPosition.X - mySpriteWidth / 2, (int)myCenterPosition.Y - mySpriteHeight / 2,
                                                 mySpriteWidth, mySpriteHeight);
         }
-
-        public void OnClick()
-        {
-
-        }
     }
 }
