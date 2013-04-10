@@ -36,6 +36,7 @@ namespace SeniorProjectGame
 
         InputAction mouseSingleLeftClick, mouseSingleRightClick, mouseSingleMiddleClick, escapeAction;
 
+        WorldMapComponent worldMapComponent;
         BoardComponent boardComp;
 
         float framesPerSecond = 60; 
@@ -80,14 +81,15 @@ namespace SeniorProjectGame
             Entity worldMapEntity = new Entity(0, State.ScreenState.WORLD_MAP);
             worldMapEntity.AddComponent(new SpriteComponent(true, new Vector2(screenWidth/2,screenHeight/2), worldMapTexture));
             worldMapEntity.AddComponent(new CameraComponent(new Vector2(screenWidth/2,screenHeight/2)));
-            WorldMapComponent worldMapComp = new WorldMapComponent();
-            worldMapEntity.AddComponent(worldMapComp);
+            worldMapComponent = new WorldMapComponent();
+            worldMapEntity.AddComponent(worldMapComponent);
             EntityManager.AddEntity(worldMapEntity);
 
-            worldMapComp.CreateNode("test", NodeState.unlocked, new Vector2(400, 300), nodeTexture);
-            worldMapComp.CreateNode("test", NodeState.unlocked, new Vector2(450, 270), nodeTexture);
-            worldMapComp.CreateNode("test", NodeState.unlocked, new Vector2(675, 400), nodeTexture);
-            //worldMapComp.CreateNode("test", NodeState.unlocked, new Vector2(300, 300), nodeTexture);
+            Entity startingNode = worldMapComponent.CreateAndReturnNode("test", NodeState.unlocked, new Vector2(400, 300), nodeTexture);
+            worldMapComponent.CreateNode("test", NodeState.unlocked, new Vector2(450, 270), nodeTexture);
+            worldMapComponent.CreateNode("test", NodeState.unlocked, new Vector2(675, 400), nodeTexture);
+
+            worldMapComponent.CreatePointer(startingNode, new Vector2(0, -20),pointerTexture);
 
         }
         void InitializeState()
@@ -179,7 +181,6 @@ namespace SeniorProjectGame
                 this.Exit();
 
             elapsedTime += gameTime.ElapsedGameTime;
-
             if (elapsedTime > TimeSpan.FromSeconds(1))
             {
                 elapsedTime -= TimeSpan.FromSeconds(1);
@@ -196,19 +197,41 @@ namespace SeniorProjectGame
 
             switch (State.screenState)
             {
+                #region MainPage
                 case State.ScreenState.MAIN_PAGE:
                     break;
+                #endregion
+
+                #region Setting
                 case State.ScreenState.SETTINGS_MENU:
                     break;
+                #endregion
+
+                #region WorldMap
                 case State.ScreenState.WORLD_MAP:
+
                     if (mouseSingleLeftClick.Evaluate())
                     {
-                        State.screenState = State.ScreenState.SKIRMISH;
+                        for(int p = 0 ; p < worldMapComponent.GetNodeEntityList().Count;p++)
+                        {
+                            ClickableComponent click = worldMapComponent.GetNodeEntityList()[p].GetComponent("ClickableComponent") as ClickableComponent;
+                            if (click.isColliding(new Vector2(Mouse.GetState().X, Mouse.GetState().Y)))
+                            {
+                                click.OnClick();
+                                //TODO: Make something happen when mouse clicks node
+                            }
+                        } 
                     }
 
                     break;
+                #endregion
+
+                #region Shop
                 case State.ScreenState.SHOP:
                     break;
+                #endregion
+
+                #region Dialogue
                 case State.ScreenState.DIALOGUE:
 
                     if (State.firstDialogueWord == "")
@@ -274,11 +297,10 @@ namespace SeniorProjectGame
                     }
 
                     break;
+                #endregion
+
+                #region Skirmish
                 case State.ScreenState.SKIRMISH:
-
-                    
-
-                    
 
                     if (mouseSingleLeftClick.Evaluate())
                     {
@@ -351,8 +373,9 @@ namespace SeniorProjectGame
                         boardComp.UpdateVisibilityAllies();
                     }
                     break;
+                #endregion
 
-
+                #region ThirdLayer
                 //As of now, we will not be using the states below
                 case State.ScreenState.BATTLE_FORECAST:
                     break;
@@ -360,8 +383,7 @@ namespace SeniorProjectGame
                     break;
                 case State.ScreenState.BATTLE_RESOLUTION:
                     break;
-
-
+                #endregion
 
                 default:
                     //This should nevr happen
