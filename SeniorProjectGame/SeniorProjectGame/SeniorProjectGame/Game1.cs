@@ -171,7 +171,7 @@ namespace SeniorProjectGame
 
             unitTexture = Content.Load<Texture2D>("Graphics\\UnitTextures\\unitSample");
 
-            selectSound = Content.Load<SoundEffect>("Audio\\Sounds\\select");
+            selectSound = Content.Load<SoundEffect>("Audio\\Sounds\\Powerup27");
 
             worldMapTexture = Content.Load<Texture2D>("Graphics\\Backgrounds\\island");
             pointerTexture = Content.Load<Texture2D>("Graphics\\Other\\pointer");
