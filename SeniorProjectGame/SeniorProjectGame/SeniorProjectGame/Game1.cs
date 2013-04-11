@@ -45,7 +45,7 @@ namespace SeniorProjectGame
         }
         public BoardComponent GetHexMap(string myID)
         {
-            if(hexMapDictionary.ContainsKey(myID))
+            if (hexMapDictionary.ContainsKey(myID))
             {
                 return hexMapDictionary[myID];
             }
@@ -60,7 +60,7 @@ namespace SeniorProjectGame
         {
             terrainDictionary.Add(myKey, myTerrainComponent);
         }
-        public TerrainComponent GetTerrainFromChar(string myKey)
+        public TerrainComponent GetTerrain(string myKey)
         {
             if (terrainDictionary.ContainsKey(myKey))
             {
@@ -153,9 +153,9 @@ namespace SeniorProjectGame
         {
             CreateBoard(new Vector2(27, 12));
 
-            //boardComp.CreateUnit(true, 2, new Vector2(5, 5), unitTexture, 50, 50);
-            //boardComp.CreateUnit(true, 2, new Vector2(16, 13), unitTexture, 50, 50);
-            //boardComp.CreateUnit(true, 2, new Vector2(10, 9), unitTexture, 50, 50);
+            boardComp.CreateUnit(true, 2, new Vector2(5, 5), unitTexture, 50, 50);
+            boardComp.CreateUnit(true, 2, new Vector2(16, 13), unitTexture, 50, 50);
+            boardComp.CreateUnit(true, 2, new Vector2(10, 9), unitTexture, 50, 50);
         }
 
         //void SaveMap(string myMapName, Entity myEntity)//THIS OVERWRITES WHAT'S THERE
@@ -198,7 +198,34 @@ namespace SeniorProjectGame
         //    return tempBoardEntity;
         //}
 
+        void ConvertTxtToBinSave(string myFilePath)
+        {
+            if (File.Exists(myFilePath))
+            {
+                FileStream txtFile = new FileStream(myFilePath, System.IO.FileMode.Open);
 
+                StreamReader titleReader = new StreamReader(txtFile);
+                string fileName = titleReader.ReadLine();
+
+                //Create a new bin file with read name or overwrite it if it already exists
+                FileStream binFile = new FileStream("Content/" + fileName + ".bin", System.IO.FileMode.Create);
+
+                using (BinaryWriter binWriter = new BinaryWriter(binFile))
+                {
+                    //We have to create a new streamreader to start at the top again
+                    //StreamReader txtReader = new StreamReader(txtFile);
+
+                    while (titleReader.EndOfStream == false)
+                    {
+                        binWriter.Write(titleReader.ReadLine());
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("No file exists at " + myFilePath + ".");
+            }
+        }
 
         void ReadWorldMapBin()
         {
@@ -214,8 +241,6 @@ namespace SeniorProjectGame
                     worldMapLines.Add(worldMapBinReader.ReadString());
                 }
 
-                //numberOfMaps = worldMapLines.Count;
-
                 Entity worldMapEntity = new Entity(0, State.ScreenState.WORLD_MAP);
                 worldMapEntity.AddComponent(new SpriteComponent(true, new Vector2(screenWidth / 2, screenHeight / 2), worldMapTexture));
                 worldMapEntity.AddComponent(new CameraComponent(new Vector2(screenWidth / 2, screenHeight / 2)));
@@ -230,7 +255,7 @@ namespace SeniorProjectGame
                     string title = line[0].Split(':')[1];
                     string id = line[1].Split(':')[1];
 
-                    ReadHexMapBin(id);
+                    //ReadHexMapBin(id);
 
                     Boolean isSideQuest = Convert.ToBoolean(line[2].Split(':')[1]);
 
@@ -238,12 +263,12 @@ namespace SeniorProjectGame
                     Vector2 position = new Vector2(float.Parse(coords.Split(',')[0]), float.Parse(coords.Split(',')[1]));
 
                     string listOfConnect = line[4].Split(':')[1];
-                    List<string> connectedTo = listOfConnect.Split(',').OfType<string>().ToList();;
+                    List<string> connectedTo = listOfConnect.Split(',').OfType<string>().ToList(); ;
 
                     NodeState state = (NodeState)Enum.Parse(typeof(NodeState), line[5].Split(':')[1]);
 
 
-                    worldMapComponent.CreateNode(title,id,position,connectedTo,state,nodeTexture);
+                    worldMapComponent.CreateNode(title, id, position, connectedTo, state, nodeTexture);
                 }
 
                 worldMapComponent.CreatePointer(worldMapComponent.GetNodeEntity(0), new Vector2(0, -20), pointerTexture);
@@ -253,6 +278,22 @@ namespace SeniorProjectGame
                 throw new Exception("Either you named the worldmap wrong or it doesnt exist.");
             }
         }
+
+        //List<String> GetLinesOfBin(string myID)
+        //{
+        //    if (File.Exists("Content/" + myID + ".bin"))
+        //    {
+        //        FileStream hexMapBinFile = new FileStream("Content/" + myID + ".bin", System.IO.FileMode.Open);
+        //        BinaryReader hexMapBinReader = new BinaryReader(hexMapBinFile);
+
+        //        List<string> hexMapLines = new List<string>();
+        //        return hexMapLines;
+        //    }
+        //    else
+        //    {
+        //        throw new Exception(myID + " doesn't exist");
+        //    }
+        //}
 
         void ReadHexMapBin(string myID)
         {
@@ -267,11 +308,56 @@ namespace SeniorProjectGame
                 {
                     hexMapLines.Add(hexMapBinReader.ReadString());
                 }
+
+                int layers = Convert.ToInt32(hexMapLines[0]);
+                Vector2 dimensions = new Vector2(float.Parse(hexMapLines[1].Split(' ')[0]), float.Parse(hexMapLines[1].Split(' ')[0]));
+
+                BoardComponent boardComponent = CreateAndReturnBoard(dimensions);
+
+                Vector2 terrainCoordinate = Vector2.Zero;
+                for (int layer = 0; layer < layers; layer++)
+                {
+                    for (int y = 2 + ((int)dimensions.Y * layer); y < hexMapLines.Count; y++)
+                    {
+                        string[] line = hexMapLines[y].Split(' ');
+                        for (int x = 0; x < line.Length; x++)
+                        {
+                            boardComponent.AddTerrain(ConvertToHexCoordinate(terrainCoordinate), GetTerrain(line[x]));
+                        }
+                    }
+                }
             }
             else
             {
-                throw new Exception("This except doesn't exist.");
+                throw new Exception(myID + " doesn't exist.");
             }
+        }
+
+        Vector2 ConvertToHexCoordinate(Vector2 myVec)
+        {
+            Vector2 convertedVector = Vector2.Zero;
+            convertedVector.X = myVec.X;
+
+            if (myVec.X % 2 == 0)
+            {
+                convertedVector.Y = myVec.X / 2f + myVec.Y;
+            }
+            else
+            {
+                convertedVector.Y = (myVec.X + 1f) / 2f + myVec.Y;
+            }
+
+            return convertedVector;
+        }
+
+        BoardComponent CreateAndReturnBoard(Vector2 myDimensions)
+        {
+            Entity board = new Entity(0, State.ScreenState.SKIRMISH);
+            BoardComponent boardComponent = new BoardComponent(board, hexBaseTexture, font, myDimensions);
+            board.AddComponent(boardComp);
+            EntityManager.AddEntity(board);
+
+            return boardComponent;
         }
 
         void CreateBoard(Vector2 myDimensions)
@@ -537,15 +623,6 @@ namespace SeniorProjectGame
             numberOfFrames++;
 
             EntityManager.Draw(spriteBatch);
-
-            //if (State.screenState == State.ScreenState.DIALOGUE)
-            //{
-            //    spriteBatch.DrawString(Globals.font, State.displayedDialogueMessage, new Vector2(0, 0), Color.White);
-            //}
-            //else if (State.screenState == State.ScreenState.SKIRMISH)
-            //{
-
-            //}
 
             string fps = string.Format("fps: {0}", framesPerSecond);
             spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);

@@ -32,6 +32,10 @@ namespace EntityEngine.Components.World_Map
         {
             return nodeEntityList[myInt];
         }
+        public NodeComponent GetNode(int myInt)
+        {
+            return nodeList[myInt];
+        }
 
         Entity pointerEntity;
 

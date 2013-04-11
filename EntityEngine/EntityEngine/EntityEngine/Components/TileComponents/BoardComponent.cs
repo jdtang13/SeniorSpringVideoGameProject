@@ -237,6 +237,14 @@ namespace EntityEngine.Components.TileComponents
 
             hexComp.AddTerrain(terrainComp);
         }
+        //Requires hex coordinates
+        public void AddTerrain(Vector2 myCoordinate, TerrainComponent myTerrain)
+        {
+            //Entity terrainEntity = new Entity(4, State.ScreenState.SKIRMISH);
+            //SpriteComponent hexSprite = getHex(myCoordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+            //terrainEntity.AddComponent(new SpriteComponent(true, hexSprite.getCenterPosition(), myTexture));
+            //terrainEntity.AddComponent(new CameraComponent(hexSprite.getCenterPosition()));
+        }
 
         //Returns the hex component of the hex entity that is under the mouse
         public HexComponent GetCurrentHexAtMouse()
