@@ -28,6 +28,10 @@ namespace EntityEngine.Components.World_Map
         {
             return nodeEntityList;
         }
+        public Entity GetNodeEntity(int myInt)
+        {
+            return nodeEntityList[myInt];
+        }
 
         Entity pointerEntity;
 
@@ -48,24 +52,24 @@ namespace EntityEngine.Components.World_Map
             this.name = "WorldMapComponent";
         }
 
-        public void CreateNode(string myLevelName, NodeState myNodeState, Vector2 myPosition,Texture2D myTexture)
+        public void CreateNode(string myLevelName, string myLevelID, Vector2 myPosition, List<string> myConnectedTo, NodeState myNodeState, Texture2D myTexture)
         {
             Entity nodeEntity = new Entity(1, State.ScreenState.WORLD_MAP);
             nodeEntity.AddComponent(new SpriteComponent(true, myPosition, myTexture));
             nodeEntity.AddComponent(new CameraComponent(myPosition));
             nodeEntity.AddComponent(new ClickableComponent(myPosition,myTexture.Width,myTexture.Height));
-            nodeEntity.AddComponent(new NodeComponent(myNodeState,myLevelName));
+            nodeEntity.AddComponent(new NodeComponent(myLevelID, myLevelName, myNodeState, myConnectedTo));
 
             AddNode(nodeEntity);
             EntityManager.AddEntity(nodeEntity);
         }
-        public Entity CreateAndReturnNode(string myLevelName, NodeState myNodeState, Vector2 myPosition, Texture2D myTexture)
+        public Entity CreateAndReturnNode(string myLevelName, string myLevelID, Vector2 myPosition, List<string> myConnectedTo, NodeState myNodeState, Texture2D myTexture)
         {
             Entity nodeEntity = new Entity(1, State.ScreenState.WORLD_MAP);
             nodeEntity.AddComponent(new SpriteComponent(true, myPosition, myTexture));
             nodeEntity.AddComponent(new CameraComponent(myPosition));
             nodeEntity.AddComponent(new ClickableComponent(myPosition, myTexture.Width, myTexture.Height));
-            nodeEntity.AddComponent(new NodeComponent(myNodeState, myLevelName));
+            nodeEntity.AddComponent(new NodeComponent(myLevelID, myLevelName, myNodeState, myConnectedTo));
 
             AddNode(nodeEntity);
             EntityManager.AddEntity(nodeEntity);

@@ -100,36 +100,14 @@ namespace SeniorProjectGame
             singleMiddleClick = new InputAction(MouseButton.middle, true);
 
             InitializeState();
+            ConvertTxtToBinSave("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
+            LoadBinaryFiles();
 
-            InitializeWorldMap();
-
-            InitializeHexMap();
+            //InitializeHexMap();
 
             base.Initialize();
         }
 
-        void PopulateTerrainDictionary()
-        {
-            //AddTerrainChar("G", hexGrassTexture);
-            //AddTerrainChar("D", hexDirtTexture);
-        }
-
-        void InitializeWorldMap()
-        {
-            Entity worldMapEntity = new Entity(0, State.ScreenState.WORLD_MAP);
-            worldMapEntity.AddComponent(new SpriteComponent(true, new Vector2(screenWidth / 2, screenHeight / 2), worldMapTexture));
-            worldMapEntity.AddComponent(new CameraComponent(new Vector2(screenWidth / 2, screenHeight / 2)));
-            worldMapComponent = new WorldMapComponent();
-            worldMapEntity.AddComponent(worldMapComponent);
-            EntityManager.AddEntity(worldMapEntity);
-
-            Entity startingNode = worldMapComponent.CreateAndReturnNode("test", NodeState.unlocked, new Vector2(400, 300), nodeTexture);
-            worldMapComponent.CreateNode("test", NodeState.unlocked, new Vector2(450, 270), nodeTexture);
-            worldMapComponent.CreateNode("test", NodeState.unlocked, new Vector2(675, 400), nodeTexture);
-
-            worldMapComponent.CreatePointer(startingNode, new Vector2(0, -20), pointerTexture);
-
-        }
         void InitializeState()
         {
             State.screenState = State.ScreenState.WORLD_MAP;
@@ -147,6 +125,13 @@ namespace SeniorProjectGame
             State.messageBegin = false;
             State.currentDialogueMessage = new List<string>();
         }
+
+        void PopulateTerrainDictionary()
+        {
+            //AddTerrainChar("G", hexGrassTexture);
+            //AddTerrainChar("D", hexDirtTexture);
+        }
+
         void InitializeHexMap()
         {
             CreateBoard(new Vector2(27, 12));
@@ -156,59 +141,66 @@ namespace SeniorProjectGame
             boardComp.CreateUnit(true, 2, new Vector2(10, 9), unitTexture, 50, 50);
         }
 
-        void SaveMap(string myMapName, Entity myEntity)//THIS OVERWRITES WHAT'S THERE
-        {
-            FileStream file = new FileStream("Content/" + myMapName + ".bin", System.IO.FileMode.Create);
+        //void SaveMap(string myMapName, Entity myEntity)//THIS OVERWRITES WHAT'S THERE
+        //{
+        //    FileStream file = new FileStream("Content/" + myMapName + ".bin", System.IO.FileMode.Create);
 
-            using (BinaryWriter bin = new BinaryWriter(file))
-            {
-                //TODO: SAVE THE BOARD'S STATE W/O UNITS
+        //    using (BinaryWriter bin = new BinaryWriter(file))
+        //    {
+        //        //TODO: SAVE THE BOARD'S STATE W/O UNITS
 
-                //How to read this file:
-                //Read for first x dimension then y to build the map. Then the next two will be the coordinates of a terrain piece and 
-                //identification for the terrain graphic and another point for whether its impassable
+        //        //How to read this file:
+        //        //Read for first x dimension then y to build the map. Then the next two will be the coordinates of a terrain piece and 
+        //        //identification for the terrain graphic and another point for whether its impassable
 
-                bin.Write(boardComp.GetDimenions().X);
-                bin.Write(boardComp.GetDimenions().Y);
-
-
+        //        //bin.Write(boardComp.GetDimenions().X);
+        //        //bin.Write(boardComp.GetDimenions().Y);
 
 
-            }
-        }
-        Entity LoadMap(string myMapName)
-        {
-            Entity tempBoardEntity = null;
 
-            if (File.Exists("Content/" + myMapName + ".bin"))
-            {
-                FileStream file = new FileStream("Content/" + myMapName + ".bin", System.IO.FileMode.Open);
 
-                using (BinaryReader bin = new BinaryReader(file))
-                {
-                    //TODO: REBUILD THE BOARD
-                    //bin.ReadByte();
+        //    }
+        //}
+        //Entity LoadMap(string myMapName)
+        //{
+        //    Entity tempBoardEntity = null;
 
-                    return tempBoardEntity;
-                }
-            }
+        //    if (File.Exists("Content/" + myMapName + ".bin"))
+        //    {
+        //        FileStream file = new FileStream("Content/" + myMapName + ".bin", System.IO.FileMode.Open);
 
-            return tempBoardEntity;
-        }
+        //        using (BinaryReader bin = new BinaryReader(file))
+        //        {
+        //            //TODO: REBUILD THE BOARD
+        //            //bin.ReadByte();
+
+        //            return tempBoardEntity;
+        //        }
+        //    }
+
+        //    return tempBoardEntity;
+        //}
 
         void LoadBinaryFiles()
         {
-            if(File.Exists("Content/WorldMap.bin"))
+            if (File.Exists("Content/WorldMap.bin"))
             {
                 FileStream worldMapBinFile = new FileStream("Content/WorldMap.bin", System.IO.FileMode.Open);
                 BinaryReader worldMapBinReader = new BinaryReader(worldMapBinFile);
-                 
+
                 List<string> worldMapLines = new List<string>();
 
-                while (worldMapBinReader.PeekChar() != null)
+                while (worldMapBinReader.PeekChar() != -1)
                 {
                     worldMapLines.Add(worldMapBinReader.ReadString());
                 }
+
+                Entity worldMapEntity = new Entity(0, State.ScreenState.WORLD_MAP);
+                worldMapEntity.AddComponent(new SpriteComponent(true, new Vector2(screenWidth / 2, screenHeight / 2), worldMapTexture));
+                worldMapEntity.AddComponent(new CameraComponent(new Vector2(screenWidth / 2, screenHeight / 2)));
+                worldMapComponent = new WorldMapComponent();
+                worldMapEntity.AddComponent(worldMapComponent);
+                EntityManager.AddEntity(worldMapEntity);
 
                 //Now we are to process the lines of the world map
                 for (int l = 0; l < worldMapLines.Count; l++)
@@ -219,15 +211,18 @@ namespace SeniorProjectGame
                     Boolean isSideQuest = Convert.ToBoolean(line[2].Split(':')[1]);
 
                     string coords = line[3].Split(':')[1];
-                    Vector2 position = new Vector2(float.Parse(coords.Split(',')[0]) , float.Parse(coords.Split(',')[1]));
+                    Vector2 position = new Vector2(float.Parse(coords.Split(',')[0]), float.Parse(coords.Split(',')[1]));
 
                     string listOfConnect = line[4].Split(':')[1];
-                    string[] connectedTo = listOfConnect.Split(',');
+                    List<string> connectedTo = listOfConnect.Split(',').OfType<string>().ToList();;
 
-                    NodeState nodeState = (NodeState)Enum.Parse(typeof(NodeState), line[5].Split(':')[1]);
+                    NodeState state = (NodeState)Enum.Parse(typeof(NodeState), line[5].Split(':')[1]);
 
 
+                    worldMapComponent.CreateNode(title,id,position,connectedTo,state,nodeTexture);
                 }
+
+                worldMapComponent.CreatePointer(worldMapComponent.GetNodeEntity(0), new Vector2(0, -20), pointerTexture);
             }
             else
             {
@@ -250,11 +245,11 @@ namespace SeniorProjectGame
                 using (BinaryWriter binWriter = new BinaryWriter(binFile))
                 {
                     //We have to create a new streamreader to start at the top again
-                    StreamReader txtReader = new StreamReader(txtFile);
+                    //StreamReader txtReader = new StreamReader(txtFile);
 
-                    while (!txtReader.EndOfStream)
+                    while (titleReader.EndOfStream == false)
                     {
-                        binWriter.Write(txtReader.ReadLine());
+                        binWriter.Write(titleReader.ReadLine());
                     }
                 }
             }
