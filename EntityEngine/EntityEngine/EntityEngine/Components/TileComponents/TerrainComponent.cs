@@ -9,61 +9,67 @@ using EntityEngine.Components.Sprites;
 
 namespace EntityEngine.Components.TileComponents
 {
-    public class TerrainComponent : UpdateableComponent
+    public class TerrainComponent : Component
     {
         HexComponent hex;
         public HexComponent GetHex()
         {
             return hex;
         }
-        public void SetHex(HexComponent myHex)
-        {
-            hex.RemoveTerrain(this);
-            myHex.AddTerrain(this);
-            hex = myHex;
-            
-        }
 
-        Visibility visibility;
+        Visibility visibility = Visibility.Unexplored;
         public void SetVisbility(Visibility myVis)
         {
             visibility = myVis;
+
+            SpriteComponent sprite = _parent.GetDrawable("SpriteComponent") as SpriteComponent;
+
+            if (visibility == Visibility.Visible)
+            {
+                sprite.setColor(Color.White);
+                sprite._visible = true;
+            }
+
+            if (visibility == Visibility.Explored)
+            {
+                sprite.setColor(Color.SlateGray);
+                sprite._visible = true;
+            }
+
+            if (visibility == Visibility.Unexplored)
+            {
+                sprite._visible = false;
+            }
         }
 
         Boolean impassable;
-        public Boolean getImpassable()
+        public Boolean GetImpassable()
         {
             return impassable;
         }
 
         float movementRestriction;
-        public float getMovementRestriction()
+        public float GetMovementRestriction()
         {
             return movementRestriction;
         }
-        public void setMovementRestriction(float myMoveRes)
+        public void SetMovementRestriction(float myMoveRes)
         {
             movementRestriction = myMoveRes;
         }
 
-        public TerrainComponent(Entity myParent, HexComponent myHex, bool myImpassable)
-            : base(myParent)
+        public TerrainComponent(HexComponent myHex, bool myImpassable)
         {
             this.name = "TerrainComponent";
             hex = myHex;
             impassable = myImpassable;
-        }
 
-        public override void Update(GameTime gameTime)
-        {
-            UpdateVisibility();
-            base.Update(gameTime);
         }
 
         public void UpdateVisibility()
-        {  
+        {
             visibility = hex.GetVisibility();
-            SpriteComponent sprite = _parent.getDrawable("SpriteComponent") as SpriteComponent;
+            SpriteComponent sprite = _parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
             if (visibility == Visibility.Visible)
             {
@@ -78,14 +84,16 @@ namespace EntityEngine.Components.TileComponents
             }
 
             else if (visibility == Visibility.Unexplored)
-            { 
+            {
 
                 sprite._visible = false;
             }
         }
 
-        
-
-
+        public override void Initialize()
+        {
+            SetVisbility(hex.GetVisibility());
+            base.Initialize();
+        }
     }
 }

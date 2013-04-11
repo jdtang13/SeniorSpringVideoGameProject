@@ -17,17 +17,18 @@ namespace EntityEngine
         //At the start, an entity is a blank slate. In order to get it to do things, we add components to it. Components hold all
         //the functionality of an entity. For instance, a spaceship would have a spritecomponent, a physicscomponent, and a camera
         //component to describe it.
-        
+
         //Each component is named in the constructor of the component. You call one of these methods method and pass the name string.
         //For instance, a sprite component is named "SpriteComponenent" in its code
 
         //So, if you wanted to use the sprite component of an entity named spaceShip(assuming it has one) the code would be:
-        //        SpriteComponent spriteComp = spaceShip.getDrawable("SpriteComponent") as SpriteComponent;
+        //        SpriteComponent spriteComp = spaceShip.GetDrawable("SpriteComponent") as SpriteComponent;
 
-        //So since the function getDrawable(string) returns a DrawableComponent (DrawableComponent is the parent of SpriteComponent) 
+        //So since the function GetDrawable(string) returns a DrawableComponent (DrawableComponent is the parent of SpriteComponent) 
         //we have to use it AS a SpriteComponent
 
-        public Component getComponent(string myComponentName)
+        
+        public Component GetComponent(string myComponentName)
         {
             if (this.ComponentsDictionary.ContainsKey(myComponentName))
             {
@@ -38,7 +39,7 @@ namespace EntityEngine
                 throw new ArgumentOutOfRangeException(myComponentName);
             }
         }
-        public DrawableComponent getDrawable(string myComponentName)
+        public DrawableComponent GetDrawable(string myComponentName)
         {
             if (this.ComponentsDictionary.ContainsKey(myComponentName))
             {
@@ -50,7 +51,7 @@ namespace EntityEngine
                 return draw;
             }
         }
-        public UpdateableComponent getUpdateable(string myComponentName)
+        public UpdateableComponent GetUpdateable(string myComponentName)
         {
             if (this.ComponentsDictionary.ContainsKey(myComponentName))
             {
@@ -66,10 +67,6 @@ namespace EntityEngine
         public List<IEntityUpdateable> updateableComponentList = new List<IEntityUpdateable>();
         public List<IEntityDrawable> drawableComponentList = new List<IEntityDrawable>();
 
-        private List<IEntityComponent> tempComponentList = new List<IEntityComponent>();
-        private List<IEntityUpdateable> tempUpdateableComponentList = new List<IEntityUpdateable>();
-        private List<IEntityDrawable> tempDrawableComponentList = new List<IEntityDrawable>();
-
         public void AddComponent(IEntityComponent myComponent)
         {
             if (myComponent == null)
@@ -77,10 +74,16 @@ namespace EntityEngine
                 throw new ArgumentNullException("Componenet is null");
             }
 
+            //take this code out if you want to have two of each component
             if (componentList.Contains(myComponent))
             {
                 return;
-                //take this code out if you want to have two of each component
+            }
+
+            //Setting the parent
+            if (myComponent.Parent == null)
+            {
+                myComponent.Parent = this;
             }
 
             componentList.Add(myComponent);
@@ -125,45 +128,37 @@ namespace EntityEngine
             }
             return false;
         }
-        
+
         //Layer is used so that certain entities are drawn before others, background objects before foreground etc
         public int layer;
 
-        //Some components have to update before others so we have an order system that can be set within the components
-        //At max there are 100 different selections for priority for a component as detailed in this var
-        private const int ORDER_THRESHOLD = 100;
+        State.ScreenState screenState;
+        public State.ScreenState GetAssociatedState()
+        {
+            return screenState;
+        }
 
-        public Entity(int myLayer)
+        public Entity(int myLayer, State.ScreenState myState)
         {
             layer = myLayer;
+            screenState = myState;
         }
 
         public void Update(GameTime gameTime)
         {
-            tempUpdateableComponentList.Clear();
-            tempUpdateableComponentList.AddRange(updateableComponentList);
-
-            //Cycle through the differnt update priorities, 0 being the msot importatn to update
-            for (int q = 0; q < ORDER_THRESHOLD; q++)
+            for (int p = 0; p < updateableComponentList.Count; p++)
             {
-                for (int p = 0; p < tempUpdateableComponentList.Count; p++)
-                {
-                    //Check to see if it is indeed enabled and if it matches the priority
-                    if (tempUpdateableComponentList[p].enabled && tempUpdateableComponentList[p].updateOrder == q)
-                        tempUpdateableComponentList[p].Update(gameTime);
-                }
+                if (updateableComponentList[p].enabled)
+                    updateableComponentList[p].Update(gameTime);
             }
         }
 
         public void Draw(SpriteBatch batch)
         {
-            tempDrawableComponentList.Clear();
-            tempDrawableComponentList.AddRange(drawableComponentList);
-
-            for (int p = 0; p < tempDrawableComponentList.Count; p++)
+            for (int p = 0; p < drawableComponentList.Count; p++)
             {
-                if (tempDrawableComponentList[p].visible)
-                    tempDrawableComponentList[p].Draw(batch);
+                if (drawableComponentList[p].visible)
+                    drawableComponentList[p].Draw(batch);
             }
         }
     }

@@ -10,7 +10,7 @@ using EntityEngine;
 
 namespace EntityEngine.Components.TileComponents
 {
-    public class UnitComponent : UpdateableComponent
+    public class UnitComponent : Component
     {
         HexComponent hex;
         public HexComponent GetHex()
@@ -34,6 +34,7 @@ namespace EntityEngine.Components.TileComponents
             selected = myTruth;
         }
 
+
         Orient orientation = Orient.s;
         public void changeOrientation(Orient myOar)
         {
@@ -46,6 +47,39 @@ namespace EntityEngine.Components.TileComponents
         public void SetVisbility(Visibility myVis)
         {
             visibility = myVis;
+            AnimatedSpriteComponent sprite = _parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
+
+            if (isAlly)
+            {
+                sprite.SetColor(Color.White);
+                sprite._visible = true;
+            }
+            else if (visibility == Visibility.Visible)
+            {
+                sprite.SetColor(Color.White);
+                sprite._visible = true;
+            }
+
+            else if (visibility == Visibility.Explored)
+            {
+                sprite.SetColor(Color.SlateGray);
+                sprite._visible = true;
+            }
+
+            else if (visibility == Visibility.Unexplored)
+            {
+                sprite._visible = false;
+            }
+        }
+
+        bool isAlly;
+        public void SetAlly(bool myTruth)
+        {
+            isAlly = myTruth;
+        }
+        public bool GetAlly()
+        {
+            return isAlly;
         }
 
         int sightRadius;
@@ -67,100 +101,118 @@ namespace EntityEngine.Components.TileComponents
         }
         public void SetUnitData(UnitData u) { unitData = u; }
 
-        public UnitComponent(Entity myParent, HexComponent myHex, bool mySelectable)
-            : base(myParent)
-        {
-            hex = myHex;
-            this.name = "UnitComponent";
-        }
-
-        public UnitComponent(Entity myParent, HexComponent myHex, bool mySelectable, UnitData unitData)
-            : base(myParent)
+        public UnitComponent(bool myIsAlly, int mySightRadius, HexComponent myHex, bool mySelectable, UnitData unitData)
         {
             hex = myHex;
             this.name = "UnitComponent";
             this.unitData = unitData;
+            sightRadius = mySightRadius;
+            isAlly = myIsAlly;
         }
 
-        public override void Update(GameTime gameTime)
-        {
-            UpdateVisibility();
-            base.Update(gameTime);
-        }
-
-        public void UpdateVisibility()
-        {
-
-            visibility = hex.GetVisibility();
-            SpriteComponent sprite = _parent.getDrawable("SpriteComponent") as SpriteComponent;
-
-            if (visibility == Visibility.Visible)
-            {
-                sprite.setColor(Color.White);
-                sprite._visible = true;
-            }
-
-            else if (visibility == Visibility.Explored)
-            {
-                sprite.setColor(Color.SlateGray);
-                sprite._visible = true;
-            }
-
-            else if (visibility == Visibility.Unexplored)
-            {
-
-                sprite._visible = false;
-            }
-        }
-
-
-        //public void moveDirection(Orientation myOar)
+        //public override void Initialize()
         //{
-        //    //Move one hexEntity in a direction
-        //    switch (myOar)
-        //    {
-        //        case Orientation.n:
-        //            if (hex.n != null)
-        //            {
-        //                setHex(hex.n);
-        //            }
-        //            break;
-        //        case Orientation.ne:
-        //            if (hex.ne != null)
-        //            {
-        //                setHex(hex.ne);
-        //            }
-        //            break;
-        //        case Orientation.se:
-        //            if (hex.se != null)
-        //            {
-        //                setHex(hex.se);
-        //            }
-        //            break;
-        //        case Orientation.s:
-        //            if (hex.s != null)
-        //            {
-        //                setHex(hex.s);
-        //            }
-        //            break;
-        //        case Orientation.sw:
-        //            if (hex.sw != null)
-        //            {
-        //                setHex(hex.sw);
-        //            }
-        //            break;
-        //        case Orientation.nw:
-        //            if (hex.nw != null)
-        //            {
-        //                setHex(hex.nw);
-        //            }
-        //            break;
-
-        //        default:
-        //            //This should never happen
-        //            break;
-        //    }
-
+        //    AnimatedSpriteComponent sprite = _parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
+        //    sprite._visible = false;
+        //    base.Initialize();
         //}
+
+        public void MoveDirection(Orient myOar)
+        {
+            //Move one hexEntity in a direction
+            switch (myOar)
+            {
+                case Orient.n:
+                    if (hex.n != null)
+                    {
+                        if (!hex.n.HasUnit())
+                        {
+                            hex.n.SetUnit(this);
+                            SetHex(hex.n);
+                            hex.RemoveUnit();
+                            
+                        }
+                    }
+                    break;
+                case Orient.ne:
+                    if (hex.ne != null)
+                    {
+                        if (hex.ne != null)
+                        {
+                            if (!hex.ne.HasUnit())
+                            {
+                                hex.ne.SetUnit(this);
+                                SetHex(hex.ne);
+                                hex.RemoveUnit();
+                            }
+                        }
+                    }
+                    break;
+                case Orient.se:
+                    if (hex.se != null)
+                    {
+                        if (hex.se != null)
+                        {
+                            if (!hex.se.HasUnit())
+                            {
+                                hex.se.SetUnit(this);
+                                SetHex(hex.se);
+                                hex.RemoveUnit();
+                            }
+                        }
+                    }
+                    break;
+                case Orient.s:
+                    if (hex.s != null)
+                    {
+                        if (hex.s != null)
+                        {
+                            if (!hex.s.HasUnit())
+                            {
+                                hex.s.SetUnit(this);
+                                SetHex(hex.s);
+                                hex.RemoveUnit();
+                            }
+                        }
+                    }
+                    break;
+                case Orient.sw:
+                    if (hex.sw != null)
+                    {
+                        if (hex.sw != null)
+                        {
+                            if (!hex.sw.HasUnit())
+                            {
+                                hex.sw.SetUnit(this);
+                                SetHex(hex.sw);
+                                hex.RemoveUnit();
+                            }
+                        }
+                    }
+                    break;
+                case Orient.nw:
+                    if (hex.nw != null)
+                    {
+                        if (hex.nw != null)
+                        {
+                            if (!hex.nw.HasUnit())
+                            {
+                                hex.nw.SetUnit(this);
+                                SetHex(hex.nw);
+                                hex.RemoveUnit();
+                            }
+                        }
+                    }
+                    break;
+
+                default:
+                    //This should never happen
+                    break;
+            }
+            AnimatedSpriteComponent sprite = _parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
+            SpriteComponent hexSprite = hex._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+            sprite.position = hexSprite.position;
+
+        }
     }
 }

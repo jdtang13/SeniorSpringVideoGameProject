@@ -7,7 +7,7 @@ using EntityEngine.Components.Component_Parents;
 
 namespace EntityEngine.Components.Sprites
 {
-    public class CameraComponent: UpdateableComponent
+    public class CameraComponent:Component
     {
         //You must add this component to your entity if you want to use sprites. This component allows you to follow a specific entity
         //with the camera. Very useful indeed.
@@ -17,7 +17,6 @@ namespace EntityEngine.Components.Sprites
         {
             return offset;
         }
-
 
         //Followed means that the camera is following this entity, following means that this entity is following another, and if
         //it's no camera the sprites are drawn to their positions without alteration
@@ -48,11 +47,11 @@ namespace EntityEngine.Components.Sprites
         }
 
         //Pass in the position of the sprite for teh vector
-        public CameraComponent(Entity myParent, Vector2 myVector):base(myParent)
+        public CameraComponent( Vector2 myVector)
         {
-            followedPosition = new Vector2(400, 300);
-            offset = followedPosition - myVector;
             this.name = "CameraComponent";
+            followedPosition = new Vector2(400, 300);
+            offset = followedPosition - myVector;          
         }
 
         //Followed means its centered on this sprite, following means its following another sprite

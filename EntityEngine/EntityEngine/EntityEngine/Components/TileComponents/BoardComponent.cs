@@ -14,13 +14,15 @@ namespace EntityEngine.Components.TileComponents
     {
         //Use this component to make an entity into a board. This component handles the creation of the other hex entities.
 
-        HexComponent oldPlayerPosition;
-        HexComponent newPlayerPosition;
-
         List<HexComponent> oldVisible;
         List<HexComponent> newVisible;
 
         Vector2 gridSize;
+        public Vector2 GetDimenions()
+        {
+            return gridSize;
+        }
+
         Texture2D gridTexture;
         SpriteFont gridFont;
 
@@ -33,6 +35,9 @@ namespace EntityEngine.Components.TileComponents
         {
             selectedUnit = myUnit;
         }
+
+        public List<UnitComponent> alliedUnitList = new List<UnitComponent>();
+        List<UnitComponent> nonAlliedUnitList = new List<UnitComponent>();
 
         //You must handle nulls for this dictionary
         Dictionary<Vector2, HexComponent> HexDictionary = new Dictionary<Vector2, HexComponent>();
@@ -79,18 +84,22 @@ namespace EntityEngine.Components.TileComponents
 
         }
 
+        public BoardComponent(Texture2D myTexture, SpriteFont myFont, Vector2 mySize)
+        {
+            this.name = "BoardComponent";
+
+            gridSize = mySize;
+            gridTexture = myTexture;
+            gridFont = myFont;
+        }
+
         public override void Initialize()
         {
             hexEntityGrid = new Entity[(int)gridSize.X, (int)gridSize.Y];
             createGrid();
 
-            oldPlayerPosition = null;
-            newPlayerPosition = getHex(mouseCurrentHex);
-
             oldVisible = new List<HexComponent>();
-            newVisible = GetAllRings(3);
-
-            //getHex(new Vector2(5, 5)).SetFog(Visibility.Unexplored);
+            newVisible = new List<HexComponent>();
 
             base.Initialize();
         }
@@ -101,7 +110,7 @@ namespace EntityEngine.Components.TileComponents
         }
         public Vector2 screenCoordinatesOfHex(int x, int y)
         {
-            SpriteComponent sprite = getHex(new Vector2(x,y))._parent.getDrawable("SpriteComponent") as SpriteComponent;
+            SpriteComponent sprite = getHex(new Vector2(x,y))._parent.GetDrawable("SpriteComponent") as SpriteComponent;
             return sprite.getTopLeftPosition();
 
             /*Vector2 screenPosition;
@@ -126,7 +135,7 @@ namespace EntityEngine.Components.TileComponents
                 for (int y = 0; y < gridSize.Y; y++)
                 {
                     //Each hex will be an entity
-                    Entity hexEntity = new Entity(0);
+                    Entity hexEntity = new Entity(0, State.ScreenState.SKIRMISH);
                     hexEntityGrid[x, y] = hexEntity;
 
 
@@ -141,7 +150,7 @@ namespace EntityEngine.Components.TileComponents
                         coordPosition.Y = (coordPosition.X + 1f) / 2f + y;
                     }
 
-                    HexComponent hexComp = new HexComponent(hexEntity, coordPosition);
+                    HexComponent hexComp = new HexComponent(coordPosition);
                     hexEntity.AddComponent(hexComp);
                     HexDictionary.Add(coordPosition, hexComp);
                     HexEntityDictionary.Add(coordPosition, hexEntity);
@@ -158,19 +167,19 @@ namespace EntityEngine.Components.TileComponents
                     }
                     screenPosition.X = x * (gridTexture.Width / 4f * 3f) + gridTexture.Width / 2f;
 
-                    SpriteComponent hexSprite = new SpriteComponent(hexEntity, true, screenPosition, gridTexture);
+                    SpriteComponent hexSprite = new SpriteComponent( true, screenPosition, gridTexture);
                     hexEntity.AddComponent(hexSprite);
-                    hexEntity.AddComponent(new CameraComponent(hexEntity, screenPosition));
+                    hexEntity.AddComponent(new CameraComponent(screenPosition));
 
 
                     EntityManager.AddEntity(hexEntity);
 
-                    getHex(coordPosition).SetFog(Visibility.Unexplored);
+                    getHex(coordPosition).SetVisibility(Visibility.Unexplored);
 
 
                     //Adding text to label the coordinates of the hex entity
                     Vector2 debugTextPosition = new Vector2(hexSprite.getCenterPosition().X, hexSprite.getCenterPosition().Y);
-                    hexEntity.AddComponent(new TextSpriteComponent(hexEntity, false, coordPosition.X.ToString() + "," + coordPosition.Y.ToString(), Color.Black, debugTextPosition, gridFont));
+                    hexEntity.AddComponent(new TextSpriteComponent(false, coordPosition.X.ToString() + "," + coordPosition.Y.ToString(), Color.Black, debugTextPosition, gridFont));
                 }
             }
 
@@ -202,8 +211,61 @@ namespace EntityEngine.Components.TileComponents
                 if (getHex(new Vector2(coords.X - 1, coords.Y - 1)) != null)
                     nw = getHex(new Vector2(coords.X - 1, coords.Y - 1));
 
-                hex.setAdjacent(n, ne, se, s, sw, nw);
+                hex.SetAdjacent(n, ne, se, s, sw, nw);
             }
+        }
+        public void CreateUnit(bool myIsAlly, int mySightRadius, Vector2 myCoordinate, Texture2D myTexture, int mySpriteFrameWidth, int mySpriteFrameHeight)
+        {
+            HexComponent hexComp = getHex(myCoordinate);
+
+            if (hexComp.GetUnit() == null)
+            {
+                Entity unitEntity = new Entity(5, State.ScreenState.SKIRMISH);
+
+                SpriteComponent hexSprite = getHex(myCoordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+                unitEntity.AddComponent(new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), myTexture, 75f, mySpriteFrameWidth, mySpriteFrameHeight));
+                unitEntity.AddComponent(new CameraComponent( hexSprite.getCenterPosition()));
+
+                // TODO: unitData is null right now.
+                UnitComponent unitComp = new UnitComponent(myIsAlly, mySightRadius, getHex(myCoordinate), true, null);
+                unitEntity.AddComponent(unitComp);
+
+                getHex(myCoordinate).SetUnit(unitComp);
+
+                EntityManager.AddEntity(unitEntity);
+
+                if (myIsAlly)
+                {
+                    alliedUnitList.Add(unitComp);
+                }
+                else
+                {
+                    nonAlliedUnitList.Add(unitComp);
+                }
+
+                hexComp.SetUnit(unitComp);
+            }
+            else
+            {
+                throw new Exception("There is already a unit where you are trying to create one.");
+            }
+        }
+        public void CreateTerrain(Vector2 myCoordinate, Texture2D myTexture, bool myImpassable)
+        {
+            HexComponent hexComp = getHex(myCoordinate);
+
+            Entity terrainEntity = new Entity(4, State.ScreenState.SKIRMISH);
+
+            SpriteComponent hexSprite = getHex(myCoordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+            terrainEntity.AddComponent(new SpriteComponent(true, hexSprite.getCenterPosition(), myTexture));
+            terrainEntity.AddComponent(new CameraComponent(hexSprite.getCenterPosition()));
+
+            TerrainComponent terrainComp = new TerrainComponent(hexComp, myImpassable);
+            terrainEntity.AddComponent(terrainComp);
+
+            EntityManager.AddEntity(terrainEntity);
+
+            hexComp.AddTerrain(terrainComp);
         }
 
         //Returns the hex component of the hex entity that is under the mouse
@@ -220,7 +282,7 @@ namespace EntityEngine.Components.TileComponents
 
             if (getHex(mouseRoundedHexCoordinate) != null)
             {
-                SpriteComponent centerSprite = getHex(mouseRoundedHexCoordinate)._parent.getDrawable("SpriteComponent") as SpriteComponent;
+                SpriteComponent centerSprite = getHex(mouseRoundedHexCoordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
                 distance = Vector2.Distance(mousePosition, centerSprite.getCenterPosition());
 
@@ -232,7 +294,7 @@ namespace EntityEngine.Components.TileComponents
                 {
                     if (getHex(mouseRoundedHexCoordinate).n != null)
                     {
-                        SpriteComponent sprite = getHex(mouseRoundedHexCoordinate).n._parent.getDrawable("SpriteComponent") as SpriteComponent;
+                        SpriteComponent sprite = getHex(mouseRoundedHexCoordinate).n._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
                         if (Vector2.Distance(mousePosition, sprite.getCenterPosition()) < gridTexture.Height / 2f)
                         {
@@ -241,7 +303,7 @@ namespace EntityEngine.Components.TileComponents
                     }
                     if (getHex(mouseRoundedHexCoordinate).ne != null)
                     {
-                        SpriteComponent sprite = getHex(mouseRoundedHexCoordinate).ne._parent.getDrawable("SpriteComponent") as SpriteComponent;
+                        SpriteComponent sprite = getHex(mouseRoundedHexCoordinate).ne._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
                         if (Vector2.Distance(mousePosition, sprite.getCenterPosition()) < gridTexture.Height / 2f)
                         {
@@ -250,7 +312,7 @@ namespace EntityEngine.Components.TileComponents
                     }
                     if (getHex(mouseRoundedHexCoordinate).se != null)
                     {
-                        SpriteComponent sprite = getHex(mouseRoundedHexCoordinate).se._parent.getDrawable("SpriteComponent") as SpriteComponent;
+                        SpriteComponent sprite = getHex(mouseRoundedHexCoordinate).se._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
                         if (Vector2.Distance(mousePosition, sprite.getCenterPosition()) < gridTexture.Height / 2f)
                         {
@@ -259,7 +321,7 @@ namespace EntityEngine.Components.TileComponents
                     }
                     if (getHex(mouseRoundedHexCoordinate).s != null)
                     {
-                        SpriteComponent sprite = getHex(mouseRoundedHexCoordinate).s._parent.getDrawable("SpriteComponent") as SpriteComponent;
+                        SpriteComponent sprite = getHex(mouseRoundedHexCoordinate).s._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
                         if (Vector2.Distance(mousePosition, sprite.getCenterPosition()) < gridTexture.Height / 2f)
                         {
@@ -268,7 +330,7 @@ namespace EntityEngine.Components.TileComponents
                     }
                     if (getHex(mouseRoundedHexCoordinate).sw != null)
                     {
-                        SpriteComponent sprite = getHex(mouseRoundedHexCoordinate).sw._parent.getDrawable("SpriteComponent") as SpriteComponent;
+                        SpriteComponent sprite = getHex(mouseRoundedHexCoordinate).sw._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
                         if (Vector2.Distance(mousePosition, sprite.getCenterPosition()) < gridTexture.Height / 2f)
                         {
@@ -277,7 +339,7 @@ namespace EntityEngine.Components.TileComponents
                     }
                     if (getHex(mouseRoundedHexCoordinate).nw != null)
                     {
-                        SpriteComponent sprite = getHex(mouseRoundedHexCoordinate).nw._parent.getDrawable("SpriteComponent") as SpriteComponent;
+                        SpriteComponent sprite = getHex(mouseRoundedHexCoordinate).nw._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
                         if (Vector2.Distance(mousePosition, sprite.getCenterPosition()) < gridTexture.Height / 2f)
                         {
@@ -287,144 +349,6 @@ namespace EntityEngine.Components.TileComponents
                 }
             }
             return getHex(mouseCurrentHex);
-        }        
-        
-        //returns ring of hexes distance radius away from mouseCurrentHex
-        public List<HexComponent> GetRing(int radius)
-        {
-            List<HexComponent> ring = new List<HexComponent>();
-            Vector2 startCoord = new Vector2(mouseCurrentHex.X, mouseCurrentHex.Y - radius);
-            Vector2 ghostCoord = startCoord;
-
-            //                              N                  NE                 SE                S                  SW                   NW
-            Vector2[] directions = { new Vector2(0, -1), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1), new Vector2(-1, 0), new Vector2(-1, -1) };
-
-            // 7 % 6 = orientation 1
-            for (int o = 2; o <= 7; o++)
-            {
-                int times = radius;
-                while (times > 0) // > or >=
-                {
-                    ghostCoord = ghostCoord + directions[o % 6];
-
-                    if (getHex(ghostCoord) != null)
-                    {
-                        ring.Add(getHex(ghostCoord));
-                    }
-
-                    times--;
-                }
-            }
-
-            return ring;
-        }
-
-        //returns all rings of hexes distance radius or less away from mouseCurrentHex
-        public List<HexComponent> GetAllRings(int radius)
-        {
-            List<HexComponent> allRings = new List<HexComponent>();
-
-            for (int r = 0; r <= radius; r++)
-            {
-                allRings.AddRange(GetRing(r));
-            }
-
-            allRings.Add(getHex(mouseCurrentHex));
-
-            return allRings;
-        }
-
-        //public void SelectUnit
-
-        public void CreateUnit(Vector2 myCoordinate, Texture2D myTexture,int mySpriteFrameWidth,int mySpriteFrameHeight)
-        {
-            HexComponent hexComp = getHex(myCoordinate);
-
-            if (hexComp.GetUnit() == null)
-            {
-                Entity unitEntity = new Entity(5);
-
-                UnitComponent unitComp = new UnitComponent(unitEntity, getHex(myCoordinate), true);
-                unitEntity.AddComponent(unitComp);
-                
-                SpriteComponent hexSprite = getHex(myCoordinate)._parent.getDrawable("SpriteComponent") as SpriteComponent;
-                unitEntity.AddComponent(new AnimatedSpriteComponent(unitEntity, true, hexSprite.getCenterPosition(), myTexture, 75f, mySpriteFrameWidth, mySpriteFrameHeight));
-                unitEntity.AddComponent(new CameraComponent(unitEntity, hexSprite.getCenterPosition()));
-                
-                EntityManager.AddEntity(unitEntity);
-
-                hexComp.SetUnit(unitComp);
-
-            }
-            else
-            {
-                throw new Exception("There is already a unit where you are trying to create one.");
-            }
-        }
-        public void CreateTerrain(Vector2 myCoordinate, Texture2D myTexture, bool myImpassable)
-        {
-            HexComponent hexComp = getHex(myCoordinate);
-
-            Entity terrainEntity = new Entity(4);
-            TerrainComponent terrainComp = new TerrainComponent(terrainEntity, getHex(myCoordinate), myImpassable);
-            terrainEntity.AddComponent(terrainComp);
-            SpriteComponent hexSprite = getHex(myCoordinate)._parent.getDrawable("SpriteComponent") as SpriteComponent;
-            terrainEntity.AddComponent(new SpriteComponent(terrainEntity,true,hexSprite.getCenterPosition(),myTexture));
-            terrainEntity.AddComponent(new CameraComponent(terrainEntity, hexSprite.getCenterPosition()));
-            EntityManager.AddEntity(terrainEntity);
-
-            hexComp.AddTerrain(terrainComp);
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-            HexComponent currentHex = GetCurrentHexAtMouse();
-            UpdateFog();
-        }
-
-        public void UpdateFog()
-        {
-            newPlayerPosition = getHex(mouseCurrentHex);
-
-            newVisible = GetAllRings(3);
-
-            if (new InputAction(MouseButton.left, false).Evaluate())
-            {
-                //for (int i = 0; i < newVisible.Count; i++)
-                //{
-                //    newVisible[i].SetFog(Visibility.Visible);
-                //}
-
-                //if (oldPlayerPosition != newPlayerPosition)
-                //{
-                //    for (int i = 0; i < oldVisible.Count; i++)
-                //    {
-                //        if (newVisible.Contains(oldVisible[i]) == false)
-                //        {
-                //            oldVisible[i].SetFog(Visibility.Explored);
-                //        }
-                //    }
-
-                if (oldPlayerPosition != newPlayerPosition)
-                {
-
-
-                    for (int i = 0; i < oldVisible.Count; i++)
-                    {
-                        oldVisible[i].SetFog(Visibility.Explored);
-                    }
-
-                    for (int i = 0; i < newVisible.Count; i++)
-                    {
-                        newVisible[i].SetFog(Visibility.Visible);
-                    }
-
-
-                }
-                oldPlayerPosition = newPlayerPosition;
-                oldVisible = newVisible;
-            }
         }
 
         //Some rounding functions, nothing to see here
@@ -439,6 +363,82 @@ namespace EntityEngine.Components.TileComponents
             float rounded = (int)myNum;
 
             return rounded;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+            HexComponent currentHex = GetCurrentHexAtMouse();
+
+        }
+
+        //returns ring of hexes distance radius away from mouseCurrentHex
+        public List<HexComponent> GetRing(UnitComponent myUnit, int myRadius)
+        {
+            List<HexComponent> ring = new List<HexComponent>();
+
+            HexComponent unitHex = myUnit.GetHex();
+
+            Vector2 startCoord = new Vector2(unitHex.getCoordPosition().X, unitHex.getCoordPosition().Y - myRadius);
+            Vector2 ghostCoord = startCoord;
+
+            //                              N                  NE                 SE                S                  SW                   NW
+            Vector2[] directions = { new Vector2(0, -1), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1), new Vector2(-1, 0), new Vector2(-1, -1) };
+
+            // 7 % 6 = orientation 1
+            for (int o = 2; o <= 7; o++)
+            {
+                int times = myRadius;
+                while (times > 0) // > or >=
+                {
+                    ghostCoord = ghostCoord + directions[o % 6];
+
+                    if (getHex(ghostCoord) != null)
+                    {
+                        ring.Add(getHex(ghostCoord));
+                    }
+
+                    times--;
+                }
+            }
+            return ring;
+        }
+
+        //returns all rings of hexes distance radius or less away from mouseCurrentHex
+        public List<HexComponent> GetAllRings(UnitComponent myUnit)
+        {
+            List<HexComponent> allRings = new List<HexComponent>();
+
+            for (int r = 0; r <= myUnit.GetSightRadius(); r++)
+            {
+                allRings.AddRange(GetRing(myUnit, r));
+            }
+
+            allRings.Add(getHex(myUnit.GetHex().getCoordPosition()));
+
+            return allRings;
+        }
+
+
+        //IMPORTANT: Call this function every time anyone on your team moves
+        public void UpdateVisibilityAllies()
+        {
+            for (int u = 0; u < oldVisible.Count; u++)
+            {
+                oldVisible[u].SetVisibility(Visibility.Explored);
+            }
+
+            newVisible.Clear();
+            for (int p = 0; p < alliedUnitList.Count; p++)
+            {
+                newVisible.AddRange(GetAllRings(alliedUnitList[p]));
+            }
+
+            for (int i = 0; i < newVisible.Count; i++)
+            {
+                newVisible[i].SetVisibility(Visibility.Visible);
+            }
+            oldVisible = newVisible;
         }
     }
 }

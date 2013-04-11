@@ -15,11 +15,11 @@ namespace EntityEngine.Components.Component_Parents
         public string _name = "";
         public bool _enabled = true;
 
-        public readonly Entity _parent;
+        public Entity _parent;
 
-        public Component(Entity myParent)
+        public Component()
         {
-            _parent = myParent;
+
         }
 
         public string name
@@ -34,6 +34,18 @@ namespace EntityEngine.Components.Component_Parents
             }
         }
 
+        public Entity Parent
+        {
+            get
+            {
+                return _parent;
+            }
+            set
+            {
+                _parent = value;
+            }
+        }
+        
         public virtual void Initialize()
         {
         }
