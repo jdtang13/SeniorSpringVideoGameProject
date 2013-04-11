@@ -41,6 +41,12 @@ namespace EntityEngine.Components.Sprites
             offset = followedPosition - myPosition;
         }
 
+        // TODO: added by jon. ask oliver to debug.
+        public void setPosition(Vector2 pos)
+        {
+            offset = followedPosition - pos;
+        }
+
         //Pass in the position of the sprite for teh vector
         public CameraComponent(Entity myParent, Vector2 myVector):base(myParent)
         {
