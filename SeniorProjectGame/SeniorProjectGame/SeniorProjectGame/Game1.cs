@@ -12,6 +12,7 @@ using System.IO;
 using EntityEngine;
 using EntityEngine.Components.TileComponents;
 using EntityEngine.Components.Sprites;
+using EntityEngine.Components.Component_Parents;
 using EntityEngine.Input;
 
 
@@ -97,12 +98,6 @@ namespace SeniorProjectGame
             base.Initialize();
         }
 
-        // TODO:
-        UnitComponent GetUnitAtLocation(int x, int y)
-        {
-            return null;
-        }
-
         void CreateBoard()
         {
             Entity board = new Entity(0);
@@ -123,6 +118,20 @@ namespace SeniorProjectGame
             hexDirtTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\hexDirt");
 
             unitTexture = Content.Load<Texture2D>("Graphics\\UnitTextures\\unitSample");
+        }
+
+        void MoveUnit(HexComponent original, HexComponent final)
+        {
+            UnitComponent unit = original.GetUnit();
+            Entity unitEntity = unit._parent;
+
+            ((SpriteComponent) unitEntity.getDrawable("SpriteComponent")).
+                setPosition(final._parent.getDrawable("SpriteComponent").position);
+
+            unit.SetHex(final);
+            final.SetUnit(unit);
+
+            original.SetUnit(null); //todo: removeunit()
         }
 
         protected override void Update(GameTime gameTime)
@@ -246,6 +255,10 @@ namespace SeniorProjectGame
                         }
                         else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits)
                         {
+                            MoveUnit(State.originalHexClicked, boardComp.GetCurrentHexAtMouse());
+                            State.selectionState = State.SelectionState.NoSelection;
+                            State.originalHexClicked = null;
+
                             //if (ButtonPressed == "Back")
                             //{
                             //    State.selectionState = State.SelectionState.NoSelection;
@@ -335,12 +348,16 @@ namespace SeniorProjectGame
             else if (State.screenState == State.ScreenState.SKIRMISH)
             {
                 EntityManager.Draw(spriteBatch);
+
+                if (State.originalHexClicked != null)
+                {
+                    spriteBatch.Draw(hexDirtTexture, boardComp.screenCoordinatesOfHex(State.originalHexClicked.getCoordPosition())
+                        , new Color(250,250,210,100));
+                }
             }
             string fps = string.Format("fps: {0}", framesPerSecond);
 
-
             spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);
-
 
             spriteBatch.End();
 

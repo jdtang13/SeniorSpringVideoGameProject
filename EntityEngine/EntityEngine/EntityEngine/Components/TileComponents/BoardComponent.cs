@@ -95,6 +95,30 @@ namespace EntityEngine.Components.TileComponents
             base.Initialize();
         }
 
+        // TODO: broken. have lionel or oliver fix "screen coordinates of hex"
+        public Vector2 screenCoordinatesOfHex(Vector2 pos) {
+            return screenCoordinatesOfHex((int)pos.X, (int)pos.Y);
+        }
+        public Vector2 screenCoordinatesOfHex(int x, int y)
+        {
+            SpriteComponent sprite = getHex(new Vector2(x,y))._parent.getDrawable("SpriteComponent") as SpriteComponent;
+            return sprite.getTopLeftPosition();
+
+            /*Vector2 screenPosition;
+
+            if (x % 2 == 0)
+            {
+                screenPosition.Y = y * gridTexture.Height + gridTexture.Height / 2f;
+            }
+            else
+            {
+                screenPosition.Y = y * gridTexture.Height + gridTexture.Height / 2f + gridTexture.Height / 2f;
+            }
+            screenPosition.X = x * (gridTexture.Width / 4f * 3f) + gridTexture.Width / 2f;
+
+            return screenPosition;*/
+        }
+
         void createGrid()
         {
             for (int x = 0; x < gridSize.X; x++)
