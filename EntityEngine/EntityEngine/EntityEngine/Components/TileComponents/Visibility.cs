@@ -7,6 +7,6 @@ namespace EntityEngine.Components.TileComponents
 {
     public enum Visibility
     {
-        Visible,Explored,Unexplored
+        Visible,Explored,Unexplored,ForceUnexplored
     }
 }

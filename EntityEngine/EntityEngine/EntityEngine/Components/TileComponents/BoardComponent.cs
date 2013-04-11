@@ -18,6 +18,11 @@ namespace EntityEngine.Components.TileComponents
         List<HexComponent> newVisible;
 
         Vector2 gridSize;
+        public Vector2 GetDimenions()
+        {
+            return gridSize;
+        }
+
         Texture2D gridTexture;
         SpriteFont gridFont;
 
@@ -81,8 +86,6 @@ namespace EntityEngine.Components.TileComponents
             gridSize = mySize;
             gridTexture = myTexture;
             gridFont = myFont;
-
-
         }
 
         public override void Initialize()
