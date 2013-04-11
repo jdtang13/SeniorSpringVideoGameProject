@@ -38,6 +38,23 @@ namespace SeniorProjectGame
         //    return new FileStream();
         //}
 
+        Dictionary<string, BoardComponent> hexMapDictionary = new Dictionary<string, BoardComponent>();
+        public void AddHexMap(string myID, BoardComponent myBoard)
+        {
+            hexMapDictionary.Add(myID, myBoard);
+        }
+        public BoardComponent GetHexMap(string myID)
+        {
+            if(hexMapDictionary.ContainsKey(myID))
+            {
+                return hexMapDictionary[myID];
+            }
+            else
+            {
+                throw new Exception("That map doesn't exist");
+            }
+        }
+
         Dictionary<string, TerrainComponent> terrainDictionary = new Dictionary<string, TerrainComponent>();
         public void AddTerrainComponent(string myKey, TerrainComponent myTerrainComponent)
         {
@@ -101,9 +118,9 @@ namespace SeniorProjectGame
 
             InitializeState();
             ConvertTxtToBinSave("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
-            LoadBinaryFiles();
+            ReadWorldMapBin();
 
-            //InitializeHexMap();
+            InitializeHexMap();
 
             base.Initialize();
         }
@@ -136,9 +153,9 @@ namespace SeniorProjectGame
         {
             CreateBoard(new Vector2(27, 12));
 
-            boardComp.CreateUnit(true, 2, new Vector2(5, 5), unitTexture, 50, 50);
-            boardComp.CreateUnit(true, 2, new Vector2(16, 13), unitTexture, 50, 50);
-            boardComp.CreateUnit(true, 2, new Vector2(10, 9), unitTexture, 50, 50);
+            //boardComp.CreateUnit(true, 2, new Vector2(5, 5), unitTexture, 50, 50);
+            //boardComp.CreateUnit(true, 2, new Vector2(16, 13), unitTexture, 50, 50);
+            //boardComp.CreateUnit(true, 2, new Vector2(10, 9), unitTexture, 50, 50);
         }
 
         //void SaveMap(string myMapName, Entity myEntity)//THIS OVERWRITES WHAT'S THERE
@@ -181,7 +198,9 @@ namespace SeniorProjectGame
         //    return tempBoardEntity;
         //}
 
-        void LoadBinaryFiles()
+
+
+        void ReadWorldMapBin()
         {
             if (File.Exists("Content/WorldMap.bin"))
             {
@@ -194,6 +213,8 @@ namespace SeniorProjectGame
                 {
                     worldMapLines.Add(worldMapBinReader.ReadString());
                 }
+
+                //numberOfMaps = worldMapLines.Count;
 
                 Entity worldMapEntity = new Entity(0, State.ScreenState.WORLD_MAP);
                 worldMapEntity.AddComponent(new SpriteComponent(true, new Vector2(screenWidth / 2, screenHeight / 2), worldMapTexture));
@@ -208,6 +229,9 @@ namespace SeniorProjectGame
                     string[] line = worldMapLines[l].Split(new string[] { " ; " }, StringSplitOptions.None);
                     string title = line[0].Split(':')[1];
                     string id = line[1].Split(':')[1];
+
+                    ReadHexMapBin(id);
+
                     Boolean isSideQuest = Convert.ToBoolean(line[2].Split(':')[1]);
 
                     string coords = line[3].Split(':')[1];
@@ -230,32 +254,23 @@ namespace SeniorProjectGame
             }
         }
 
-        void ConvertTxtToBinSave(string myFilePath)
+        void ReadHexMapBin(string myID)
         {
-            if (File.Exists(myFilePath))
+            if (File.Exists("Content/" + myID + ".bin"))
             {
-                FileStream txtFile = new FileStream(myFilePath, System.IO.FileMode.Open);
+                FileStream hexMapBinFile = new FileStream("Content/" + myID + ".bin", System.IO.FileMode.Open);
+                BinaryReader hexMapBinReader = new BinaryReader(hexMapBinFile);
 
-                StreamReader titleReader = new StreamReader(txtFile);
-                string fileName = titleReader.ReadLine();
+                List<string> hexMapLines = new List<string>();
 
-                //Create a new bin file with read name or overwrite it if it already exists
-                FileStream binFile = new FileStream("Content/" + fileName + ".bin", System.IO.FileMode.Create);
-
-                using (BinaryWriter binWriter = new BinaryWriter(binFile))
+                while (hexMapBinReader.PeekChar() != -1)
                 {
-                    //We have to create a new streamreader to start at the top again
-                    //StreamReader txtReader = new StreamReader(txtFile);
-
-                    while (titleReader.EndOfStream == false)
-                    {
-                        binWriter.Write(titleReader.ReadLine());
-                    }
+                    hexMapLines.Add(hexMapBinReader.ReadString());
                 }
             }
             else
             {
-                throw new Exception("No file exists at " + myFilePath + ".");
+                throw new Exception("This except doesn't exist.");
             }
         }
 
