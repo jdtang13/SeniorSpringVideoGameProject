@@ -77,6 +77,7 @@ namespace SeniorProjectGame
         Texture2D worldMapTexture, nodeTexture, pointerTexture;
 
         Texture2D hexBaseTexture, hexDirtTexture, hexGrassTexture;
+        Texture2D hexTreeTexture;
 
         Texture2D unitTexture;
 
@@ -117,8 +118,8 @@ namespace SeniorProjectGame
             singleMiddleClick = new InputAction(MouseButton.middle, true);
 
             InitializeState();
-            ConvertTxtToBinSave("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
-            ReadWorldMapBin();
+
+            ProcessWorldMapBin();
 
             InitializeHexMap();
 
@@ -143,10 +144,12 @@ namespace SeniorProjectGame
             State.currentDialogueMessage = new List<string>();
         }
 
+        //We store what each character in hexmap txt represents here
         void PopulateTerrainDictionary()
         {
-            //AddTerrainChar("G", hexGrassTexture);
-            //AddTerrainChar("D", hexDirtTexture);
+            AddTerrainComponent("G", new TerrainComponent(null, hexGrassTexture, false));
+            AddTerrainComponent("D", new TerrainComponent(null, hexDirtTexture, false));
+            AddTerrainComponent("T", new TerrainComponent(null, hexTreeTexture, false));
         }
 
         void InitializeHexMap()
@@ -156,181 +159,6 @@ namespace SeniorProjectGame
             boardComp.CreateUnit(true, 2, new Vector2(5, 5), unitTexture, 50, 50);
             boardComp.CreateUnit(true, 2, new Vector2(16, 13), unitTexture, 50, 50);
             boardComp.CreateUnit(true, 2, new Vector2(10, 9), unitTexture, 50, 50);
-        }
-
-        //void SaveMap(string myMapName, Entity myEntity)//THIS OVERWRITES WHAT'S THERE
-        //{
-        //    FileStream file = new FileStream("Content/" + myMapName + ".bin", System.IO.FileMode.Create);
-
-        //    using (BinaryWriter bin = new BinaryWriter(file))
-        //    {
-        //        //TODO: SAVE THE BOARD'S STATE W/O UNITS
-
-        //        //How to read this file:
-        //        //Read for first x dimension then y to build the map. Then the next two will be the coordinates of a terrain piece and 
-        //        //identification for the terrain graphic and another point for whether its impassable
-
-        //        //bin.Write(boardComp.GetDimenions().X);
-        //        //bin.Write(boardComp.GetDimenions().Y);
-
-
-
-
-        //    }
-        //}
-        //Entity LoadMap(string myMapName)
-        //{
-        //    Entity tempBoardEntity = null;
-
-        //    if (File.Exists("Content/" + myMapName + ".bin"))
-        //    {
-        //        FileStream file = new FileStream("Content/" + myMapName + ".bin", System.IO.FileMode.Open);
-
-        //        using (BinaryReader bin = new BinaryReader(file))
-        //        {
-        //            //TODO: REBUILD THE BOARD
-        //            //bin.ReadByte();
-
-        //            return tempBoardEntity;
-        //        }
-        //    }
-
-        //    return tempBoardEntity;
-        //}
-
-        void ConvertTxtToBinSave(string myFilePath)
-        {
-            if (File.Exists(myFilePath))
-            {
-                FileStream txtFile = new FileStream(myFilePath, System.IO.FileMode.Open);
-
-                StreamReader titleReader = new StreamReader(txtFile);
-                string fileName = titleReader.ReadLine();
-
-                //Create a new bin file with read name or overwrite it if it already exists
-                FileStream binFile = new FileStream("Content/" + fileName + ".bin", System.IO.FileMode.Create);
-
-                using (BinaryWriter binWriter = new BinaryWriter(binFile))
-                {
-                    //We have to create a new streamreader to start at the top again
-                    //StreamReader txtReader = new StreamReader(txtFile);
-
-                    while (titleReader.EndOfStream == false)
-                    {
-                        binWriter.Write(titleReader.ReadLine());
-                    }
-                }
-            }
-            else
-            {
-                throw new Exception("No file exists at " + myFilePath + ".");
-            }
-        }
-
-        void ReadWorldMapBin()
-        {
-            if (File.Exists("Content/WorldMap.bin"))
-            {
-                FileStream worldMapBinFile = new FileStream("Content/WorldMap.bin", System.IO.FileMode.Open);
-                BinaryReader worldMapBinReader = new BinaryReader(worldMapBinFile);
-
-                List<string> worldMapLines = new List<string>();
-
-                while (worldMapBinReader.PeekChar() != -1)
-                {
-                    worldMapLines.Add(worldMapBinReader.ReadString());
-                }
-
-                Entity worldMapEntity = new Entity(0, State.ScreenState.WORLD_MAP);
-                worldMapEntity.AddComponent(new SpriteComponent(true, new Vector2(screenWidth / 2, screenHeight / 2), worldMapTexture));
-                worldMapEntity.AddComponent(new CameraComponent(new Vector2(screenWidth / 2, screenHeight / 2)));
-                worldMapComponent = new WorldMapComponent();
-                worldMapEntity.AddComponent(worldMapComponent);
-                EntityManager.AddEntity(worldMapEntity);
-
-                //Now we are to process the lines of the world map
-                for (int l = 0; l < worldMapLines.Count; l++)
-                {
-                    string[] line = worldMapLines[l].Split(new string[] { " ; " }, StringSplitOptions.None);
-                    string title = line[0].Split(':')[1];
-                    string id = line[1].Split(':')[1];
-
-                    //ReadHexMapBin(id);
-
-                    Boolean isSideQuest = Convert.ToBoolean(line[2].Split(':')[1]);
-
-                    string coords = line[3].Split(':')[1];
-                    Vector2 position = new Vector2(float.Parse(coords.Split(',')[0]), float.Parse(coords.Split(',')[1]));
-
-                    string listOfConnect = line[4].Split(':')[1];
-                    List<string> connectedTo = listOfConnect.Split(',').OfType<string>().ToList(); ;
-
-                    NodeState state = (NodeState)Enum.Parse(typeof(NodeState), line[5].Split(':')[1]);
-
-
-                    worldMapComponent.CreateNode(title, id, position, connectedTo, state, nodeTexture);
-                }
-
-                worldMapComponent.CreatePointer(worldMapComponent.GetNodeEntity(0), new Vector2(0, -20), pointerTexture);
-            }
-            else
-            {
-                throw new Exception("Either you named the worldmap wrong or it doesnt exist.");
-            }
-        }
-
-        //List<String> GetLinesOfBin(string myID)
-        //{
-        //    if (File.Exists("Content/" + myID + ".bin"))
-        //    {
-        //        FileStream hexMapBinFile = new FileStream("Content/" + myID + ".bin", System.IO.FileMode.Open);
-        //        BinaryReader hexMapBinReader = new BinaryReader(hexMapBinFile);
-
-        //        List<string> hexMapLines = new List<string>();
-        //        return hexMapLines;
-        //    }
-        //    else
-        //    {
-        //        throw new Exception(myID + " doesn't exist");
-        //    }
-        //}
-
-        void ReadHexMapBin(string myID)
-        {
-            if (File.Exists("Content/" + myID + ".bin"))
-            {
-                FileStream hexMapBinFile = new FileStream("Content/" + myID + ".bin", System.IO.FileMode.Open);
-                BinaryReader hexMapBinReader = new BinaryReader(hexMapBinFile);
-
-                List<string> hexMapLines = new List<string>();
-
-                while (hexMapBinReader.PeekChar() != -1)
-                {
-                    hexMapLines.Add(hexMapBinReader.ReadString());
-                }
-
-                int layers = Convert.ToInt32(hexMapLines[0]);
-                Vector2 dimensions = new Vector2(float.Parse(hexMapLines[1].Split(' ')[0]), float.Parse(hexMapLines[1].Split(' ')[0]));
-
-                BoardComponent boardComponent = CreateAndReturnBoard(dimensions);
-
-                Vector2 terrainCoordinate = Vector2.Zero;
-                for (int layer = 0; layer < layers; layer++)
-                {
-                    for (int y = 2 + ((int)dimensions.Y * layer); y < hexMapLines.Count; y++)
-                    {
-                        string[] line = hexMapLines[y].Split(' ');
-                        for (int x = 0; x < line.Length; x++)
-                        {
-                            boardComponent.AddTerrain(ConvertToHexCoordinate(terrainCoordinate), GetTerrain(line[x]));
-                        }
-                    }
-                }
-            }
-            else
-            {
-                throw new Exception(myID + " doesn't exist.");
-            }
         }
 
         Vector2 ConvertToHexCoordinate(Vector2 myVec)
@@ -359,7 +187,6 @@ namespace SeniorProjectGame
 
             return boardComponent;
         }
-
         void CreateBoard(Vector2 myDimensions)
         {
             Entity board = new Entity(0, State.ScreenState.SKIRMISH);
@@ -375,9 +202,14 @@ namespace SeniorProjectGame
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
             Globals.font = font;
 
-            hexBaseTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\hexBase");
-            hexGrassTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\hexWater0");
-            hexDirtTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\hexDirt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
+
+            hexBaseTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexBase");
+            hexGrassTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexGrass");
+            hexDirtTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexDirt");
+
+            hexTreeTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\tree");
 
             unitTexture = Content.Load<Texture2D>("Graphics\\UnitTextures\\unitSample");
 
@@ -386,6 +218,117 @@ namespace SeniorProjectGame
             worldMapTexture = Content.Load<Texture2D>("Graphics\\Backgrounds\\island");
             pointerTexture = Content.Load<Texture2D>("Graphics\\Other\\pointer");
             nodeTexture = Content.Load<Texture2D>("Graphics\\Other\\node");
+        }
+
+        //File Processing
+        void ConvertTxtToBin(string myFilePath)
+        {
+            if (File.Exists(myFilePath))
+            {
+                FileStream txtFile = new FileStream(myFilePath, System.IO.FileMode.Open);
+
+                StreamReader titleReader = new StreamReader(txtFile);
+                string fileName = titleReader.ReadLine();
+
+                //Create a new bin file with read name or overwrite it if it already exists
+                FileStream binFile = new FileStream("Content/" + fileName + ".bin", System.IO.FileMode.Create);
+
+                using (BinaryWriter binWriter = new BinaryWriter(binFile))
+                {
+                    //We have to create a new streamreader to start at the top again
+                    //StreamReader txtReader = new StreamReader(txtFile);
+
+                    while (titleReader.EndOfStream == false)
+                    {
+                        binWriter.Write(titleReader.ReadLine());
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("No file exists at " + myFilePath + ".");
+            }
+        }
+        List<string> ReadBin(string myID)
+        {
+            if (File.Exists("Content/" + myID + ".bin"))
+            {
+                FileStream binFile = new FileStream("Content/" + myID + ".bin", System.IO.FileMode.Open);
+                BinaryReader binReader = new BinaryReader(binFile);
+
+                List<string> lines = new List<string>();
+
+                while (binReader.PeekChar() != -1)
+                {
+                    lines.Add(binReader.ReadString());
+                }
+                return lines;
+            }
+            else
+            {
+                throw new Exception(myID + " doesn't exist. Did you load the txt of it?");
+            }
+        }
+
+        void ProcessWorldMapBin()
+        {
+            List<string> worldMapLines = ReadBin("WorldMap");
+
+            Entity worldMapEntity = new Entity(0, State.ScreenState.WORLD_MAP);
+            worldMapEntity.AddComponent(new SpriteComponent(true, new Vector2(screenWidth / 2, screenHeight / 2), worldMapTexture));
+            worldMapEntity.AddComponent(new CameraComponent(new Vector2(screenWidth / 2, screenHeight / 2)));
+            worldMapComponent = new WorldMapComponent();
+            worldMapEntity.AddComponent(worldMapComponent);
+            EntityManager.AddEntity(worldMapEntity);
+
+            //Now we are to process the lines of the world map
+            for (int l = 0; l < worldMapLines.Count; l++)
+            {
+                string[] line = worldMapLines[l].Split(new string[] { " ; " }, StringSplitOptions.None);
+                string title = line[0].Split(':')[1];
+                string id = line[1].Split(':')[1];
+
+                //ProcessHexMapBin(id);
+
+                Boolean isSideQuest = Convert.ToBoolean(line[2].Split(':')[1]);
+
+                string coords = line[3].Split(':')[1];
+                Vector2 position = new Vector2(float.Parse(coords.Split(',')[0]), float.Parse(coords.Split(',')[1]));
+
+                string listOfConnect = line[4].Split(':')[1];
+                List<string> connectedTo = listOfConnect.Split(',').OfType<string>().ToList(); ;
+
+                NodeState state = (NodeState)Enum.Parse(typeof(NodeState), line[5].Split(':')[1]);
+
+
+                worldMapComponent.CreateNode(title, id, position, connectedTo, state, nodeTexture);
+            }
+
+            worldMapComponent.CreatePointer(worldMapComponent.GetNodeEntity(0), new Vector2(0, -20), pointerTexture);
+
+        }
+        BoardComponent ProcessHexMapBin(string myID)
+        {
+            List<string> hexMapLines = ReadBin(myID);
+
+            int layers = Convert.ToInt32(hexMapLines[0]);
+            Vector2 dimensions = new Vector2(float.Parse(hexMapLines[1].Split(' ')[0]), float.Parse(hexMapLines[1].Split(' ')[0]));
+
+            BoardComponent boardComponent = CreateAndReturnBoard(dimensions);
+
+            Vector2 terrainCoordinate = Vector2.Zero;
+            for (int layer = 0; layer < layers; layer++)
+            {
+                for (int y = 2 + ((int)dimensions.Y * layer); y < hexMapLines.Count; y++)
+                {
+                    string[] line = hexMapLines[y].Split(' ');
+                    for (int x = 0; x < line.Length; x++)
+                    {
+                        boardComponent.AddTerrain(ConvertToHexCoordinate(terrainCoordinate), GetTerrain(line[x]));
+                    }
+                }
+            }
+            return boardComponent;
         }
 
         protected override void Update(GameTime gameTime)
