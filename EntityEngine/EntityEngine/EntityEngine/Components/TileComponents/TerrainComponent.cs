@@ -6,6 +6,7 @@ using EntityEngine.Components.Component_Parents;
 using Microsoft.Xna.Framework;
 using EntityEngine.Components.TileComponents;
 using EntityEngine.Components.Sprites;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngine.Components.TileComponents
 {
@@ -58,12 +59,14 @@ namespace EntityEngine.Components.TileComponents
             movementRestriction = myMoveRes;
         }
 
-        public TerrainComponent(HexComponent myHex, bool myImpassable)
+        Texture2D texture;
+
+        public TerrainComponent(HexComponent myHex, Texture2D myTex, bool myImpassable)
         {
             this.name = "TerrainComponent";
             hex = myHex;
             impassable = myImpassable;
-
+            texture = myTex;
         }
 
         public override void Initialize()

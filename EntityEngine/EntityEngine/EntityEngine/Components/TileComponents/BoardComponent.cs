@@ -230,7 +230,7 @@ namespace EntityEngine.Components.TileComponents
             terrainEntity.AddComponent(new SpriteComponent(true, hexSprite.getCenterPosition(), myTexture));
             terrainEntity.AddComponent(new CameraComponent(hexSprite.getCenterPosition()));
 
-            TerrainComponent terrainComp = new TerrainComponent(hexComp, myImpassable);
+            TerrainComponent terrainComp = new TerrainComponent(hexComp,myTexture, myImpassable);
             terrainEntity.AddComponent(terrainComp);
 
             EntityManager.AddEntity(terrainEntity);
