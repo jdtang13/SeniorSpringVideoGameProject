@@ -31,7 +31,7 @@ namespace EntityEngine
 
         public static void Initialize()
         {
-            State.screenState = State.ScreenState.SKIRMISH;
+            State.screenState = State.ScreenState.WORLD_MAP;
             State.selectionState = State.SelectionState.NoSelection;
             State.dialoguePosition = 0;
             State.dialogueChoicePosition = 0;

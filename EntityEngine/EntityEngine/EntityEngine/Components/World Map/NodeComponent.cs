@@ -36,10 +36,11 @@ namespace EntityEngine.Components.World_Map
         //Keeps a list of all the id's of the nodes it's connected to
         List<string> connectedTo = new List<string>();
 
-        public NodeComponent(string myLevelID, string myLevelName,NodeState myNodeState,List<string> myConnectedTo)
+        public NodeComponent(string myLevelName,string myLevelID,NodeState myNodeState,List<string> myConnectedTo)
         {
             this.name = "NodeComponent";
             levelName = myLevelName;
+            id = myLevelID;
             nodeState = myNodeState;
         }
     }

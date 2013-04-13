@@ -17,6 +17,10 @@ namespace EntityEngine.Components.TileComponents
         {
             return hex;
         }
+        public void SetHex(HexComponent myHex)
+        {
+            hex = myHex;
+        }
 
         Visibility visibility = Visibility.Unexplored;
         public void SetVisbility(Visibility myVis)
@@ -60,11 +64,14 @@ namespace EntityEngine.Components.TileComponents
         }
 
         Texture2D texture;
+        public Texture2D GetTexture()
+        {
+            return texture;
+        }
 
-        public TerrainComponent(HexComponent myHex, Texture2D myTex, bool myImpassable)
+        public TerrainComponent(Texture2D myTex, bool myImpassable)
         {
             this.name = "TerrainComponent";
-            hex = myHex;
             impassable = myImpassable;
             texture = myTex;
         }

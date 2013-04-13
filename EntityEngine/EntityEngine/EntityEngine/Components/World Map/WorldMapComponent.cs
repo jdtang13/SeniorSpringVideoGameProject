@@ -63,7 +63,7 @@ namespace EntityEngine.Components.World_Map
             nodeEntity.AddComponent(new SpriteComponent(true, myPosition, myTexture));
             nodeEntity.AddComponent(new CameraComponent(myPosition));
             nodeEntity.AddComponent(new ClickableComponent(myPosition,myTexture.Width,myTexture.Height));
-            nodeEntity.AddComponent(new NodeComponent(myLevelID, myLevelName, myNodeState, myConnectedTo));
+            nodeEntity.AddComponent(new NodeComponent(myLevelName, myLevelID, myNodeState, myConnectedTo));
 
             AddNode(nodeEntity);
             EntityManager.AddEntity(nodeEntity);
