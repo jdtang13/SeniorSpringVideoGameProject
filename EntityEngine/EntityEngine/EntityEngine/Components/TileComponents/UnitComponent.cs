@@ -6,6 +6,7 @@ using EntityEngine.Components.Component_Parents;
 using Microsoft.Xna.Framework;
 using EntityEngine.Components.TileComponents;
 using EntityEngine.Components.Sprites;
+using EntityEngine;
 
 namespace EntityEngine.Components.TileComponents
 {
@@ -93,14 +94,20 @@ namespace EntityEngine.Components.TileComponents
             commandState = myState;
         }
 
-        public UnitComponent(bool myIsAlly, int mySightRadius, HexComponent myHex, bool mySelectable)
+        UnitData unitData;
+        public UnitData GetUnitData()
         {
-            this.name = "UnitComponent";
-            sightRadius = mySightRadius;
-            hex = myHex;
-            isAlly = myIsAlly;
+            return unitData;
+        }
+        public void SetUnitData(UnitData u) { unitData = u; }
 
-            
+        public UnitComponent(bool myIsAlly, int mySightRadius, HexComponent myHex, bool mySelectable, UnitData unitData)
+        {
+            hex = myHex;
+            this.name = "UnitComponent";
+            this.unitData = unitData;
+            sightRadius = mySightRadius;
+            isAlly = myIsAlly;
         }
 
         //public override void Initialize()
@@ -109,8 +116,6 @@ namespace EntityEngine.Components.TileComponents
         //    sprite._visible = false;
         //    base.Initialize();
         //}
-
-
 
         public void MoveDirection(Orient myOar)
         {
@@ -207,7 +212,6 @@ namespace EntityEngine.Components.TileComponents
             AnimatedSpriteComponent sprite = _parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
             SpriteComponent hexSprite = hex._parent.GetDrawable("SpriteComponent") as SpriteComponent;
             sprite.position = hexSprite.position;
-
 
         }
     }

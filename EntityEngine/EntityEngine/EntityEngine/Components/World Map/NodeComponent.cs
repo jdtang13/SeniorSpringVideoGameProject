@@ -27,6 +27,12 @@ namespace EntityEngine.Components.World_Map
             return levelName;
         }
 
+        string id;
+        public string GetID()
+        {
+            return id;
+        }
+
         //Keeps a list of all the id's of the nodes it's connected to
         List<string> connectedTo = new List<string>();
 

@@ -23,8 +23,9 @@ namespace EntityEngine.Components.TileComponents
             return gridSize;
         }
 
-        Texture2D gridTexture;
-        SpriteFont gridFont;
+        //If the maps works correctly why would we need this?
+        //Texture2D gridTexture;
+        //SpriteFont gridFont;
 
         Vector2 mouseCurrentHex;
 
@@ -53,6 +54,11 @@ namespace EntityEngine.Components.TileComponents
             }
         }
 
+        public HexComponent getHex(int x, int y)
+        {
+            return getHex(new Vector2(x, y));
+        }
+
         Dictionary<Vector2, Entity> HexEntityDictionary = new Dictionary<Vector2, Entity>();
         public Entity getHexEntity(Vector2 myVec)
         {
@@ -73,8 +79,8 @@ namespace EntityEngine.Components.TileComponents
             this.name = "BoardComponent";
 
             gridSize = mySize;
-            gridTexture = myTexture;
-            gridFont = myFont;
+            //gridTexture = myTexture;
+            //gridFont = myFont;
 
 
         }
@@ -97,6 +103,30 @@ namespace EntityEngine.Components.TileComponents
             newVisible = new List<HexComponent>();
 
             base.Initialize();
+        }
+
+        // TODO: broken. have lionel or oliver fix "screen coordinates of hex"
+        public Vector2 screenCoordinatesOfHex(Vector2 pos) {
+            return screenCoordinatesOfHex((int)pos.X, (int)pos.Y);
+        }
+        public Vector2 screenCoordinatesOfHex(int x, int y)
+        {
+            SpriteComponent sprite = getHex(new Vector2(x,y))._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+            return sprite.getTopLeftPosition();
+
+            /*Vector2 screenPosition;
+
+            if (x % 2 == 0)
+            {
+                screenPosition.Y = y * gridTexture.Height + gridTexture.Height / 2f;
+            }
+            else
+            {
+                screenPosition.Y = y * gridTexture.Height + gridTexture.Height / 2f + gridTexture.Height / 2f;
+            }
+            screenPosition.X = x * (gridTexture.Width / 4f * 3f) + gridTexture.Width / 2f;
+
+            return screenPosition;*/
         }
 
         void createGrid()
@@ -197,7 +227,8 @@ namespace EntityEngine.Components.TileComponents
                 unitEntity.AddComponent(new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), myTexture, 75f, mySpriteFrameWidth, mySpriteFrameHeight));
                 unitEntity.AddComponent(new CameraComponent( hexSprite.getCenterPosition()));
 
-                UnitComponent unitComp = new UnitComponent( myIsAlly, mySightRadius, getHex(myCoordinate), true);
+                // TODO: unitData is null right now.
+                UnitComponent unitComp = new UnitComponent(myIsAlly, mySightRadius, getHex(myCoordinate), true, null);
                 unitEntity.AddComponent(unitComp);
 
                 getHex(myCoordinate).SetUnit(unitComp);
@@ -237,7 +268,6 @@ namespace EntityEngine.Components.TileComponents
 
             hexComp.AddTerrain(terrainComp);
         }
-        //Requires hex coordinates
         public void AddTerrain(Vector2 myCoordinate, TerrainComponent myTerrain)
         {
             //Entity terrainEntity = new Entity(4, State.ScreenState.SKIRMISH);
@@ -329,14 +359,29 @@ namespace EntityEngine.Components.TileComponents
             return getHex(mouseCurrentHex);
         }
 
-        //Some rounding functions, nothing to see here
-        public float roundUp(float myNum)
+        static Vector2 ConvertToHexCoordinate(Vector2 myVec)
+        {
+            Vector2 convertedVector = Vector2.Zero;
+            convertedVector.X = myVec.X;
+
+            if (myVec.X % 2 == 0)
+            {
+                convertedVector.Y = myVec.X / 2f + myVec.Y;
+            }
+            else
+            {
+                convertedVector.Y = (myVec.X + 1f) / 2f + myVec.Y;
+            }
+
+            return convertedVector;
+        }
+        static float roundUp(float myNum)
         {
             float rounded = (int)myNum + 1;
 
             return rounded;
         }
-        public float roundDown(float myNum)
+        static float roundDown(float myNum)
         {
             float rounded = (int)myNum;
 
@@ -396,7 +441,6 @@ namespace EntityEngine.Components.TileComponents
 
             return allRings;
         }
-
 
         //IMPORTANT: Call this function every time anyone on your team moves
         public void UpdateVisibilityAllies()

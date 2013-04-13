@@ -69,9 +69,32 @@ namespace EntityEngine.Components.TileComponents
             texture = myTex;
         }
 
+        public void UpdateVisibility()
+        {
+            visibility = hex.GetVisibility();
+            SpriteComponent sprite = _parent.GetDrawable("SpriteComponent") as SpriteComponent;
+
+            if (visibility == Visibility.Visible)
+            {
+                sprite.setColor(Color.White);
+                sprite._visible = true;
+            }
+
+            else if (visibility == Visibility.Explored)
+            {
+                sprite.setColor(Color.SlateGray);
+                sprite._visible = true;
+            }
+
+            else if (visibility == Visibility.Unexplored)
+            {
+
+                sprite._visible = false;
+            }
+        }
+
         public override void Initialize()
         {
-
             SetVisbility(hex.GetVisibility());
             base.Initialize();
         }

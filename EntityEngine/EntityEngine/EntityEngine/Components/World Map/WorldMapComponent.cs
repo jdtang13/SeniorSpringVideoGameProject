@@ -12,25 +12,26 @@ namespace EntityEngine.Components.World_Map
 {
     public class WorldMapComponent : Component
     {
-        List<Entity> nodeEntityList = new List<Entity>();
-        List<NodeComponent> nodeList = new List<NodeComponent>();
-        public void AddNode(NodeComponent myNode)
-        {
-            nodeList.Add(myNode);
-            nodeEntityList.Add(myNode._parent);
-        }
+        List<Entity> nodeEntityList = new List<Entity>();       
         public void AddNode(Entity myEnt)
         {
             nodeList.Add(myEnt.GetComponent("NodeComponent") as NodeComponent);
             nodeEntityList.Add(myEnt);
         }
+        public Entity GetNodeEntity(int myInt)
+        {
+            return nodeEntityList[myInt];
+        }
         public List<Entity> GetNodeEntityList()
         {
             return nodeEntityList;
         }
-        public Entity GetNodeEntity(int myInt)
+        
+        List<NodeComponent> nodeList = new List<NodeComponent>();
+        public void AddNode(NodeComponent myNode)
         {
-            return nodeEntityList[myInt];
+            nodeList.Add(myNode);
+            nodeEntityList.Add(myNode._parent);
         }
         public NodeComponent GetNode(int myInt)
         {
@@ -99,9 +100,9 @@ namespace EntityEngine.Components.World_Map
         }
 
         //Uses the currently selected node
-        public void SelectNode()
+        public string SelectCurrentNode()
         {
-
+            return selectedNode.GetID();
         }
     }
 }

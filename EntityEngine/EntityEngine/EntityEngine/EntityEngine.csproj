@@ -62,7 +62,6 @@
     <Compile Include="Components\World Map\NodeComponent.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EntityManager.cs" />
-    <Compile Include="Globals.cs" />
     <Compile Include="Input\InputAction.cs" />
     <Compile Include="Input\InputState.cs" />
     <Compile Include="Input\MouseButton.cs" />
@@ -72,8 +71,8 @@
     <Compile Include="Stat Attribute Classes\Mount.cs" />
     <Compile Include="Stat Attribute Classes\Role.cs" />
     <Compile Include="Stat Attribute Classes\Scroll.cs" />
-    <Compile Include="Stat Attribute Classes\Unit.cs" />
     <Compile Include="Stat Attribute Classes\Weapon.cs" />
+    <Compile Include="Stat Attribute Classes\UnitData.cs" />
     <Compile Include="State.cs" />
   </ItemGroup>
   <ItemGroup>

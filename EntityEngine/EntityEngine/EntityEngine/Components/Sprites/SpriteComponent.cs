@@ -38,6 +38,11 @@ namespace EntityEngine.Components.Sprites
             color = myColor;
         }
 
+        public void setPosition(Vector2 pos)
+        {
+            position = pos;
+        }
+
         //Use this constructor if you want to pass in a rotation of the sprite so that it moves aroudn
         public SpriteComponent(bool myMain,Vector2 myPosition,Texture2D myTex, float myRot)
                                : base(myMain)

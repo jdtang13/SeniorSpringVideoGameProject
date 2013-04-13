@@ -12,9 +12,9 @@ using System.IO;
 using EntityEngine;
 using EntityEngine.Components.TileComponents;
 using EntityEngine.Components.Sprites;
+using EntityEngine.Components.Component_Parents;
 using EntityEngine.Input;
 using EntityEngine.Components.World_Map;
-
 
 namespace SeniorProjectGame
 {
@@ -24,19 +24,6 @@ namespace SeniorProjectGame
         int screenWidth = 1280;
         int screenHeight = 680;
         SpriteBatch spriteBatch;
-
-        //FileStream worldMapTxt, worldMapBin;
-
-        //Dictionary<string, FileStream> hexMapTxts = new Dictionary<string, FileStream>();
-        //Dictionary<string, FileStream> hexMapBinaries = new Dictionary<string, FileStream>();
-        //public FileStream GetLevelBinary(string myLevelID)
-        //{
-        //    return new FileStream();
-        //}
-        //public FileStream GetLevelTxt(string myLevelID)
-        //{
-        //    return new FileStream();
-        //}
 
         Dictionary<string, BoardComponent> hexMapDictionary = new Dictionary<string, BoardComponent>();
         public void AddHexMap(string myID, BoardComponent myBoard)
@@ -88,8 +75,12 @@ namespace SeniorProjectGame
         InputAction singleLeftClick, singleRightClick, singleMiddleClick;
         InputAction wClick, aClick, sClick, dClick, escapeClick;
 
+        Entity worldMapEntity;
         WorldMapComponent worldMapComponent;
-        BoardComponent boardComp;
+
+        //There is to be one board with an interchangeable boardComponent
+        Entity boardEntity;
+        BoardComponent boardComponent;
 
         float framesPerSecond = 60;
         float numberOfFrames;
@@ -112,88 +103,82 @@ namespace SeniorProjectGame
 
             PopulateTerrainDictionary();
 
-            escapeClick = new InputAction(new Keys[] { Keys.Escape }, true);
-            singleLeftClick = new InputAction(MouseButton.left, true);
-            singleRightClick = new InputAction(MouseButton.right, true);
-            singleMiddleClick = new InputAction(MouseButton.middle, true);
-
-            InitializeState();
+            InitializeInput();
 
             ProcessWorldMapBin();
 
-            InitializeHexMap();
+            LoadNodeHexMap();
+
+            InitializeState();
 
             base.Initialize();
         }
 
         void InitializeState()
         {
-            State.screenState = State.ScreenState.WORLD_MAP;
-            State.selectionState = State.SelectionState.NoSelection;
-            State.dialoguePosition = 0;
-            State.dialogueChoicePosition = 0;
-            State.displayedDialogueMessage = "";
+            State.Initialize();
 
-            State.dialogueLinePosition = 0;
-            State.dialogueWordPosition = 0;
-            State.dialogueCharacterPosition = 0;
+            Dictionary<String, Role> classes = new Dictionary<String, Role>();
+            Role lordClass = new Role(3,2,4,4,2,0,3,
+                .1f,.2f,.2f,.3f,.4f,.1f,.3f,
+                4,2,3,5,3,2,4,
+                true, false, false, false, false, false, false, 3);
 
-            State.firstDialogueWord = "";
-            State.lastTimeDialogueChecked = 0;
-            State.messageBegin = false;
-            State.currentDialogueMessage = new List<string>();
+            classes["lord"] = lordClass;
+
+            UnitData myUnitData = new UnitData(5,5,4,3,7,2,5,
+                .6f,.5f,.4f,.5f,.7f,.3f,.6f,
+                40,40,40,35,45,35,45, "myUnit",
+                Alignment.PLAYER, classes["lord"], 1, 0);
+
+            Entity unitEntity = new Entity(5, State.ScreenState.SKIRMISH);
+            UnitComponent myUnitComponent = new UnitComponent(true, 4,
+                boardComponent.getHex(new Vector2(3, 3)), true, myUnitData);
+
+            //unitEntity.AddComponent(new AnimatedSpriteComponent(unitEntity, false, 
+            //    new Vector2(3,3), unitTexture, 4, 50, 50));
+
+            Texture2D debugTexture = Content.Load<Texture2D>("Graphics\\UnitTextures\\unitSample");
+
+            unitEntity.AddComponent(new SpriteComponent(false, boardComponent.getHex(new Vector2(3,3))
+                ._parent.GetDrawable("SpriteComponent").position, debugTexture));
+
+            unitEntity.AddComponent(myUnitComponent);
+            unitEntity.AddComponent(new CameraComponent(new Vector2(3, 3)));
+
+            boardComponent.getHex(3, 3).SetUnit(myUnitComponent);
+            //boardComponent.CreateUnit();
+            
+            EntityManager.AddEntity(unitEntity);
         }
-
-        //We store what each character in hexmap txt represents here
+        
         void PopulateTerrainDictionary()
         {
             AddTerrainComponent("G", new TerrainComponent(null, hexGrassTexture, false));
             AddTerrainComponent("D", new TerrainComponent(null, hexDirtTexture, false));
             AddTerrainComponent("T", new TerrainComponent(null, hexTreeTexture, false));
         }
-
-        void InitializeHexMap()
+        void InitializeInput()
         {
-            CreateBoard(new Vector2(27, 12));
+            escapeClick = new InputAction(new Keys[] { Keys.Escape }, true);
+            singleLeftClick = new InputAction(MouseButton.left, true);
+            singleRightClick = new InputAction(MouseButton.right, true);
+            singleMiddleClick = new InputAction(MouseButton.middle, true);
 
-            boardComp.CreateUnit(true, 2, new Vector2(5, 5), unitTexture, 50, 50);
-            boardComp.CreateUnit(true, 2, new Vector2(16, 13), unitTexture, 50, 50);
-            boardComp.CreateUnit(true, 2, new Vector2(10, 9), unitTexture, 50, 50);
         }
 
-        Vector2 ConvertToHexCoordinate(Vector2 myVec)
+        void LoadNodeHexMap()
         {
-            Vector2 convertedVector = Vector2.Zero;
-            convertedVector.X = myVec.X;
+            boardEntity = new Entity(0, State.ScreenState.SKIRMISH);
+            boardComponent = ProcessHexMapBin(worldMapComponent.SelectCurrentNode());
+            boardEntity.AddComponent(boardComponent);
+            EntityManager.AddEntity(boardEntity);
 
-            if (myVec.X % 2 == 0)
-            {
-                convertedVector.Y = myVec.X / 2f + myVec.Y;
-            }
-            else
-            {
-                convertedVector.Y = (myVec.X + 1f) / 2f + myVec.Y;
-            }
-
-            return convertedVector;
+            boardComponent.CreateUnit(true, 2, new Vector2(5, 5), unitTexture, 50, 50);
+            boardComponent.CreateUnit(true, 2, new Vector2(16, 13), unitTexture, 50, 50);
+            boardComponent.CreateUnit(true, 2, new Vector2(10, 9), unitTexture, 50, 50);
         }
 
-        BoardComponent CreateAndReturnBoard(Vector2 myDimensions)
-        {
-            Entity board = new Entity(0, State.ScreenState.SKIRMISH);
-            BoardComponent boardComponent = new BoardComponent(board, hexBaseTexture, font, myDimensions);
-            board.AddComponent(boardComp);
-            EntityManager.AddEntity(board);
-
-            return boardComponent;
-        }
-        void CreateBoard(Vector2 myDimensions)
-        {
-            Entity board = new Entity(0, State.ScreenState.SKIRMISH);
-            boardComp = new BoardComponent(board, hexBaseTexture, font, myDimensions);
-            board.AddComponent(boardComp);
-            EntityManager.AddEntity(board);
-        }
 
         protected override void LoadContent()
         {
@@ -220,28 +205,25 @@ namespace SeniorProjectGame
             nodeTexture = Content.Load<Texture2D>("Graphics\\Other\\node");
         }
 
-        //File Processing
         void ConvertTxtToBin(string myFilePath)
         {
             if (File.Exists(myFilePath))
             {
                 FileStream txtFile = new FileStream(myFilePath, System.IO.FileMode.Open);
-
-                StreamReader titleReader = new StreamReader(txtFile);
-                string fileName = titleReader.ReadLine();
-
-                //Create a new bin file with read name or overwrite it if it already exists
-                FileStream binFile = new FileStream("Content/" + fileName + ".bin", System.IO.FileMode.Create);
-
-                using (BinaryWriter binWriter = new BinaryWriter(binFile))
+                using (StreamReader txtReader = new StreamReader(txtFile))
                 {
-                    //We have to create a new streamreader to start at the top again
-                    //StreamReader txtReader = new StreamReader(txtFile);
+                    //Create a new bin file with read name or overwrite it if it already exists
+                    FileStream binFile = new FileStream("Content/" + txtReader.ReadLine() + ".bin", System.IO.FileMode.Create);
 
-                    while (titleReader.EndOfStream == false)
+                    using (BinaryWriter binWriter = new BinaryWriter(binFile))
                     {
-                        binWriter.Write(titleReader.ReadLine());
+                        while (txtReader.EndOfStream == false)
+                        {
+                            binWriter.Write(txtReader.ReadLine());
+                        }
+                        binWriter.Close();
                     }
+                    
                 }
             }
             else
@@ -254,15 +236,18 @@ namespace SeniorProjectGame
             if (File.Exists("Content/" + myID + ".bin"))
             {
                 FileStream binFile = new FileStream("Content/" + myID + ".bin", System.IO.FileMode.Open);
-                BinaryReader binReader = new BinaryReader(binFile);
-
-                List<string> lines = new List<string>();
-
-                while (binReader.PeekChar() != -1)
+                using (BinaryReader binReader = new BinaryReader(binFile))
                 {
-                    lines.Add(binReader.ReadString());
+                    List<string> lines = new List<string>();
+
+                    while (binReader.PeekChar() != -1)
+                    {
+                        lines.Add(binReader.ReadString());
+                    }
+
+                    binReader.Close();
+                    return lines;
                 }
-                return lines;
             }
             else
             {
@@ -274,7 +259,7 @@ namespace SeniorProjectGame
         {
             List<string> worldMapLines = ReadBin("WorldMap");
 
-            Entity worldMapEntity = new Entity(0, State.ScreenState.WORLD_MAP);
+            worldMapEntity = new Entity(0, State.ScreenState.WORLD_MAP);
             worldMapEntity.AddComponent(new SpriteComponent(true, new Vector2(screenWidth / 2, screenHeight / 2), worldMapTexture));
             worldMapEntity.AddComponent(new CameraComponent(new Vector2(screenWidth / 2, screenHeight / 2)));
             worldMapComponent = new WorldMapComponent();
@@ -300,7 +285,6 @@ namespace SeniorProjectGame
 
                 NodeState state = (NodeState)Enum.Parse(typeof(NodeState), line[5].Split(':')[1]);
 
-
                 worldMapComponent.CreateNode(title, id, position, connectedTo, state, nodeTexture);
             }
 
@@ -314,7 +298,7 @@ namespace SeniorProjectGame
             int layers = Convert.ToInt32(hexMapLines[0]);
             Vector2 dimensions = new Vector2(float.Parse(hexMapLines[1].Split(' ')[0]), float.Parse(hexMapLines[1].Split(' ')[0]));
 
-            BoardComponent boardComponent = CreateAndReturnBoard(dimensions);
+            BoardComponent boardComponent = new BoardComponent(dimensions);
 
             Vector2 terrainCoordinate = Vector2.Zero;
             for (int layer = 0; layer < layers; layer++)
@@ -329,6 +313,20 @@ namespace SeniorProjectGame
                 }
             }
             return boardComponent;
+        }
+
+        void MoveUnit(HexComponent original, HexComponent final)
+        {
+            UnitComponent unit = original.GetUnit();
+            Entity unitEntity = unit._parent;
+
+            ((SpriteComponent) unitEntity.GetDrawable("SpriteComponent")).
+                setPosition(final._parent.GetDrawable("SpriteComponent").position);
+
+            unit.SetHex(final);
+            final.SetUnit(unit);
+
+            original.SetUnit(null); //todo: removeunit()
         }
 
         protected override void Update(GameTime gameTime)
@@ -377,7 +375,9 @@ namespace SeniorProjectGame
                                 selectSound.Play();
                                 NodeComponent node = click._parent.GetComponent("NodeComponent") as NodeComponent;
                                 worldMapComponent.SetSelectedNode(node);
-                                //LoadMap(node.GetLevelName());
+
+                                LoadNodeHexMap();
+                                State.screenState = State.ScreenState.SKIRMISH;
                             }
                         }
                     }
@@ -396,7 +396,6 @@ namespace SeniorProjectGame
 
                 #region Dialogue
                 case State.ScreenState.DIALOGUE:
-
                     if (State.firstDialogueWord == "")
                     {
                         string line = string.Empty;
@@ -460,85 +459,56 @@ namespace SeniorProjectGame
                     }
 
                     break;
-                #endregion
+#endregion
 
                 #region Skirmish
                 case State.ScreenState.SKIRMISH:
 
                     if (singleLeftClick.Evaluate())
                     {
-                        boardComp.UpdateVisibilityAllies();
+                        HexComponent hexComp = boardComponent.GetCurrentHexAtMouse();
+                        Entity hexEntity = hexComp._parent;
+
+                        boardComponent.UpdateVisibilityAllies();
+
+                        if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection)
+                        {
+                            UnitComponent unit = hexComp.GetUnit();
+                            State.selectionState = State.SelectionState.SelectingUnit;
+
+                            State.originalHexClicked = hexComp;
+                        }
+
+                        else if (State.selectionState == State.SelectionState.SelectingUnit)
+                        {
+                            State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
+                        }
+                        else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits)
+                        {
+                            MoveUnit(State.originalHexClicked, boardComponent.GetCurrentHexAtMouse());
+                            State.selectionState = State.SelectionState.NoSelection;
+                            State.originalHexClicked = null;
+
+                        }
                     }
-                    //if (singleLeftClick.Evaluate())
-                    //{
-                    //HexComponent hexComp = boardComp.GetCurrentHexAtMouse();
-                    //Entity hexEntity = hexComp._parent;
-
-                    //// PSEUDO-CODE OUTLINE BELOW. DO NOT ERASE! t.Jon
-
-
-                    ////if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection)
-                    ////{
-                    ////    UnitComponent unit = hexComp.GetUnit();
-                    ////    State.selectionState = State.SelectionState.SelectingUnit;
-
-                    ////    State.originalHexClicked = hexComp;
-                    ////}
-
-
-
-                    ////else if (State.selectionState == State.SelectionState.SelectingUnit)
-                    ////{
-                    ////    State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
-                    ////}
-                    ////else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits) {
-
-                    ////    if (ButtonPressed == "Back")
-                    ////    {
-                    ////        State.selectionState = State.SelectionState.NoSelection;
-                    ////    }
-                    ////    else if (OptionSelected == "Wait" || OptionSelected == "Item")
-                    ////    {
-                    ////        UnitComponent unit = State.originalHexClicked.GetUnit();
-                    ////        State.originalHexClicked.RemoveUnit();
-
-                    ////        hexComp.SetUnit(unit);
-
-                    ////        State.SelectionState.NoSelection;
-                    ////    }
-
-                    ////}
-                    ////*/
-
-                    //SpriteComponent sprite = hexEntity.GetDrawable("SpriteComponent") as SpriteComponent;
-
-                    //sprite.setColor(Color.BurlyWood);
-
-                    //List<HexComponent> hexRing = boardComp.GetAllRings(3);
-                    //for (int p = 0; p < hexRing.Count; p++)
-                    //{
-                    //    Entity hexParent = hexRing[p]._parent;
-                    //    SpriteComponent spriteParent = hexParent.GetDrawable("SpriteComponent") as SpriteComponent;
-                    //    spriteParent.setColor(Color.CadetBlue);
-                    //}
-                    //}
-                    if (singleRightClick.Evaluate())
+                    else if (singleRightClick.Evaluate())
                     {
-                        HexComponent hexComp = boardComp.GetCurrentHexAtMouse();
+                        HexComponent hexComp = boardComponent.GetCurrentHexAtMouse();
                         Entity hexEntity = hexComp._parent;
                         SpriteComponent sprite = hexEntity.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                        boardComp.CreateTerrain(hexComp.getCoordPosition(), hexGrassTexture, false);
+                        boardComponent.CreateTerrain(hexComp.getCoordPosition(), hexGrassTexture, false);
                     }
                     if (singleMiddleClick.Evaluate())
                     {
-                        boardComp.alliedUnitList[0].MoveDirection(Orient.se);
-                        boardComp.UpdateVisibilityAllies();
+                        boardComponent.alliedUnitList[0].MoveDirection(Orient.se);
+                        boardComponent.UpdateVisibilityAllies();
                     }
                     break;
                 #endregion
 
                 #region ThirdLayer
+
                 //As of now, we will not be using the states below
                 case State.ScreenState.BATTLE_FORECAST:
                     break;
@@ -568,8 +538,8 @@ namespace SeniorProjectGame
             EntityManager.Draw(spriteBatch);
 
             string fps = string.Format("fps: {0}", framesPerSecond);
-            spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);
 
+            spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);
 
             spriteBatch.End();
 

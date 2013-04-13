@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SeniorProjectGame
+namespace EntityEngine
 {
     public class Role  //attributes growths and caps for the roll of characters
     {
@@ -19,11 +19,16 @@ namespace SeniorProjectGame
         public int movement;
 
         public Role(int str, int mag, int dex, int agi, int def, int res, int spd,
-             int strGrowth, int magGrowth, int dexGrowth, int agiGrowth, int defGrowth, int resGrowth, int spdGrowth,
+             float strGrowth, float magGrowth, float dexGrowth, float agiGrowth, float defGrowth, float resGrowth, float spdGrowth,
              int strCap, int magCap, int dexCap, int agiCap, int defCap, int resCap, int spdCap,
-                    bool sword, bool lance, bool axe, bool light, bool anima, bool dark, bool bow)
+                    bool sword, bool lance, bool axe, bool light, bool anima, bool dark, bool bow, int movement)
         {
             attributes = new Dictionary<string, int>();
+            growths = new Dictionary<string, float>();
+            caps = new Dictionary<string, int>();
+            weapons = new Dictionary<string, bool>();
+
+            this.movement = movement;
 
             attributes["strength"] = str;
             attributes["magic"] = mag;

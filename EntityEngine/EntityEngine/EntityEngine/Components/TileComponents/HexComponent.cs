@@ -52,11 +52,12 @@ namespace EntityEngine.Components.TileComponents
         {
             unit = myUnit;   
         }
+
         public void RemoveUnit()
         {
             unit = null;
         }
-        public Boolean HasUnit()
+        public bool HasUnit()
         {
             return (unit!=null);
         }
