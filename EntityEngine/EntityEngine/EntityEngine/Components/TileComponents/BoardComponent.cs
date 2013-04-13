@@ -200,6 +200,7 @@ namespace EntityEngine.Components.TileComponents
                 hex.SetAdjacent(n, ne, se, s, sw, nw);
             }
         }
+
         public void CreateUnit(bool myIsAlly, int mySightRadius, Vector2 myCoordinate, Texture2D myTexture, int mySpriteFrameWidth, int mySpriteFrameHeight)
         {
             HexComponent hexComp = GetHex(myCoordinate);
@@ -242,18 +243,16 @@ namespace EntityEngine.Components.TileComponents
         {
             HexComponent hexComponent = GetHex(myCoordinate);
             SpriteComponent hexSprite = hexComponent._parent.GetDrawable("SpriteComponent") as SpriteComponent;
-            hexComponent.AddTerrain(myTerrain);
-
+            
             Entity terrainEntity = new Entity(4, State.ScreenState.SKIRMISH);
             terrainEntity.AddComponent(new SpriteComponent(true, hexSprite.getCenterPosition(), myTerrain.GetTexture()));
             terrainEntity.AddComponent(new CameraComponent(hexSprite.getCenterPosition()));
-            
-            terrainEntity.AddComponent(myTerrain);
+
+            TerrainComponent terrComp = new TerrainComponent(hexComponent, myTerrain.GetTexture(), myTerrain.GetImpassable());
+            terrainEntity.AddComponent(terrComp);
+            hexComponent.AddTerrain(terrComp);
 
             EntityManager.AddEntity(terrainEntity);
-            myTerrain.SetHex(hexComponent);
-            
-            
         }
 
         //Returns the hex component of the hex entity that is under the mouse

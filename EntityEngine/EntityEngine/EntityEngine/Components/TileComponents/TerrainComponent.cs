@@ -78,6 +78,20 @@ namespace EntityEngine.Components.TileComponents
             texture = myTex;
         }
 
+        //Only use this constuctor when you are making a terrain component from another
+        public TerrainComponent(HexComponent myHex, Texture2D myTex, bool myImpassable)
+        {
+            hex = myHex;
+            impassable = myImpassable;
+            texture = myTex;
+        }
+
+        public override void Initialize()
+        {
+            UpdateVisibility();
+            base.Initialize();
+        }
+
         public void UpdateVisibility()
         {
             visibility = hex.GetVisibility();

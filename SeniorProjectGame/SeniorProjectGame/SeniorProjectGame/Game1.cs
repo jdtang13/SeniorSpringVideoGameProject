@@ -156,7 +156,7 @@ namespace SeniorProjectGame
             AddTerrainComponent("G", new TerrainComponent( hexGrassTexture, false));
             AddTerrainComponent("D", new TerrainComponent( hexDirtTexture, false));
             AddTerrainComponent("T", new TerrainComponent( hexTreeTexture, false));
-            AddTerrainComponent("*", new TerrainComponent(null, true));
+            //AddTerrainComponent("*", new TerrainComponent(null, true));
         }
 
         void InitializeInput()
@@ -179,9 +179,9 @@ namespace SeniorProjectGame
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
             Globals.font = font;
 
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Laboratory.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Laboratory.txt");
 
             hexBaseTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexBase");
             hexGrassTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexGrass");
@@ -305,7 +305,11 @@ namespace SeniorProjectGame
                     for (int x = 0; x < line.Length; x++)
                     {
                         terrainCoordinate = new Vector2(x, y - 2 - ((int)dimensions.Y * layer));
-                        tempBoardComponent.AddTerrain(ConvertToHexCoordinate(terrainCoordinate), GetTerrain(line[x]));
+
+                        if (line[x] != "*")
+                        {
+                            tempBoardComponent.AddTerrain(ConvertToHexCoordinate(terrainCoordinate), GetTerrain(line[x]));
+                        }
                     }
                 }
             }
@@ -367,7 +371,7 @@ namespace SeniorProjectGame
                                 boardEntity = ProcessHexMapBin(worldMapComponent.SelectCurrentNode());
                                 boardComponent = boardEntity.GetComponent("BoardComponent") as BoardComponent;
 
-                                boardComponent.CreateUnit(true, 2, new Vector2(5, 5), unitTexture, 50, 50);
+                                boardComponent.CreateUnit(true, 2, new Vector2(0, 2), unitTexture, 50, 50);
 
 
                                 State.screenState = State.ScreenState.SKIRMISH;
