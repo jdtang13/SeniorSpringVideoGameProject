@@ -20,6 +20,8 @@ namespace EntityEngine.Components.TileComponents
         public void SetHex(HexComponent myHex)
         {
             hex = myHex;
+            hex.AddTerrain(this);
+            SetVisbility(hex.GetVisibility());
         }
 
         Visibility visibility = Visibility.Unexplored;
@@ -95,15 +97,8 @@ namespace EntityEngine.Components.TileComponents
 
             else if (visibility == Visibility.Unexplored)
             {
-
                 sprite._visible = false;
             }
-        }
-
-        public override void Initialize()
-        {
-            SetVisbility(hex.GetVisibility());
-            base.Initialize();
         }
     }
 }

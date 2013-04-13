@@ -230,30 +230,13 @@ namespace EntityEngine.Components.TileComponents
                 }
 
                 hexComp.SetUnit(unitComp);
+                UpdateVisibilityAllies();
             }
             else
             {
                 throw new Exception("There is already a unit where you are trying to create one.");
             }
         }
-
-        //public void CreateTerrain(Vector2 myCoordinate, Texture2D myTexture, bool myImpassable)
-        //{
-        //    HexComponent hexComp = GetHex(myCoordinate);
-
-        //    Entity terrainEntity = new Entity(4, State.ScreenState.SKIRMISH);
-
-        //    SpriteComponent hexSprite = GetHex(myCoordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
-        //    terrainEntity.AddComponent(new SpriteComponent(true, hexSprite.getCenterPosition(), myTexture));
-        //    terrainEntity.AddComponent(new CameraComponent(hexSprite.getCenterPosition()));
-
-        //    TerrainComponent terrainComp = new TerrainComponent(hexComp,myTexture, myImpassable);
-        //    terrainEntity.AddComponent(terrainComp);
-
-        //    EntityManager.AddEntity(terrainEntity);
-
-        //    hexComp.AddTerrain(terrainComp);
-        //}
         
         public void AddTerrain(Vector2 myCoordinate, TerrainComponent myTerrain)
         {
@@ -264,10 +247,11 @@ namespace EntityEngine.Components.TileComponents
             Entity terrainEntity = new Entity(4, State.ScreenState.SKIRMISH);
             terrainEntity.AddComponent(new SpriteComponent(true, hexSprite.getCenterPosition(), myTerrain.GetTexture()));
             terrainEntity.AddComponent(new CameraComponent(hexSprite.getCenterPosition()));
-            myTerrain.SetHex(hexComponent);
+            
             terrainEntity.AddComponent(myTerrain);
 
             EntityManager.AddEntity(terrainEntity);
+            myTerrain.SetHex(hexComponent);
             
             
         }

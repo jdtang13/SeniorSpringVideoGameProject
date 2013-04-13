@@ -20,6 +20,7 @@ namespace SeniorProjectGame
 {
     public class Game1 : Microsoft.Xna.Framework.Game
     {
+        #region Variables
         GraphicsDeviceManager graphics;
         int screenWidth = 1280;
         int screenHeight = 680;
@@ -82,6 +83,10 @@ namespace SeniorProjectGame
         float numberOfFrames;
         TimeSpan elapsedTime;
 
+        #endregion
+
+        #region Initialization
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -95,6 +100,7 @@ namespace SeniorProjectGame
         protected override void Initialize()
         {
             IsMouseVisible = true;
+
             LoadContent();
 
             PopulateTerrainDictionary();
@@ -102,8 +108,6 @@ namespace SeniorProjectGame
             InitializeInput();
 
             ProcessWorldMapBin();
-
-            //LoadNodeHexMap();
 
             InitializeState();
 
@@ -152,7 +156,9 @@ namespace SeniorProjectGame
             AddTerrainComponent("G", new TerrainComponent( hexGrassTexture, false));
             AddTerrainComponent("D", new TerrainComponent( hexDirtTexture, false));
             AddTerrainComponent("T", new TerrainComponent( hexTreeTexture, false));
+            AddTerrainComponent("*", new TerrainComponent(null, true));
         }
+
         void InitializeInput()
         {
             escapeClick = new InputAction(new Keys[] { Keys.Escape }, true);
@@ -162,13 +168,9 @@ namespace SeniorProjectGame
 
         }
 
-        void LoadNodeHexMap()
-        {
-            boardEntity = ProcessHexMapBin(worldMapComponent.SelectCurrentNode());
-            boardComponent = boardEntity.GetComponent("BoardComponent") as BoardComponent;
+        #endregion
 
-            boardComponent.CreateUnit(true, 2, new Vector2(0, 0), unitTexture, 50, 50);
-        }
+        #region Loading_Content_and_File_Processing
 
         protected override void LoadContent()
         {
@@ -177,8 +179,9 @@ namespace SeniorProjectGame
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
             Globals.font = font;
 
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Laboratory.txt");
 
             hexBaseTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexBase");
             hexGrassTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexGrass");
@@ -263,8 +266,6 @@ namespace SeniorProjectGame
                 string title = line[0].Split(':')[1];
                 string id = line[1].Split(':')[1];
 
-                //ProcessHexMapBin(id);
-
                 Boolean isSideQuest = Convert.ToBoolean(line[2].Split(':')[1]);
 
                 string coords = line[3].Split(':')[1];
@@ -311,44 +312,15 @@ namespace SeniorProjectGame
             return tempBoard;
         }
 
-        Vector2 ConvertToHexCoordinate(Vector2 myVec)
-        {
-            Vector2 convertedVector = Vector2.Zero;
-            convertedVector.X = myVec.X;
+        #endregion  
 
-            if (myVec.X % 2 == 0)
-            {
-                convertedVector.Y = myVec.X / 2f + myVec.Y;
-            }
-            else
-            {
-                convertedVector.Y = (myVec.X + 1f) / 2f + myVec.Y;
-            }
-
-            return convertedVector;
-        }
-
-        void MoveUnit(HexComponent original, HexComponent final)
-        {
-            UnitComponent unit = original.GetUnit();
-            Entity unitEntity = unit._parent;
-
-            ((SpriteComponent) unitEntity.GetDrawable("SpriteComponent")).
-                setPosition(final._parent.GetDrawable("SpriteComponent").position);
-
-            unit.SetHex(final);
-            final.SetUnit(unit);
-
-            original.SetUnit(null); //todo: removeunit()
-        }
+        #region Update
 
         protected override void Update(GameTime gameTime)
         {
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
-
-
 
             elapsedTime += gameTime.ElapsedGameTime;
             if (elapsedTime > TimeSpan.FromSeconds(1))
@@ -391,7 +363,13 @@ namespace SeniorProjectGame
                                 NodeComponent node = click._parent.GetComponent("NodeComponent") as NodeComponent;
                                 worldMapComponent.SetSelectedNode(node);
 
-                                LoadNodeHexMap();
+
+                                boardEntity = ProcessHexMapBin(worldMapComponent.SelectCurrentNode());
+                                boardComponent = boardEntity.GetComponent("BoardComponent") as BoardComponent;
+
+                                boardComponent.CreateUnit(true, 2, new Vector2(5, 5), unitTexture, 50, 50);
+
+
                                 State.screenState = State.ScreenState.SKIRMISH;
                             }
                         }
@@ -538,6 +516,41 @@ namespace SeniorProjectGame
             base.Update(gameTime);
         }
 
+        Vector2 ConvertToHexCoordinate(Vector2 myVec)
+        {
+            Vector2 convertedVector = Vector2.Zero;
+            convertedVector.X = myVec.X;
+
+            if (myVec.X % 2 == 0)
+            {
+                convertedVector.Y = myVec.X / 2f + myVec.Y;
+            }
+            else
+            {
+                convertedVector.Y = (myVec.X + 1f) / 2f + myVec.Y;
+            }
+
+            return convertedVector;
+        }
+
+        void MoveUnit(HexComponent original, HexComponent final)
+        {
+            UnitComponent unit = original.GetUnit();
+            Entity unitEntity = unit._parent;
+
+            ((SpriteComponent)unitEntity.GetDrawable("SpriteComponent")).
+                setPosition(final._parent.GetDrawable("SpriteComponent").position);
+
+            unit.SetHex(final);
+            final.SetUnit(unit);
+
+            original.SetUnit(null); //todo: removeunit()
+        }
+
+        #endregion
+
+        #region Draw
+
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
@@ -554,5 +567,7 @@ namespace SeniorProjectGame
             spriteBatch.End();
             base.Draw(gameTime);
         }
+
+        #endregion
     }
 }

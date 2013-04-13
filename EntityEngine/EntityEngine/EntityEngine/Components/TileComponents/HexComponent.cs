@@ -52,7 +52,6 @@ namespace EntityEngine.Components.TileComponents
         {
             unit = myUnit;   
         }
-
         public void RemoveUnit()
         {
             unit = null;
