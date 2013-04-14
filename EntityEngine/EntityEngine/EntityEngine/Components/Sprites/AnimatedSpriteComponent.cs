@@ -38,6 +38,11 @@ namespace EntityEngine.Components.Sprites
             color = myColor;
         }
 
+        public void setPosition(Vector2 pos)
+        {
+            position = pos;
+        }
+
         bool animating;//Turns the animating on and off
         public void SetAnimated(bool myTruth)
         {

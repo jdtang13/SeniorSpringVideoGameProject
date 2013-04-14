@@ -116,6 +116,18 @@ namespace EntityEngine.Components.TileComponents
             return terrainList;
         }
 
+        public Boolean ContainsImpassable()
+        {
+            for (int p = 0; p < terrainList.Count ; p++)
+            {
+                if (terrainList[p].GetImpassable() == true)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public HexComponent(Vector2 myCoordPosition) 
         {
             this.name = "HexComponent";

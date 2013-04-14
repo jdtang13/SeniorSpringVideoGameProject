@@ -43,12 +43,8 @@ namespace SeniorProjectGame
             }
         }
 
-        Dictionary<string, TerrainComponent> terrainDictionary = new Dictionary<string, TerrainComponent>();
-        public void AddTerrainComponent(string myKey, TerrainComponent myTerrainComponent)
-        {
-            terrainDictionary.Add(myKey, myTerrainComponent);
-        }
-        public TerrainComponent GetTerrain(string myKey)
+        Dictionary<string, TerrainPackage> terrainDictionary = new Dictionary<string, TerrainPackage>();
+        public TerrainPackage GetTerrain(string myKey)
         {
             if (terrainDictionary.ContainsKey(myKey))
             {
@@ -64,7 +60,7 @@ namespace SeniorProjectGame
 
         Texture2D worldMapTexture, nodeTexture, pointerTexture;
 
-        Texture2D hexBaseTexture, hexDirtTexture, hexGrassTexture;
+        Texture2D hexBaseTexture, hexDirtTexture, hexGrassTexture, hexGravelTexture, hexSandTexture, hexWoodTexture, hexWaterTexture, hexStoneTexture;
         Texture2D hexTreeTexture;
 
         Texture2D unitTexture;
@@ -119,16 +115,16 @@ namespace SeniorProjectGame
             State.Initialize();
 
             Dictionary<String, Role> classes = new Dictionary<String, Role>();
-            Role lordClass = new Role(3,2,4,4,2,0,3,
-                .1f,.2f,.2f,.3f,.4f,.1f,.3f,
-                4,2,3,5,3,2,4,
+            Role lordClass = new Role(3, 2, 4, 4, 2, 0, 3,
+                .1f, .2f, .2f, .3f, .4f, .1f, .3f,
+                4, 2, 3, 5, 3, 2, 4,
                 true, false, false, false, false, false, false, 3);
 
             classes["lord"] = lordClass;
 
-            UnitData myUnitData = new UnitData(5,5,4,3,7,2,5,
-                .6f,.5f,.4f,.5f,.7f,.3f,.6f,
-                40,40,40,35,45,35,45, "myUnit",
+            UnitData myUnitData = new UnitData(5, 5, 4, 3, 7, 2, 5,
+                .6f, .5f, .4f, .5f, .7f, .3f, .6f,
+                40, 40, 40, 35, 45, 35, 45, "myUnit",
                 Alignment.PLAYER, classes["lord"], 1, 0);
 
             //Entity unitEntity = new Entity(5, State.ScreenState.SKIRMISH);
@@ -147,16 +143,21 @@ namespace SeniorProjectGame
 
             //boardComponent.GetHex(3, 3).SetUnit(myUnitComponent);
             //loadedBoardComponent.CreateUnit();
-            
+
             //EntityManager.AddEntity(unitEntity);
         }
-        
+
         void PopulateTerrainDictionary()
         {
-            AddTerrainComponent("G", new TerrainComponent( hexGrassTexture, false));
-            AddTerrainComponent("D", new TerrainComponent( hexDirtTexture, false));
-            AddTerrainComponent("T", new TerrainComponent( hexTreeTexture, false));
-            //AddTerrainComponent("*", new TerrainComponent(null, true));
+            terrainDictionary["G"] = new TerrainPackage(hexGrassTexture, false);//Grass
+            terrainDictionary["D"] = new TerrainPackage(hexDirtTexture, false);//Dirt
+            terrainDictionary["L"] = new TerrainPackage(hexWaterTexture, true);//Water
+            terrainDictionary["W"] = new TerrainPackage(hexWoodTexture, false);//Wood
+            terrainDictionary["S"] = new TerrainPackage(hexStoneTexture, false);//Stone
+            terrainDictionary["A"] = new TerrainPackage(hexSandTexture, false);//Sand
+            terrainDictionary["R"] = new TerrainPackage(hexGravelTexture, false);//Gravel
+
+            terrainDictionary["T"] = new TerrainPackage(hexTreeTexture, true);//Tree
         }
 
         void InitializeInput()
@@ -185,6 +186,11 @@ namespace SeniorProjectGame
 
             hexBaseTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexBase");
             hexGrassTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexGrass");
+            hexGravelTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexGravel");
+            hexSandTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexSand");
+            hexWoodTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexWood0");
+            hexWaterTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexWater0");
+            hexStoneTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexStonePath0");
             hexDirtTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexDirt");
 
             hexTreeTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\tree");
@@ -216,7 +222,7 @@ namespace SeniorProjectGame
                         }
                         binWriter.Close();
                     }
-                    
+
                 }
             }
             else
@@ -290,7 +296,7 @@ namespace SeniorProjectGame
             Vector2 dimensions = new Vector2(float.Parse(hexMapLines[1].Split(' ')[0]), float.Parse(hexMapLines[1].Split(' ')[0]));
 
             Entity tempBoard = new Entity(0, State.ScreenState.SKIRMISH);
-            BoardComponent tempBoardComponent = new BoardComponent(dimensions,hexBaseTexture,font);
+            BoardComponent tempBoardComponent = new BoardComponent(dimensions, hexBaseTexture, font);
             tempBoard.AddComponent(tempBoardComponent);
 
             EntityManager.AddEntity(tempBoard);
@@ -316,7 +322,7 @@ namespace SeniorProjectGame
             return tempBoard;
         }
 
-        #endregion  
+        #endregion
 
         #region Update
 
@@ -456,7 +462,7 @@ namespace SeniorProjectGame
                     }
 
                     break;
-#endregion
+                #endregion
 
                 #region Skirmish
                 case State.ScreenState.SKIRMISH:
@@ -466,7 +472,7 @@ namespace SeniorProjectGame
                         HexComponent hexComp = boardComponent.GetMouseHex();
                         Entity hexEntity = hexComp._parent;
 
-                        boardComponent.UpdateVisibilityAllies();
+                        //boardComponent.UpdateVisibilityAllies();
 
                         if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection)
                         {
@@ -475,27 +481,36 @@ namespace SeniorProjectGame
 
                             State.originalHexClicked = hexComp;
                         }
-
-                        else if (State.selectionState == State.SelectionState.SelectingUnit)
+                        else if (!hexComp.HasUnit() && State.selectionState == State.SelectionState.SelectingUnit)
                         {
-                            State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
+                            if (hexComp.ContainsImpassable() == false)
+                            {
+                                MoveUnit(State.originalHexClicked, boardComponent.GetMouseHex());
+                                State.selectionState = State.SelectionState.NoSelection;
+                                State.originalHexClicked = null;
+                            }
                         }
-                        else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits)
-                        {
-                            MoveUnit(State.originalHexClicked, boardComponent.GetMouseHex());
-                            State.selectionState = State.SelectionState.NoSelection;
-                            State.originalHexClicked = null;
+                        
+                        //else if (State.selectionState == State.SelectionState.SelectingUnit)
+                        //{
+                        //    State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
+                        //}
+                        //else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits)
+                        //{
+                        //    MoveUnit(State.originalHexClicked, boardComponent.GetMouseHex());
+                        //    State.selectionState = State.SelectionState.NoSelection;
+                        //    State.originalHexClicked = null;
 
-                        }
+                        //}
                     }
                     else if (singleRightClick.Evaluate())
                     {
-                        
+
                     }
                     if (singleMiddleClick.Evaluate())
                     {
-                        boardComponent.alliedUnitList[0].MoveDirection(Orient.se);
-                        boardComponent.UpdateVisibilityAllies();
+                        //boardComponent.alliedUnitList[0].MoveDirection(Orient.se);
+                        //boardComponent.UpdateVisibilityAllies();
                     }
                     break;
                 #endregion
@@ -542,13 +557,20 @@ namespace SeniorProjectGame
             UnitComponent unit = original.GetUnit();
             Entity unitEntity = unit._parent;
 
-            ((SpriteComponent)unitEntity.GetDrawable("SpriteComponent")).
+            //SpriteComponent unitSprite = unitEntity.GetDrawable("SpriteComponent") as SpriteComponent;
+            //SpriteComponent hexSprite = Entity.GetDrawable("SpriteComponent") as SpriteComponent;
+            ////sprite.setPosition(final.
+
+            ((AnimatedSpriteComponent)unitEntity.GetDrawable("AnimatedSpriteComponent")).
                 setPosition(final._parent.GetDrawable("SpriteComponent").position);
 
             unit.SetHex(final);
             final.SetUnit(unit);
 
-            original.SetUnit(null); //todo: removeunit()
+            boardComponent.UpdateVisibilityAllies();
+
+
+            original.RemoveUnit(); //todo: removeunit()
         }
 
         #endregion

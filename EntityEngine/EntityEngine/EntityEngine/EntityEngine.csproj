@@ -53,6 +53,7 @@
     <Compile Include="Components\TileComponents\HexComponent.cs" />
     <Compile Include="Components\TileComponents\TerrainComponent.cs" />
     <Compile Include="Components\TileComponents\CommandState.cs" />
+    <Compile Include="Components\TileComponents\TerrainPackage.cs" />
     <Compile Include="Components\TileComponents\UnitComponent.cs" />
     <Compile Include="Components\TileComponents\Visibility.cs" />
     <Compile Include="Components\World Map\ClickableComponent.cs" />

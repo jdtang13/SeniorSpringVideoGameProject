@@ -31,11 +31,11 @@ namespace EntityEngine.Components.TileComponents
 
         Entity[,] hexEntityGrid;
 
-        UnitComponent selectedUnit;
-        public void SetSelectedUnit(UnitComponent myUnit)
-        {
-            selectedUnit = myUnit;
-        }
+        //UnitComponent selectedUnit;
+        //public void SetSelectedUnit(UnitComponent myUnit)
+        //{
+        //    selectedUnit = myUnit;
+        //}
 
         public List<UnitComponent> alliedUnitList = new List<UnitComponent>();
         List<UnitComponent> nonAlliedUnitList = new List<UnitComponent>();
@@ -239,7 +239,7 @@ namespace EntityEngine.Components.TileComponents
             }
         }
         
-        public void AddTerrain(Vector2 myCoordinate, TerrainComponent myTerrain)
+        public void AddTerrain(Vector2 myCoordinate, TerrainPackage myTerrain)
         {
             HexComponent hexComponent = GetHex(myCoordinate);
             SpriteComponent hexSprite = hexComponent._parent.GetDrawable("SpriteComponent") as SpriteComponent;
