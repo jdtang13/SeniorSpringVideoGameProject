@@ -180,9 +180,9 @@ namespace SeniorProjectGame
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
             Globals.font = font;
 
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Laboratory.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Laboratory.txt");
 
             hexBaseTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexBase");
             hexGrassTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexGrass");
