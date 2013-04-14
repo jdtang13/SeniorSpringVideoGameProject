@@ -52,7 +52,7 @@ namespace SeniorProjectGame
             }
             else
             {
-                throw new Exception("That character doesn't exist in the terrain dictionary");
+                throw new Exception(myKey + " doesn't exist in the terrain dictionary");
             }
         }
 
@@ -290,10 +290,10 @@ namespace SeniorProjectGame
         }
         Entity ProcessHexMapBin(string myID)
         {
-            List<string> hexMapLines = ReadBin(myID);
+            List<string> binLines = ReadBin(myID);
 
-            int layers = Convert.ToInt32(hexMapLines[0]);
-            Vector2 dimensions = new Vector2(float.Parse(hexMapLines[1].Split(' ')[0]), float.Parse(hexMapLines[1].Split(' ')[0]));
+            int layers = Convert.ToInt32(binLines[0]);
+            Vector2 dimensions = new Vector2(float.Parse(binLines[1].Split(' ')[0]), float.Parse(binLines[1].Split(' ')[0]));
 
             Entity tempBoard = new Entity(0, State.ScreenState.SKIRMISH);
             BoardComponent tempBoardComponent = new BoardComponent(dimensions, hexBaseTexture, font);
@@ -301,16 +301,24 @@ namespace SeniorProjectGame
 
             EntityManager.AddEntity(tempBoard);
 
+            List<string> hexMapLines = new List<string>();
+            for (int line = 2; line < binLines.Count; line++)
+            {
+                if (binLines[line] != "")
+                    hexMapLines.Add(binLines[line]);
+            }
+
             Vector2 terrainCoordinate = Vector2.Zero;
             for (int layer = 0; layer < layers; layer++)
             {
-                for (int y = 2 + ((int)dimensions.Y * layer); y < dimensions.Y + 2 + ((int)dimensions.Y * layer); y++)
+                for (int y = 0 + ((int)dimensions.Y * layer); y < dimensions.Y + ((int)dimensions.Y * layer); y++)
+                //for (int y = 2 + ((int)dimensions.Y * layer); y < dimensions.Y + 2 + ((int)dimensions.Y * layer); y++)
                 {
                     string[] line = hexMapLines[y].Split(' ');
 
                     for (int x = 0; x < line.Length; x++)
                     {
-                        terrainCoordinate = new Vector2(x, y - 2 - ((int)dimensions.Y * layer));
+                        terrainCoordinate = new Vector2(x, y - ((int)dimensions.Y * layer));
 
                         if (line[x] != "*")
                         {
