@@ -180,9 +180,9 @@ namespace SeniorProjectGame
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
             Globals.font = font;
 
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Laboratory.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Laboratory.txt");
 
             hexBaseTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexBase");
             hexGrassTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexGrass");
@@ -312,7 +312,6 @@ namespace SeniorProjectGame
             for (int layer = 0; layer < layers; layer++)
             {
                 for (int y = 0 + ((int)dimensions.Y * layer); y < dimensions.Y + ((int)dimensions.Y * layer); y++)
-                //for (int y = 2 + ((int)dimensions.Y * layer); y < dimensions.Y + 2 + ((int)dimensions.Y * layer); y++)
                 {
                     string[] line = hexMapLines[y].Split(' ');
 
@@ -386,6 +385,7 @@ namespace SeniorProjectGame
                                 boardComponent = boardEntity.GetComponent("BoardComponent") as BoardComponent;
 
                                 boardComponent.CreateUnit(true, 2, new Vector2(0, 2), unitTexture, 50, 50);
+                                boardComponent.CreateUnit(true, 2, new Vector2(0, 5), unitTexture, 50, 50);
 
 
                                 State.screenState = State.ScreenState.SKIRMISH;
