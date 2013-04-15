@@ -36,8 +36,8 @@ namespace EntityEngine.Components.Sprites
             color = myColor;
         }
 
-        public SpriteSheetComponent(Entity myParent, bool myMain, Vector2 myPosition, Texture2D myTex, int mySpriteWidth, int mySpriteHeight)
-            : base(myParent,myMain)
+        public SpriteSheetComponent( bool myMain, Vector2 myPosition, Texture2D myTex, int mySpriteWidth, int mySpriteHeight)
+            : base(myMain)
         {
             this.name = "SpriteSheetComponent";
             this.position = myPosition;
@@ -63,7 +63,7 @@ namespace EntityEngine.Components.Sprites
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            CameraComponent cam = _parent.getUpdateable("CameraComponent") as CameraComponent;
+            CameraComponent cam = _parent.GetComponent("CameraComponent") as CameraComponent;
 
             screenPosition = cam.getDrawPosition(position) - offset;
 

@@ -38,9 +38,14 @@ namespace EntityEngine.Components.Sprites
             color = myColor;
         }
 
+        public void setPosition(Vector2 pos)
+        {
+            position = pos;
+        }
+
         //Use this constructor if you want to pass in a rotation of the sprite so that it moves aroudn
-        public SpriteComponent(Entity myParent,bool myMain,Vector2 myPosition,Texture2D myTex, float myRot)
-                               : base(myParent,myMain)
+        public SpriteComponent(bool myMain,Vector2 myPosition,Texture2D myTex, float myRot)
+                               : base(myMain)
         {
             this.name = "SpriteComponent";
             this.position = myPosition;
@@ -49,8 +54,8 @@ namespace EntityEngine.Components.Sprites
         }
 
         //If the sprite isnt going to rotate
-        public SpriteComponent(Entity myParent, bool myMain, Vector2 myPosition, Texture2D myTex)
-                                : base(myParent,myMain)
+        public SpriteComponent( bool myMain, Vector2 myPosition, Texture2D myTex)
+                                : base(myMain)
         {
             this.name = "SpriteComponent";
             this.position = myPosition;
@@ -76,7 +81,7 @@ namespace EntityEngine.Components.Sprites
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            CameraComponent cam = _parent.getUpdateable("CameraComponent") as CameraComponent;
+            CameraComponent cam = _parent.GetComponent("CameraComponent") as CameraComponent;
 
             screenPosition = cam.getDrawPosition(position) - offset;
 

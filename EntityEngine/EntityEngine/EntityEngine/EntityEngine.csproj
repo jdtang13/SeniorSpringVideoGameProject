@@ -53,13 +53,28 @@
     <Compile Include="Components\TileComponents\HexComponent.cs" />
     <Compile Include="Components\TileComponents\TerrainComponent.cs" />
     <Compile Include="Components\TileComponents\CommandState.cs" />
+    <Compile Include="Components\TileComponents\TerrainPackage.cs" />
     <Compile Include="Components\TileComponents\UnitComponent.cs" />
     <Compile Include="Components\TileComponents\Visibility.cs" />
+    <Compile Include="Components\World Map\ClickableComponent.cs" />
+    <Compile Include="Components\World Map\PointerComponent.cs" />
+    <Compile Include="Components\World Map\NodeState.cs" />
+    <Compile Include="Components\World Map\WorldMapComponent.cs" />
+    <Compile Include="Components\World Map\NodeComponent.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EntityManager.cs" />
     <Compile Include="Input\InputAction.cs" />
     <Compile Include="Input\InputState.cs" />
     <Compile Include="Input\MouseButton.cs" />
+    <Compile Include="Stat Attribute Classes\Armor.cs" />
+    <Compile Include="Stat Attribute Classes\Consumable.cs" />
+    <Compile Include="Stat Attribute Classes\Item.cs" />
+    <Compile Include="Stat Attribute Classes\Mount.cs" />
+    <Compile Include="Stat Attribute Classes\Role.cs" />
+    <Compile Include="Stat Attribute Classes\Scroll.cs" />
+    <Compile Include="Stat Attribute Classes\Weapon.cs" />
+    <Compile Include="Stat Attribute Classes\UnitData.cs" />
+    <Compile Include="State.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
@@ -74,6 +89,7 @@
     <Reference Include="Microsoft.Xna.Framework.Xact, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="System" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

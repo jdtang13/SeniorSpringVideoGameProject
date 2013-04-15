@@ -15,12 +15,11 @@ namespace EntityEngine.Components.Component_Parents
         public bool _enabled = true;
         public int _updateOrder = 0;
 
-        public readonly Entity _parent;
+        public Entity _parent;
 
-        public UpdateableComponent(Entity myParent, int myUpdateOrder)
+        public UpdateableComponent()
         {
-            _parent = myParent;
-            _updateOrder = myUpdateOrder;
+            
         }
         public UpdateableComponent(Entity myParent)
         {
@@ -52,6 +51,18 @@ namespace EntityEngine.Components.Component_Parents
             get
             {
                 return _updateOrder;
+            }
+        }
+
+        public Entity Parent
+        {
+            get
+            {
+                return _parent;
+            }
+            set
+            {
+                _parent = value;
             }
         }
 

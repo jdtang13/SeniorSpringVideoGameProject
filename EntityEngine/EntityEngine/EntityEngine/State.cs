@@ -2,14 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using EntityEngine;
+using EntityEngine.Components.TileComponents;
+using EntityEngine.Components.Sprites;
+using EntityEngine.Input;
 
-namespace SeniorProjectGame
+namespace EntityEngine
 {
     public class State
     {
         public enum ScreenState
         {
-            BATTLING, SKIRMISH, BATTLE_FORECAST, WORLD_MAP, SHOP, SETTINGS_MENU, MAIN_PAGE, DIALOGUE, BATTLE_RESOLUTION
+            LOADING_FILES, MAIN_PAGE, SETTINGS_MENU, WORLD_MAP, MAP_EDITOR, SHOP, DIALOGUE,
+            SKIRMISH, BATTLING, BATTLE_FORECAST, BATTLE_RESOLUTION,
             //SELECTING_UNIT_ON_SKIRMISH_MAP, SELECTING_OPTIONS_FOR_SKIRMISH_UNITS
         }
 
@@ -24,10 +29,32 @@ namespace SeniorProjectGame
 
         }
 
+        public static void Initialize()
+        {
+            State.screenState = State.ScreenState.WORLD_MAP;
+            State.selectionState = State.SelectionState.NoSelection;
+            State.dialoguePosition = 0;
+            State.dialogueChoicePosition = 0;
+            State.displayedDialogueMessage = "";
+
+            State.dialogueLinePosition = 0;
+            State.dialogueWordPosition = 0;
+            State.dialogueCharacterPosition = 0;
+
+            State.firstDialogueWord = "";
+            State.lastTimeDialogueChecked = 0;
+            State.messageBegin = false;
+            State.currentDialogueMessage = new List<string>();
+
+            State.originalHexClicked = null;
+        }
+
         public static int menuPosition = 0;
 
-        public static ScreenState screenState;// default = ScreenState.MAIN_PAGE;
+        public static ScreenState screenState;
         public static SelectionState selectionState;
+
+        public static HexComponent originalHexClicked; //  used for selecting units
 
         //public Node currentNode;
         public static int dialoguePosition = 0;
@@ -45,4 +72,6 @@ namespace SeniorProjectGame
 
         //public static List<Unit> units;
     }
+
+
 }

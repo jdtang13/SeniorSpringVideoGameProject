@@ -10,27 +10,16 @@ using EntityEngine.Components.Sprites;
 
 namespace EntityEngine.Components.TileComponents
 {
-    public class HexComponent : UpdateableComponent
+    public class HexComponent : Component
     {
         Vector2 coordPosition;
         public Vector2 getCoordPosition()
         {
             return coordPosition;
         }
-        public Boolean checkCoords(Vector2 myVector)
-        {
-            if (myVector == coordPosition)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
 
         public HexComponent n, ne, se, s, sw, nw;
-        public HexComponent getAdjacent(Orient myOar)
+        public HexComponent GetAdjacent(Orient myOar)
         {
             switch (myOar)
             {
@@ -63,68 +52,91 @@ namespace EntityEngine.Components.TileComponents
         {
             unit = myUnit;   
         }
-        public Boolean HasUnit()
+        public void RemoveUnit()
+        {
+            unit = null;
+        }
+        public bool HasUnit()
         {
             return (unit!=null);
         }
 
-        //List of counters on top of the hex.
-        List<TerrainComponent> terrainList = new List<TerrainComponent>();
-        public void AddTerrain(TerrainComponent myPlaceable)
+        Visibility visibility;
+        public Visibility GetVisibility()
         {
-            terrainList.Add(myPlaceable);
+            return visibility;
         }
-        public void RemoveTerrain(TerrainComponent myPlaceable)
+        public void SetVisibility(Visibility myVis)
         {
-            terrainList.Remove(myPlaceable);
-        }
-        public List<TerrainComponent> GetTerrain()
-        {
-            return terrainList;
-        }
+            visibility = myVis;
 
-        public HexComponent(Entity myParent, Vector2 myCoordPosition) : base(myParent)
-        {
-            this.name = "HexComponent";
-            coordPosition = myCoordPosition;
-        }
+            Entity hexEntity = _parent;
+            SpriteComponent sprite = hexEntity.GetDrawable("SpriteComponent") as SpriteComponent;
 
-        public void setAdjacent(HexComponent N, HexComponent NE, HexComponent SE, HexComponent S, HexComponent SW, HexComponent NW)
-        {
-            n = N; ne = NE; se = SE; s = S; sw = SW; nw = NW;
-        }
+            if (HasUnit())
+            {
+                unit.SetVisbility(visibility);
+            }
 
-        public void SetFog(Visibility myVis)
-        {
+            for (int p = 0; p < terrainList.Count; p++)
+            {
+                terrainList[p].SetVisbility(visibility);
+            }
+
             if (myVis == Visibility.Visible)
             {
-                HexComponent hexComp = this;
-                Entity hexEntity = hexComp._parent;
-                SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
-
                 sprite.setColor(Color.White);
                 sprite._visible = true;
             }
 
             if (myVis == Visibility.Explored)
             {
-                HexComponent hexComp = this;
-                Entity hexEntity = hexComp._parent;
-                SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
-
-                sprite.setColor(Color.Gray);
+                sprite.setColor(Color.SlateGray);
                 sprite._visible = true;
             }
 
             if (myVis == Visibility.Unexplored)
             {
-                HexComponent hexComp = this;
-                Entity hexEntity = hexComp._parent;
-                SpriteComponent sprite = hexEntity.getDrawable("SpriteComponent") as SpriteComponent;
-
                 sprite.setColor(Color.White);
                 sprite._visible = false;
             }
+        }
+
+        List<TerrainComponent> terrainList = new List<TerrainComponent>();
+        public void AddTerrain(TerrainComponent myTerrain)
+        {
+            terrainList.Add(myTerrain);
+        }
+        public void RemoveTerrain(TerrainComponent myTerrain)
+        {
+            terrainList.Remove(myTerrain);
+        }
+        public List<TerrainComponent> GetTerrain()
+        {
+            return terrainList;
+        }
+
+        public Boolean ContainsImpassable()
+        {
+            for (int p = 0; p < terrainList.Count ; p++)
+            {
+                if (terrainList[p].GetImpassable() == true)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public HexComponent(Vector2 myCoordPosition) 
+        {
+            this.name = "HexComponent";
+            coordPosition = myCoordPosition;
+        }
+
+        public void SetAdjacent(HexComponent N, HexComponent NE, HexComponent SE, HexComponent S, HexComponent SW, HexComponent NW)
+        {
+            n = N; ne = NE; se = SE; s = S; sw = SW; nw = NW;
         }
     }
 }

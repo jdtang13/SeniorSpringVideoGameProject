@@ -5,10 +5,12 @@ using System.Text;
 using EntityEngine.Components.Component_Parents;
 using Microsoft.Xna.Framework;
 using EntityEngine.Components.TileComponents;
+using EntityEngine.Components.Sprites;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngine.Components.TileComponents
 {
-    public class TerrainComponent : UpdateableComponent
+    public class TerrainComponent : Component
     {
         HexComponent hex;
         public HexComponent GetHex()
@@ -17,43 +19,100 @@ namespace EntityEngine.Components.TileComponents
         }
         public void SetHex(HexComponent myHex)
         {
-            hex.RemoveTerrain(this);
-            myHex.AddTerrain(this);
             hex = myHex;
-            
+            hex.AddTerrain(this);
+            SetVisbility(hex.GetVisibility());
+        }
+
+        Visibility visibility = Visibility.Unexplored;
+        public void SetVisbility(Visibility myVis)
+        {
+            visibility = myVis;
+
+            SpriteComponent sprite = _parent.GetDrawable("SpriteComponent") as SpriteComponent;
+
+            if (visibility == Visibility.Visible)
+            {
+                sprite.setColor(Color.White);
+                sprite._visible = true;
+            }
+
+            if (visibility == Visibility.Explored)
+            {
+                sprite.setColor(Color.SlateGray);
+                sprite._visible = true;
+            }
+
+            if (visibility == Visibility.Unexplored)
+            {
+                sprite._visible = false;
+            }
         }
 
         Boolean impassable;
-        public Boolean getImpassable()
+        public Boolean GetImpassable()
         {
             return impassable;
         }
 
         float movementRestriction;
-        public float getMovementRestriction()
+        public float GetMovementRestriction()
         {
             return movementRestriction;
         }
-        public void setMovementRestriction(float myMoveRes)
+        public void SetMovementRestriction(float myMoveRes)
         {
             movementRestriction = myMoveRes;
         }
 
-        public TerrainComponent(Entity myParent, HexComponent myHex, bool myImpassable)
-            : base(myParent)
+        Texture2D texture;
+        public Texture2D GetTexture()
+        {
+            return texture;
+        }
+
+        public TerrainComponent(Texture2D myTex, bool myImpassable)
         {
             this.name = "TerrainComponent";
             impassable = myImpassable;
+            texture = myTex;
         }
 
-        public override void Update(GameTime gameTime)
+        //Only use this constuctor when you are making a terrain component from another
+        public TerrainComponent(HexComponent myHex, Texture2D myTex, bool myImpassable)
         {
-
-            base.Update(gameTime);
+            hex = myHex;
+            impassable = myImpassable;
+            texture = myTex;
         }
 
-        
+        public override void Initialize()
+        {
+            UpdateVisibility();
+            base.Initialize();
+        }
 
+        public void UpdateVisibility()
+        {
+            visibility = hex.GetVisibility();
+            SpriteComponent sprite = _parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
+            if (visibility == Visibility.Visible)
+            {
+                sprite.setColor(Color.White);
+                sprite._visible = true;
+            }
+
+            else if (visibility == Visibility.Explored)
+            {
+                sprite.setColor(Color.SlateGray);
+                sprite._visible = true;
+            }
+
+            else if (visibility == Visibility.Unexplored)
+            {
+                sprite._visible = false;
+            }
+        }
     }
 }

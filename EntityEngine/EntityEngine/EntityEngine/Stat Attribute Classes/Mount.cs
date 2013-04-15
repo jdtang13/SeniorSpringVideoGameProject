@@ -3,22 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SeniorProjectGame
+namespace EntityEngine
 {
-    class Scroll
+    class Mount
     {
         public Dictionary<string, int> attributes;
 
-        public Scroll(int manamod, int magmod, int agimod, int resmod, int spdmod)
+        public Mount (int hlthmod, int drb, int movemod, int resmod, int agimod, int defmod, int spdmod)
         {
             attributes = new Dictionary<string, int>();
-            
-            attributes["mana modifier"] = manamod;
-            attributes["magic modifier"] = magmod;
+
+            attributes["health modifier"] = hlthmod;
+            attributes["durability"] = drb;
+            attributes["move modifier"] = movemod;
             attributes["agility modifier"] = agimod;
+            attributes["defense modifier"] = defmod;
             attributes["resistance modifier"] = resmod;
             attributes["speed modifier"] = spdmod;
-
         }
     }
 }
