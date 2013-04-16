@@ -31,7 +31,6 @@ namespace EntityEngine
         public static void ClearEntities()
         {
             masterList.Clear();
-            //currentList.Clear();
         }
 
         //Max of twenty different layers that an entity can exist on. Obviously you can change this number.
@@ -53,40 +52,19 @@ namespace EntityEngine
         public static void FollowEntity(Entity myEntity)
         {
             CameraComponent followedCamera = myEntity.GetComponent("CameraComponent") as CameraComponent;
-            followedCamera.SetCameraState(CameraComponent.CameraState.followed);
+
             for (int p = 0; p < masterList.Count; p++)
             {
-                if(masterList[p].GetComponent("CameraComponent") as CameraComponent != null)
+                CameraComponent followingCamera = masterList[p].GetComponent("CameraComponent") as CameraComponent;
+                if(followedCamera != null)
                 {
-
+                    if (followingCamera != followedCamera)
+                    {
+                        followingCamera.SetFollowingOffset(followedCamera.GetFollowedOffset());
+                    }
                 }
             }
-
-            ////Grab the followed entity's camera so we can edit it later, we assume it has a camera object
-            //CameraComponent followedCamera = myEntity.GetComponent("CameraComponent") as CameraComponent;
-
-            ////Cycle through every drawable component the followed entity has
-            //for (int o = 0; o < myEntity.drawableComponentList.Count; o++)
-            //{
-            //    DrawableComponent draw = myEntity.drawableComponentList[o] as DrawableComponent;
-
-            //    //Check if its the draw component is the main drawable component
-            //    if (draw.isMainSprite)
-            //    {
-            //        //Set the camerea to followed cameras offset using the screenPosition of the main sprite
-            //        followedCamera.SetFollowed(draw.position);
-            //    }
-            //}
-            //for (int p = 0; p < masterList.Count; p++)
-            //{
-            //    //Grab every entities cam object,if it has one, and apply its transformation to all
-            //    CameraComponent cam = masterList[p].GetComponent("CameraComponent") as CameraComponent;
-            //    if (cam != null)
-            //    {
-            //        //Set the camera to following by the followed entity's offset
-            //        cam.SetFollowingCamera(followedCamera.getOffset());
-            //    }
-            //}
+            followedCamera.SetCameraState(CameraComponent.CameraState.followed);
         }
 
 

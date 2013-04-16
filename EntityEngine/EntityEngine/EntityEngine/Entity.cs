@@ -36,7 +36,8 @@ namespace EntityEngine
             }
             else
             {
-                throw new ArgumentOutOfRangeException(myComponentName);
+                return null;
+                //throw new ArgumentOutOfRangeException(myComponentName);
             }
         }
         public DrawableComponent GetDrawable(string myComponentName)

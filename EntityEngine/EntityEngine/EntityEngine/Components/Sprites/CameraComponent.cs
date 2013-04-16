@@ -12,20 +12,30 @@ namespace EntityEngine.Components.Sprites
         //You must add this component to your entity if you want to use sprites. This component allows you to follow a specific entity
         //with the camera. Very useful indeed.
 
-        Vector2 offset, followedPosition,position;
-        public Vector2 getOffset()
+        Vector2 followingOffset, followedOffset, centerScreen, position;
+
+        public Vector2 GetFollowedOffset()
         {
-            return offset;
+            return followedOffset;
+        }
+        public void SetFollowingOffset(Vector2 myVector)
+        {
+            followingOffset = myVector;
+            cameraState = CameraState.following;
         }
 
         public void PositionHasChanged(object sender, PositionArgs data)
         {
-            setPosition(data.GetPosition());
-            offset = position - followedPosition;
+            position = data.GetPosition();
+            followedOffset = centerScreen - position;
+            
+            //Send pulse to tell it refresh
+            if (cameraState == CameraState.followed)
+            {
+                EntityManager.FollowEntity(this._parent);
+            }
         }
 
-        //Followed means that the camera is following this entity, following means that this entity is following another, and if
-        //it's no camera the sprites are drawn to their positions without alteration
         public enum CameraState
         {
             followed, following, noCamera
@@ -37,17 +47,12 @@ namespace EntityEngine.Components.Sprites
             cameraState = myState;
         }
 
-        // TODO: added by jon. ask oliver to debug.
-        public void setPosition(Vector2 pos)
-        {
-            position = pos;
-        }
 
         //Pass in the position of the sprite for teh vector
         public CameraComponent(Vector2 myVector)
         {
             this.name = "CameraComponent";
-            followedPosition = new Vector2(640, 340);
+            centerScreen = new Vector2(640, 340);
             
             position = myVector;
         }
@@ -57,11 +62,11 @@ namespace EntityEngine.Components.Sprites
         {
             if (cameraState == CameraState.following)
             {
-                return myVector + offset;
+                return myVector + followedOffset;
             }
             else if (cameraState == CameraState.followed)
             {
-                return followedPosition;
+                return centerScreen;
             }
             else
             {

@@ -119,9 +119,9 @@ namespace SeniorProjectGame
         void CreateMenus()
         {
             attackOrderEntity = new Entity(6, State.ScreenState.SKIRMISH);
-            attackOrderEntity.AddComponent(new SpriteComponent(true,Vector2.Zero,attackOrderTexture));
+            attackOrderEntity.AddComponent(new SpriteComponent(true, Vector2.Zero, attackOrderTexture));
             attackOrderEntity.AddComponent(new CameraComponent(Vector2.Zero));
-            attackOrderEntity.AddComponent(new ClickableComponent(Vector2.Zero,attackOrderTexture.Width,attackOrderTexture.Height));
+            attackOrderEntity.AddComponent(new ClickableComponent(Vector2.Zero, attackOrderTexture.Width, attackOrderTexture.Height));
             orderButtonEntityList.Add(attackOrderEntity);
             EntityManager.AddEntity(attackOrderEntity);
 
@@ -145,7 +145,7 @@ namespace SeniorProjectGame
             spellOrderEntity.AddComponent(new ClickableComponent(Vector2.Zero, spellOrderTexture.Width, spellOrderTexture.Height));
             orderButtonEntityList.Add(spellOrderEntity);
             EntityManager.AddEntity(spellOrderEntity);
-            
+
         }
 
         void InitializeState()
@@ -523,16 +523,25 @@ namespace SeniorProjectGame
                         HexComponent hexComp = boardComponent.GetMouseHex();
                         Entity hexEntity = hexComp._parent;
 
-                        if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection)
-                        {
-                            UnitComponent unit = hexComp.GetUnit();
-                            State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
-                            State.originalHexClicked = hexComp;
-                            State.unitMenuState = State.MenuState.NONE;
+                        EntityManager.FollowEntity(hexEntity);
 
-                            //Show the buttons
+                        //if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection)
+                        //{
+                        //    UnitComponent unit = hexComp.GetUnit();
+                        //    State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
+                        //    State.originalHexClicked = hexComp;
+                        //    State.unitMenuState = State.MenuState.NONE;
 
-                        }
+                        //    //Show the buttons
+                        //    for (int y = 0; y < orderButtonEntityList.Count; y++)
+                        //    {
+                        //        Entity parent = orderButtonEntityList[y];
+                        //        SpriteComponent sprite = parent.GetDrawable("SpriteComponent") as SpriteComponent;
+
+                        //        sprite._visible = true;
+                        //    }
+
+                        //}
 
                         //else if (!hexComp.HasUnit() && State.selectionState == State.SelectionState.SelectingUnit)
                         //{
@@ -543,13 +552,13 @@ namespace SeniorProjectGame
                         //        State.originalHexClicked = null;
                         //    }
                         //}
-                        
-                        else if (State.selectionState ==  State.SelectionState.SelectingOptionsForSkirmishUnits )
-                        {
-                            //Check to see if you are clicking on an order option
+
+                        //else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits)
+                        //{
+                        //    //Check to see if you are clicking on an order option
 
 
-                        }
+                        //}
                         //else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits)
                         //{
                         //    MoveUnit(State.originalHexClicked, boardComponent.GetMouseHex());
