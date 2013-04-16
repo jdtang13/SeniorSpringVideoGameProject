@@ -25,6 +25,7 @@ namespace EntityEngine.Components.Sprites
         public void setText(String myText)
         {
             text = myText;
+            offset = font.MeasureString(text) / 2;
         }
 
         public TextSpriteComponent( bool myMain,string myText,Color myColor,  Vector2 myPosition, SpriteFont myFont)
@@ -42,12 +43,6 @@ namespace EntityEngine.Components.Sprites
             offset = font.MeasureString(text)/2;
             this._updateOrder = 1;
             base.Initialize();
-        }
-
-        public override void Update(GameTime myTime)
-        {
-            offset = font.MeasureString(text) / 2;
-            base.Update(myTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch)

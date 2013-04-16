@@ -13,15 +13,11 @@ namespace EntityEngine.Components.Sprites
     {
         //Use this component if you want to add a sprite that uses the whole texture when its drawing
 
-        public Vector2 topLeftCornerScreenPosition, centerScreenPosition;
+        public Vector2 centerScreenPosition;
 
         public Vector2 getCenterPosition()
         {
             return centerScreenPosition;
-        }
-        public Vector2 getTopLeftPosition()
-        {
-            return topLeftCornerScreenPosition;
         }
 
         float rotation = 0f;
@@ -36,11 +32,6 @@ namespace EntityEngine.Components.Sprites
         public void setColor(Color myColor)
         {
             color = myColor;
-        }
-
-        public void setPosition(Vector2 pos)
-        {
-            position = pos;
         }
 
         //Use this constructor if you want to pass in a rotation of the sprite so that it moves aroudn
@@ -73,7 +64,6 @@ namespace EntityEngine.Components.Sprites
             spriteWidth = this.texture.Width;
             this.offset = new Vector2(spriteWidth / 2, spriteHeight / 2);
             
-            topLeftCornerScreenPosition = this.position - offset;
             centerScreenPosition = this.position;
 
             base.Initialize();
@@ -86,7 +76,6 @@ namespace EntityEngine.Components.Sprites
             screenPosition = cam.GetDrawPosition(position) - offset;
 
             centerScreenPosition = position;
-            topLeftCornerScreenPosition = screenPosition;
 
             spriteBatch.Draw(texture, screenPosition , null, color, rotation, Vector2.Zero, 1.0f, SpriteEffects.None, 0f);
 

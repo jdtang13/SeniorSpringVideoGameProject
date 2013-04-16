@@ -98,7 +98,7 @@ namespace EntityEngine.Components.TileComponents
         public Vector2 screenCoordinatesOfHex(int x, int y)
         {
             SpriteComponent sprite = GetHex(new Vector2(x,y))._parent.GetDrawable("SpriteComponent") as SpriteComponent;
-            return sprite.getTopLeftPosition();
+            return sprite.getCenterPosition();
 
             /*Vector2 screenPosition;
 

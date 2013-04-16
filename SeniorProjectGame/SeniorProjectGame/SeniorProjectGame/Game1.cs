@@ -617,7 +617,7 @@ namespace SeniorProjectGame
             ////sprite.setPosition(final.
 
             ((AnimatedSpriteComponent)unitEntity.GetDrawable("AnimatedSpriteComponent")).
-                setPosition(final._parent.GetDrawable("SpriteComponent").GetPosition());
+                SetPosition(final._parent.GetDrawable("SpriteComponent").GetPosition());
 
             unit.SetHex(final);
             final.SetUnit(unit);
