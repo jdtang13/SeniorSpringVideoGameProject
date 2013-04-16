@@ -25,22 +25,34 @@ namespace EntityEngine.Components.TileComponents
         }
 
         bool selected = false;
-        public bool getSelected()
+        public bool GetSelected()
         {
             return selected;
         }
-        public void setSelected(bool myTruth)
+        public void SetSelected(bool myTruth)
         {
             selected = myTruth;
-        }
+            
+            foreach(TerrainComponent terrain in hex.GetTerrain())
+            {
+                SpriteComponent sprite = terrain._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
+                if (myTruth)
+                {
+                    sprite.setColor(Color.Red);
+                }
+                if (!myTruth)
+                {
+                    sprite.setColor(Color.White);
+                } 
+            }    
+        }
 
         Orient orientation = Orient.s;
         public void changeOrientation(Orient myOar)
         {
             orientation = myOar;
         }
-
 
         //TODO: Somehow set this
         Visibility visibility;

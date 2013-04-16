@@ -49,6 +49,24 @@ namespace EntityEngine.Components.TileComponents
             }
         }
 
+        bool inQueue = false;
+        public void SetInQueue(bool myTruth)
+        {
+            inQueue = myTruth;
+
+            Entity hexEntity = _parent;
+            SpriteComponent sprite = hexEntity.GetDrawable("SpriteComponent") as SpriteComponent;
+
+            if (myTruth == true)
+            {
+                sprite.setColor(Color.Green);
+            }
+            if (myTruth == false)
+            {
+                sprite.setColor(Color.White);
+            }
+        }
+
         Boolean impassable;
         public Boolean GetImpassable()
         {

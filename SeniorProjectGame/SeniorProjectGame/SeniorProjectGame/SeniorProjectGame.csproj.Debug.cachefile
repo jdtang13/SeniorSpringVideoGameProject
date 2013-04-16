@@ -1,9 +1,9 @@
 Content\Graphics\Fonts\font.xnb
 Content\Graphics\Fonts\Debug.xnb
+Content\Graphics\UnitTextures\unitSample.xnb
 Content\Graphics\TileTextures\Bases\hexDirt.xnb
 Content\Graphics\TileTextures\Bases\hexGrass.xnb
 Content\Graphics\TileTextures\Bases\hexBase.xnb
-Content\Graphics\UnitTextures\unitSample.xnb
 Content\Graphics\Backgrounds\island.xnb
 Content\Graphics\Other\node.xnb
 Content\Graphics\Other\pointer.xnb

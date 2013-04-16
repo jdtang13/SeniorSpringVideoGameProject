@@ -102,6 +102,33 @@ namespace EntityEngine.Components.TileComponents
             }
         }
 
+        bool inQueue;
+        public bool GetInQueue()
+        {
+            return inQueue;
+        }
+        public void SetInQueue(bool myTruth)
+        {
+            inQueue = myTruth;
+
+            Entity hexEntity = _parent;
+            SpriteComponent sprite = hexEntity.GetDrawable("SpriteComponent") as SpriteComponent;
+
+            foreach (TerrainComponent terrain in terrainList)
+            {
+                terrain.SetInQueue(myTruth);
+            }
+
+            if (myTruth == true)
+            {
+                sprite.setColor(Color.Green);
+            }
+            if (myTruth == false)
+            {
+                sprite.setColor(Color.White);
+            }
+        }
+
         List<TerrainComponent> terrainList = new List<TerrainComponent>();
         public void AddTerrain(TerrainComponent myTerrain)
         {

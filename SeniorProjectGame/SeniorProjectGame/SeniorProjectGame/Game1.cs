@@ -67,17 +67,23 @@ namespace SeniorProjectGame
 
         SoundEffect selectSound;
 
+        List<HexComponent> pathQueue = new List<HexComponent>();
+        HexComponent ghostHex = null;
+
         SpriteFont font;
 
         InputAction singleLeftClick, singleRightClick, singleMiddleClick;
-        InputAction wClick, aClick, sClick, dClick, escapeClick;
+        InputAction wClick, aClick, sClick, dClick, enterClick, escapeClick;
 
         Entity worldMapEntity; WorldMapComponent worldMapComponent;
         Entity boardEntity; BoardComponent boardComponent;
 
         float framesPerSecond = 60;
         float numberOfFrames;
-        TimeSpan elapsedTime;
+        TimeSpan elapsedTimeForFps;
+        TimeSpan elapsedTimeForMove;
+
+        bool moving = false;
 
         #endregion
 
@@ -163,6 +169,7 @@ namespace SeniorProjectGame
         void InitializeInput()
         {
             escapeClick = new InputAction(new Keys[] { Keys.Escape }, true);
+            enterClick = new InputAction(new Keys[] { Keys.Enter }, true);
             singleLeftClick = new InputAction(MouseButton.left, true);
             singleRightClick = new InputAction(MouseButton.right, true);
             singleMiddleClick = new InputAction(MouseButton.middle, true);
@@ -180,9 +187,9 @@ namespace SeniorProjectGame
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
             Globals.font = font;
 
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Laboratory.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Laboratory.txt");
 
             hexBaseTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexBase");
             hexGrassTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexGrass");
@@ -339,10 +346,10 @@ namespace SeniorProjectGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            elapsedTime += gameTime.ElapsedGameTime;
-            if (elapsedTime > TimeSpan.FromSeconds(1))
+            elapsedTimeForFps += gameTime.ElapsedGameTime;
+            if (elapsedTimeForFps > TimeSpan.FromSeconds(1))
             {
-                elapsedTime -= TimeSpan.FromSeconds(1);
+                elapsedTimeForFps -= TimeSpan.FromSeconds(1);
                 framesPerSecond = numberOfFrames;
                 numberOfFrames = 0;
             }
@@ -384,8 +391,8 @@ namespace SeniorProjectGame
                                 boardEntity = ProcessHexMapBin(worldMapComponent.SelectCurrentNode());
                                 boardComponent = boardEntity.GetComponent("BoardComponent") as BoardComponent;
 
-                                boardComponent.CreateUnit(true, 2, new Vector2(0, 2), unitTexture, 50, 50);
-                                boardComponent.CreateUnit(true, 2, new Vector2(0, 5), unitTexture, 50, 50);
+                                boardComponent.CreateUnit(true, 5, new Vector2(0, 2), unitTexture, 50, 50);
+                                boardComponent.CreateUnit(true, 5, new Vector2(0, 5), unitTexture, 50, 50);
 
 
                                 State.screenState = State.ScreenState.SKIRMISH;
@@ -474,43 +481,122 @@ namespace SeniorProjectGame
 
                 #region Skirmish
                 case State.ScreenState.SKIRMISH:
-
-                    if (singleLeftClick.Evaluate())
+                    if (!moving)
                     {
-                        HexComponent hexComp = boardComponent.GetMouseHex();
-                        Entity hexEntity = hexComp._parent;
-
-                        //boardComponent.UpdateVisibilityAllies();
-
-                        if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection)
+                        if (singleLeftClick.Evaluate())
                         {
-                            UnitComponent unit = hexComp.GetUnit();
-                            State.selectionState = State.SelectionState.SelectingUnit;
+                            HexComponent hexComp = boardComponent.GetMouseHex();
 
-                            State.originalHexClicked = hexComp;
-                        }
-                        else if (!hexComp.HasUnit() && State.selectionState == State.SelectionState.SelectingUnit)
-                        {
-                            if (hexComp.ContainsImpassable() == false)
+                            Entity hexEntity = hexComp._parent;
+
+                            //boardComponent.UpdateVisibilityAllies();
+
+                            if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection)
                             {
-                                MoveUnit(State.originalHexClicked, boardComponent.GetMouseHex());
-                                State.selectionState = State.SelectionState.NoSelection;
-                                State.originalHexClicked = null;
-                            }
-                        }
-                        
-                        //else if (State.selectionState == State.SelectionState.SelectingUnit)
-                        //{
-                        //    State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
-                        //}
-                        //else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits)
-                        //{
-                        //    MoveUnit(State.originalHexClicked, boardComponent.GetMouseHex());
-                        //    State.selectionState = State.SelectionState.NoSelection;
-                        //    State.originalHexClicked = null;
+                                UnitComponent unit = hexComp.GetUnit();
+                                unit.SetSelected(true); //todo set false
+                                State.selectionState = State.SelectionState.SelectingUnit;
 
-                        //}
+                                State.originalHexClicked = hexComp;
+                                ghostHex = hexComp;
+                            }
+                            if (hexComp == State.originalHexClicked)
+                            {
+                                if (pathQueue.Count > 0)
+                                {
+                                    for (int i = 0; i < pathQueue.Count; i++)
+                                    {
+                                        pathQueue[i].SetInQueue(false);
+                                    }
+                                    pathQueue.Clear();
+                                    ghostHex = hexComp;
+                                }
+                                //else
+                                //{
+                                //    State.selectionState = State.SelectionState.NoSelection;
+                                //    State.originalHexClicked.GetUnit().SetSelected(false);
+                                //    State.originalHexClicked = null;
+                                //}                                
+                            }
+                            else if (!hexComp.HasUnit() && State.selectionState == State.SelectionState.SelectingUnit && hexComp.GetVisibility() != Visibility.Unexplored)
+                            {
+                                if (!hexComp.ContainsImpassable())
+                                {
+                                    if (!pathQueue.Contains(hexComp) && AreAdjacent(hexComp, ghostHex))
+                                    {
+                                        pathQueue.Add(hexComp);
+                                        hexComp.SetInQueue(true);
+                                        ghostHex = hexComp;
+                                    }
+                                    else if (pathQueue.Contains(hexComp))
+                                    {
+                                        int originalpathQueueCount = pathQueue.Count;
+                                        while (true)
+                                        {
+                                            if (pathQueue[pathQueue.Count - 1] != hexComp)
+                                            {
+                                                pathQueue[pathQueue.Count - 1].SetInQueue(false);
+                                                pathQueue.Remove(pathQueue[pathQueue.Count - 1]);
+                                            }
+                                            else
+                                            {
+                                                ghostHex = hexComp;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            //else if (State.selectionState == State.SelectionState.SelectingUnit)
+                            //{
+                            //    State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
+                            //}
+                            //else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits)
+                            //{
+                            //    MoveUnit(State.originalHexClicked, boardComponent.GetMouseHex());
+                            //    State.selectionState = State.SelectionState.NoSelection;
+                            //    State.originalHexClicked = null;
+
+                            //}
+                        }
                     }
+                    if (moving)
+                    {
+                        elapsedTimeForMove += gameTime.ElapsedGameTime;
+                      
+                        if (elapsedTimeForMove > TimeSpan.FromMilliseconds(500))
+                        {
+                            elapsedTimeForMove = TimeSpan.FromMilliseconds(0);
+
+                            MoveUnit(State.originalHexClicked, pathQueue[0]);
+                            State.originalHexClicked = pathQueue[0];
+                            pathQueue[0].SetInQueue(false);
+
+                            pathQueue.Remove(pathQueue[0]);
+                            if (pathQueue.Count == 0)
+                            {
+                                State.selectionState = State.SelectionState.NoSelection;
+                                State.originalHexClicked.GetUnit().SetSelected(false);
+                                State.originalHexClicked = null;
+                                moving = false;
+                            }                            
+                        }
+                    }
+                    if (enterClick.Evaluate())
+                    {
+                        if (pathQueue.Count != 0)
+                        {
+                            moving = true;
+                        }
+                        else
+                        {
+                            State.selectionState = State.SelectionState.NoSelection;
+                            State.originalHexClicked.GetUnit().SetSelected(false);
+                            State.originalHexClicked = null;
+                        }
+                    }
+
                     else if (singleRightClick.Evaluate())
                     {
 
@@ -577,8 +663,19 @@ namespace SeniorProjectGame
 
             boardComponent.UpdateVisibilityAllies();
 
-
             original.RemoveUnit(); //todo: removeunit()
+        }
+
+        public bool AreAdjacent(HexComponent one, HexComponent two)
+        {
+            if (boardComponent.GetAdjacentList(one).Contains(two))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         #endregion
@@ -590,13 +687,11 @@ namespace SeniorProjectGame
             GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
 
-
             EntityManager.Draw(spriteBatch);
 
             numberOfFrames++;
             string fps = string.Format("fps: {0}", framesPerSecond);
             spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);
-
 
             spriteBatch.End();
             base.Draw(gameTime);
