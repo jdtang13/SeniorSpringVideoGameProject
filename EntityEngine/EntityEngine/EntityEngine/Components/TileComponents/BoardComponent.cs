@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using EntityEngine.Components.Sprites;
 using Microsoft.Xna.Framework.Graphics;
 using EntityEngine.Input;
+using EntityEngine.Components.Component_Parents;
 
 namespace EntityEngine.Components.TileComponents
 {
@@ -210,8 +211,14 @@ namespace EntityEngine.Components.TileComponents
                 Entity unitEntity = new Entity(5, State.ScreenState.SKIRMISH);
 
                 SpriteComponent hexSprite = GetHex(myCoordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
-                unitEntity.AddComponent(new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), myTexture, 75f, mySpriteFrameWidth, mySpriteFrameHeight));
-                unitEntity.AddComponent(new CameraComponent( hexSprite.getCenterPosition()));
+
+                AnimatedSpriteComponent unitSprite = new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), myTexture, 75f, mySpriteFrameWidth, mySpriteFrameHeight);
+                CameraComponent camera = new CameraComponent(hexSprite.getCenterPosition());
+                unitSprite.AddDependantOfPosition(new DrawableComponent.PositionHandler(camera.PositionHasChanged));
+
+                unitEntity.AddComponent(unitSprite);
+                unitEntity.AddComponent(camera);
+
 
                 // TODO: unitData is null right now.
                 UnitComponent unitComp = new UnitComponent(myIsAlly, mySightRadius, GetHex(myCoordinate), true, null);

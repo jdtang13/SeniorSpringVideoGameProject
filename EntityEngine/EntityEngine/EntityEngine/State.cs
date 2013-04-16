@@ -23,10 +23,13 @@ namespace EntityEngine
             SelectingUnit, SelectingOptionsForSkirmishUnits, NoSelection
         }
 
-        //  use this for selecting battles and stuff
+        //Keeps track of which menu is displayed, if at all, for the units order
+        //Things like "no order" dont have a menu so they dont get a state
+
+        public static MenuState unitMenuState = MenuState.NONE;
         public enum MenuState
         {
-
+            MOVING, ATTACK,SPELLS,ITEMS,NONE 
         }
 
         public static void Initialize()

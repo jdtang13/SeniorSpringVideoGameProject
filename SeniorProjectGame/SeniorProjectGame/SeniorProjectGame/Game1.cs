@@ -75,6 +75,10 @@ namespace SeniorProjectGame
         Entity worldMapEntity; WorldMapComponent worldMapComponent;
         Entity boardEntity; BoardComponent boardComponent;
 
+        List<Entity> orderButtonEntityList = new List<Entity>();
+        Entity attackOrderEntity, moveOrderEntity, noOrderEntity, spellOrderEntity;
+        Texture2D attackOrderTexture, moveOrderTexture, noOrderTexture, spellOrderTexture;
+
         float framesPerSecond = 60;
         float numberOfFrames;
         TimeSpan elapsedTime;
@@ -107,7 +111,41 @@ namespace SeniorProjectGame
 
             InitializeState();
 
+            CreateMenus();
+
             base.Initialize();
+        }
+
+        void CreateMenus()
+        {
+            attackOrderEntity = new Entity(6, State.ScreenState.SKIRMISH);
+            attackOrderEntity.AddComponent(new SpriteComponent(true,Vector2.Zero,attackOrderTexture));
+            attackOrderEntity.AddComponent(new CameraComponent(Vector2.Zero));
+            attackOrderEntity.AddComponent(new ClickableComponent(Vector2.Zero,attackOrderTexture.Width,attackOrderTexture.Height));
+            orderButtonEntityList.Add(attackOrderEntity);
+            EntityManager.AddEntity(attackOrderEntity);
+
+            moveOrderEntity = new Entity(6, State.ScreenState.SKIRMISH);
+            moveOrderEntity.AddComponent(new SpriteComponent(true, Vector2.Zero, moveOrderTexture));
+            moveOrderEntity.AddComponent(new CameraComponent(Vector2.Zero));
+            moveOrderEntity.AddComponent(new ClickableComponent(Vector2.Zero, moveOrderTexture.Width, moveOrderTexture.Height));
+            orderButtonEntityList.Add(moveOrderEntity);
+            EntityManager.AddEntity(moveOrderEntity);
+
+            noOrderEntity = new Entity(6, State.ScreenState.SKIRMISH);
+            noOrderEntity.AddComponent(new SpriteComponent(true, Vector2.Zero, noOrderTexture));
+            noOrderEntity.AddComponent(new CameraComponent(Vector2.Zero));
+            noOrderEntity.AddComponent(new ClickableComponent(Vector2.Zero, noOrderTexture.Width, noOrderTexture.Height));
+            orderButtonEntityList.Add(noOrderEntity);
+            EntityManager.AddEntity(noOrderEntity);
+
+            spellOrderEntity = new Entity(6, State.ScreenState.SKIRMISH);
+            spellOrderEntity.AddComponent(new SpriteComponent(true, Vector2.Zero, spellOrderTexture));
+            spellOrderEntity.AddComponent(new CameraComponent(Vector2.Zero));
+            spellOrderEntity.AddComponent(new ClickableComponent(Vector2.Zero, spellOrderTexture.Width, spellOrderTexture.Height));
+            orderButtonEntityList.Add(spellOrderEntity);
+            EntityManager.AddEntity(spellOrderEntity);
+            
         }
 
         void InitializeState()
@@ -180,9 +218,9 @@ namespace SeniorProjectGame
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
             Globals.font = font;
 
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Laboratory.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Laboratory.txt");
 
             hexBaseTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexBase");
             hexGrassTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexGrass");
@@ -202,6 +240,11 @@ namespace SeniorProjectGame
             worldMapTexture = Content.Load<Texture2D>("Graphics\\Backgrounds\\island");
             pointerTexture = Content.Load<Texture2D>("Graphics\\Other\\pointer");
             nodeTexture = Content.Load<Texture2D>("Graphics\\Other\\node");
+
+            attackOrderTexture = Content.Load<Texture2D>("Graphics\\Menu\\selectionIcon");
+            moveOrderTexture = Content.Load<Texture2D>("Graphics\\Menu\\selectionIcon");
+            spellOrderTexture = Content.Load<Texture2D>("Graphics\\Menu\\selectionIcon");
+            noOrderTexture = Content.Load<Texture2D>("Graphics\\Menu\\selectionIcon");
         }
 
         void ConvertTxtToBin(string myFilePath)
@@ -480,29 +523,33 @@ namespace SeniorProjectGame
                         HexComponent hexComp = boardComponent.GetMouseHex();
                         Entity hexEntity = hexComp._parent;
 
-                        //boardComponent.UpdateVisibilityAllies();
-
                         if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection)
                         {
                             UnitComponent unit = hexComp.GetUnit();
-                            State.selectionState = State.SelectionState.SelectingUnit;
-
+                            State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
                             State.originalHexClicked = hexComp;
+                            State.unitMenuState = State.MenuState.NONE;
+
+                            //Show the buttons
+
                         }
-                        else if (!hexComp.HasUnit() && State.selectionState == State.SelectionState.SelectingUnit)
-                        {
-                            if (hexComp.ContainsImpassable() == false)
-                            {
-                                MoveUnit(State.originalHexClicked, boardComponent.GetMouseHex());
-                                State.selectionState = State.SelectionState.NoSelection;
-                                State.originalHexClicked = null;
-                            }
-                        }
-                        
-                        //else if (State.selectionState == State.SelectionState.SelectingUnit)
+
+                        //else if (!hexComp.HasUnit() && State.selectionState == State.SelectionState.SelectingUnit)
                         //{
-                        //    State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
+                        //    if (hexComp.ContainsImpassable() == false)
+                        //    {
+                        //        MoveUnit(State.originalHexClicked, boardComponent.GetMouseHex());
+                        //        State.selectionState = State.SelectionState.NoSelection;
+                        //        State.originalHexClicked = null;
+                        //    }
                         //}
+                        
+                        else if (State.selectionState ==  State.SelectionState.SelectingOptionsForSkirmishUnits )
+                        {
+                            //Check to see if you are clicking on an order option
+
+
+                        }
                         //else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits)
                         //{
                         //    MoveUnit(State.originalHexClicked, boardComponent.GetMouseHex());
@@ -570,7 +617,7 @@ namespace SeniorProjectGame
             ////sprite.setPosition(final.
 
             ((AnimatedSpriteComponent)unitEntity.GetDrawable("AnimatedSpriteComponent")).
-                setPosition(final._parent.GetDrawable("SpriteComponent").position);
+                setPosition(final._parent.GetDrawable("SpriteComponent").GetPosition());
 
             unit.SetHex(final);
             final.SetUnit(unit);

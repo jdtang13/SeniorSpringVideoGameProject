@@ -52,31 +52,41 @@ namespace EntityEngine
 
         public static void FollowEntity(Entity myEntity)
         {
-            //Grab the followed entity's camera so we can edit it later, we assume it has a camera object
             CameraComponent followedCamera = myEntity.GetComponent("CameraComponent") as CameraComponent;
-
-            //Cycle through every drawable component the followed entity has
-            for (int o = 0; o < myEntity.drawableComponentList.Count; o++)
-            {
-                DrawableComponent draw = myEntity.drawableComponentList[o] as DrawableComponent;
-
-                //Check if its the draw component is the main drawable component
-                if (draw.isMainSprite)
-                {
-                    //Set the camerea to followed cameras offset using the screenPosition of the main sprite
-                    followedCamera.setFollowed(draw.position);
-                }
-            }
+            followedCamera.SetCameraState(CameraComponent.CameraState.followed);
             for (int p = 0; p < masterList.Count; p++)
             {
-                //Grab every entities cam object,if it has one, and apply its transformation to all
-                CameraComponent cam = masterList[p].GetComponent("CameraComponent") as CameraComponent;
-                if (cam != null)
+                if(masterList[p].GetComponent("CameraComponent") as CameraComponent != null)
                 {
-                    //Set the camera to following by the followed entity's offset
-                    cam.setFollowingCamera(followedCamera.getOffset());
+
                 }
             }
+
+            ////Grab the followed entity's camera so we can edit it later, we assume it has a camera object
+            //CameraComponent followedCamera = myEntity.GetComponent("CameraComponent") as CameraComponent;
+
+            ////Cycle through every drawable component the followed entity has
+            //for (int o = 0; o < myEntity.drawableComponentList.Count; o++)
+            //{
+            //    DrawableComponent draw = myEntity.drawableComponentList[o] as DrawableComponent;
+
+            //    //Check if its the draw component is the main drawable component
+            //    if (draw.isMainSprite)
+            //    {
+            //        //Set the camerea to followed cameras offset using the screenPosition of the main sprite
+            //        followedCamera.SetFollowed(draw.position);
+            //    }
+            //}
+            //for (int p = 0; p < masterList.Count; p++)
+            //{
+            //    //Grab every entities cam object,if it has one, and apply its transformation to all
+            //    CameraComponent cam = masterList[p].GetComponent("CameraComponent") as CameraComponent;
+            //    if (cam != null)
+            //    {
+            //        //Set the camera to following by the followed entity's offset
+            //        cam.SetFollowingCamera(followedCamera.getOffset());
+            //    }
+            //}
         }
 
 

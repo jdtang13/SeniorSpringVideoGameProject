@@ -158,6 +158,11 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Graphics\Menu\selectionIcon.png">
+      <Name>selectionIcon</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Graphics\TileTextures\Bases\hexStonePath2.png">
       <Name>hexStonePath2</Name>
       <Importer>TextureImporter</Importer>

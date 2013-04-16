@@ -17,7 +17,7 @@ namespace EntityEngine.Components.Component_Parents
         public Entity _parent;
 
         public Texture2D texture;
-        public Vector2 offset, position, screenPosition;
+        internal Vector2 offset, position, screenPosition;
 
         public string _name = "";
         public bool _enabled = true;
@@ -26,6 +26,27 @@ namespace EntityEngine.Components.Component_Parents
         public int _updateOrder=0;
 
         public Boolean isMainSprite;
+
+
+        //Managing changing position
+        public delegate void PositionHandler(object sender, PositionArgs posA);
+        public event PositionHandler positionChange;
+
+        public void SetPosition(Vector2 myVector)
+        {
+            PositionArgs pa = new PositionArgs(myVector);
+
+            //Call the event
+            positionChange(this, pa); 
+        }
+        public Vector2 GetPosition()
+        {
+            return position;
+        }
+        public void AddDependantOfPosition(PositionHandler myHandler)
+        {
+            positionChange += myHandler;
+        }
 
         public DrawableComponent(bool myMain)
         {
