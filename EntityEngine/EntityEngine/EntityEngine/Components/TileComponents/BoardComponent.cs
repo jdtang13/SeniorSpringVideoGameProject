@@ -29,6 +29,8 @@ namespace EntityEngine.Components.TileComponents
 
         Vector2 mouseCurrentHex;
 
+        List<HexComponent> adjacentList = new List<HexComponent>();
+
         Entity[,] hexEntityGrid;
 
         //UnitComponent selectedUnit;
@@ -199,6 +201,20 @@ namespace EntityEngine.Components.TileComponents
 
                 hex.SetAdjacent(n, ne, se, s, sw, nw);
             }
+        }
+
+        public List<HexComponent> GetAdjacentList(HexComponent hex)
+        {
+            adjacentList = new List<HexComponent>();
+
+            adjacentList.Add(hex.n);
+            adjacentList.Add(hex.ne);
+            adjacentList.Add(hex.nw);
+            adjacentList.Add(hex.s);
+            adjacentList.Add(hex.sw);
+            adjacentList.Add(hex.se);
+
+            return adjacentList;
         }
 
         public void CreateUnit(bool myIsAlly, int mySightRadius, Vector2 myCoordinate, Texture2D myTexture, int mySpriteFrameWidth, int mySpriteFrameHeight)
