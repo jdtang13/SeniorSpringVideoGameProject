@@ -22,11 +22,6 @@ namespace EntityEngine
 
 
         public static List<Entity> masterList = new List<Entity>();
-        static Entity followedEntity;
-        public static Entity GetFollowedEntity()
-        {
-            return followedEntity;
-        }
 
         public static void AddEntity(Entity myEntity)
         {
@@ -37,7 +32,6 @@ namespace EntityEngine
             masterList.Clear();
         }
 
-        //Max of twenty different layers that an entity can exist on. Obviously you can change this number.
         static int LAYER_LIMIT = 20;
 
         public static void Update(GameTime myTime)
@@ -53,37 +47,17 @@ namespace EntityEngine
             }
         }
 
-        public static void FollowEntity(Entity myEntity)
+        public static void Draw(SpriteBatch myBatch,GraphicsDeviceManager myGraph)
         {
-            followedEntity = myEntity; 
-            CameraComponent followedCamera = myEntity.GetComponent("CameraComponent") as CameraComponent;
-            Vector2 followedOffset = followedCamera.GetOffset();
 
-            if (followedCamera != null)
-            {
-                for (int p = 0; p < masterList.Count; p++)
-                {
-                    CameraComponent followingCamera = masterList[p].GetComponent("CameraComponent") as CameraComponent;
-
-                    if (followingCamera != null)
-                    {
-                        followingCamera.SetOffset(followedOffset);
-                        followingCamera.SetCameraState(CameraComponent.CameraState.following);
-                    }
-                }
-                followedCamera.SetCameraState(CameraComponent.CameraState.followed);
-            }
-        }
-
-
-        public static void Draw(SpriteBatch myBatch)
-        {
             //Cycle through the layers of all the entities, 0 being the most background
-            for (int q = 0; q < LAYER_LIMIT; q++)
+            for (int layer = 0; layer < LAYER_LIMIT; layer++)
             {
+                myBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, null, null, null, null, Camera.GetTransformation(myGraph.GraphicsDevice));
+                
                 for (int p = 0; p < masterList.Count; p++)
                 {
-                    if (masterList[p].layer == q)
+                    if (masterList[p].layer == layer)
                     {
                         if (masterList[p].GetAssociatedState() == State.screenState)
                         {
@@ -91,6 +65,7 @@ namespace EntityEngine
                         }
                     }
                 }
+                myBatch.End();
             }
         }
     }

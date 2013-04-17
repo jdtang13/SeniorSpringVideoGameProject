@@ -71,13 +71,9 @@ namespace EntityEngine.Components.Sprites
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            CameraComponent cam = _parent.GetComponent("CameraComponent") as CameraComponent;
-
-            screenPosition = cam.GetDrawPosition(position - offset);
-
             centerScreenPosition = position;
 
-            spriteBatch.Draw(texture, screenPosition , null, color, rotation, Vector2.Zero, 1.0f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, position - offset , null, color, rotation, Vector2.Zero, 1.0f, SpriteEffects.None, 0f);
 
             
         }

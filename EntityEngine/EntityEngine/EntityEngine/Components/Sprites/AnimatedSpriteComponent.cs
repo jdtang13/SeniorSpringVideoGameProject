@@ -26,7 +26,7 @@ namespace EntityEngine.Components.Sprites
         {
             currentFrame.X = y;
         }
-        public int spriteWidth, spriteHeight;
+        public int frameWidth, frameHeight;
 
         float timer = 0;
         float interval;
@@ -54,32 +54,32 @@ namespace EntityEngine.Components.Sprites
             this.position = myPosition;
 
             this.texture = myTex;
-            spriteWidth = mySpriteWidth;
-            spriteHeight = mySpriteHeight;
+            frameWidth = mySpriteWidth;
+            frameHeight = mySpriteHeight;
 
-            numberFrames = this.texture.Width / spriteWidth -1;
+            numberFrames = this.texture.Width / frameWidth -1;
             interval = myInterval;
             animating = true;
         }
         public AnimatedSpriteComponent(bool myMain, Vector2 myPosition, Texture2D myTex,
-                float myInterval, int mySpriteWidth, int mySpriteHeight, int myXOffset, int myYOffset)
+                float myInterval, int myFrameWidth, int myFrameHeight, int myXOffset, int myYOffset)
             : base( myMain)
         {
             this.name = "AnimatedSpriteComponent";
             this.position = myPosition;
 
             this.texture = myTex;
-            spriteWidth = mySpriteWidth;
-            spriteHeight = mySpriteHeight;
+            frameWidth = myFrameWidth;
+            frameHeight = myFrameHeight;
 
-            numberFrames = this.texture.Width / spriteWidth -1;
+            numberFrames = this.texture.Width / frameWidth -1;
             interval = myInterval;
             animating = true;
         }
 
         public override void Initialize()
         {
-            this.offset = new Vector2(spriteWidth / 2, spriteHeight / 2);
+            this.offset = new Vector2(frameWidth / 2, frameHeight / 2);
             this._updateOrder = 1;
             base.Initialize();
         }
@@ -103,18 +103,13 @@ namespace EntityEngine.Components.Sprites
                     }
                 }
             }
-
             base.Update(myTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            CameraComponent cam = _parent.GetComponent("CameraComponent") as CameraComponent;
-
-            screenPosition = cam.GetDrawPosition(position) - offset;
-
-            spriteBatch.Draw(texture, screenPosition,
-                new Rectangle(spriteWidth * (int)currentFrame.X, spriteHeight * (int)currentFrame.Y, spriteWidth, spriteHeight), color);
+            spriteBatch.Draw(texture, position - offset,
+                new Rectangle(frameWidth * (int)currentFrame.X, frameHeight * (int)currentFrame.Y, frameWidth, frameHeight), color);
         }
     }
 }

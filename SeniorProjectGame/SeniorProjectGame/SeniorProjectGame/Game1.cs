@@ -119,33 +119,33 @@ namespace SeniorProjectGame
 
         void CreateMenus()
         {
-            attackOrderEntity = new Entity(6, State.ScreenState.SKIRMISH);
-            attackOrderEntity.AddComponent(new SpriteComponent(true, Vector2.Zero, attackOrderTexture));
-            attackOrderEntity.AddComponent(new CameraComponent(Vector2.Zero));
-            attackOrderEntity.AddComponent(new ClickableComponent(Vector2.Zero, attackOrderTexture.Width, attackOrderTexture.Height));
-            orderButtonEntityList.Add(attackOrderEntity);
-            EntityManager.AddEntity(attackOrderEntity);
+            //attackOrderEntity = new Entity(6, State.ScreenState.SKIRMISH);
+            //attackOrderEntity.AddComponent(new SpriteComponent(true, Vector2.Zero, attackOrderTexture));
+            //attackOrderEntity.AddComponent(new CameraComponent(Vector2.Zero));
+            //attackOrderEntity.AddComponent(new ClickableComponent(Vector2.Zero, attackOrderTexture.Width, attackOrderTexture.Height));
+            //orderButtonEntityList.Add(attackOrderEntity);
+            //EntityManager.AddEntity(attackOrderEntity);
 
-            moveOrderEntity = new Entity(6, State.ScreenState.SKIRMISH);
-            moveOrderEntity.AddComponent(new SpriteComponent(true, Vector2.Zero, moveOrderTexture));
-            moveOrderEntity.AddComponent(new CameraComponent(Vector2.Zero));
-            moveOrderEntity.AddComponent(new ClickableComponent(Vector2.Zero, moveOrderTexture.Width, moveOrderTexture.Height));
-            orderButtonEntityList.Add(moveOrderEntity);
-            EntityManager.AddEntity(moveOrderEntity);
+            //moveOrderEntity = new Entity(6, State.ScreenState.SKIRMISH);
+            //moveOrderEntity.AddComponent(new SpriteComponent(true, Vector2.Zero, moveOrderTexture));
+            //moveOrderEntity.AddComponent(new CameraComponent(Vector2.Zero));
+            //moveOrderEntity.AddComponent(new ClickableComponent(Vector2.Zero, moveOrderTexture.Width, moveOrderTexture.Height));
+            //orderButtonEntityList.Add(moveOrderEntity);
+            //EntityManager.AddEntity(moveOrderEntity);
 
-            noOrderEntity = new Entity(6, State.ScreenState.SKIRMISH);
-            noOrderEntity.AddComponent(new SpriteComponent(true, Vector2.Zero, noOrderTexture));
-            noOrderEntity.AddComponent(new CameraComponent(Vector2.Zero));
-            noOrderEntity.AddComponent(new ClickableComponent(Vector2.Zero, noOrderTexture.Width, noOrderTexture.Height));
-            orderButtonEntityList.Add(noOrderEntity);
-            EntityManager.AddEntity(noOrderEntity);
+            //noOrderEntity = new Entity(6, State.ScreenState.SKIRMISH);
+            //noOrderEntity.AddComponent(new SpriteComponent(true, Vector2.Zero, noOrderTexture));
+            //noOrderEntity.AddComponent(new CameraComponent(Vector2.Zero));
+            //noOrderEntity.AddComponent(new ClickableComponent(Vector2.Zero, noOrderTexture.Width, noOrderTexture.Height));
+            //orderButtonEntityList.Add(noOrderEntity);
+            //EntityManager.AddEntity(noOrderEntity);
 
-            spellOrderEntity = new Entity(6, State.ScreenState.SKIRMISH);
-            spellOrderEntity.AddComponent(new SpriteComponent(true, Vector2.Zero, spellOrderTexture));
-            spellOrderEntity.AddComponent(new CameraComponent(Vector2.Zero));
-            spellOrderEntity.AddComponent(new ClickableComponent(Vector2.Zero, spellOrderTexture.Width, spellOrderTexture.Height));
-            orderButtonEntityList.Add(spellOrderEntity);
-            EntityManager.AddEntity(spellOrderEntity);
+            //spellOrderEntity = new Entity(6, State.ScreenState.SKIRMISH);
+            //spellOrderEntity.AddComponent(new SpriteComponent(true, Vector2.Zero, spellOrderTexture));
+            //spellOrderEntity.AddComponent(new CameraComponent(Vector2.Zero));
+            //spellOrderEntity.AddComponent(new ClickableComponent(Vector2.Zero, spellOrderTexture.Width, spellOrderTexture.Height));
+            //orderButtonEntityList.Add(spellOrderEntity);
+            //EntityManager.AddEntity(spellOrderEntity);
 
         }
 
@@ -203,7 +203,7 @@ namespace SeniorProjectGame
         {
             escapeClick = new InputAction(new Keys[] { Keys.Escape }, true);
             singleLeftClick = new InputAction(MouseButton.left, true);
-            singleRightClick = new InputAction(MouseButton.right, true);
+            singleRightClick = new InputAction(MouseButton.right, false);
             singleMiddleClick = new InputAction(MouseButton.middle, true);
 
         }
@@ -219,9 +219,9 @@ namespace SeniorProjectGame
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
             Globals.font = font;
 
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Laboratory.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Laboratory.txt");
 
             hexBaseTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexBase");
             hexGrassTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexGrass");
@@ -234,7 +234,7 @@ namespace SeniorProjectGame
 
             hexTreeTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\tree");
 
-            unitTexture = Content.Load<Texture2D>("Graphics\\UnitTextures\\unitSample");
+            unitTexture = Content.Load<Texture2D>("Graphics\\UnitTextures\\Flail");
 
             selectSound = Content.Load<SoundEffect>("Audio\\Sounds\\Powerup27");
 
@@ -304,9 +304,8 @@ namespace SeniorProjectGame
         {
             List<string> worldMapLines = ReadBin("WorldMap");
 
-            worldMapEntity = new Entity(0, State.ScreenState.WORLD_MAP);
-            worldMapEntity.AddComponent(new SpriteComponent(true, new Vector2(screenWidth / 2, screenHeight / 2), worldMapTexture));
-            worldMapEntity.AddComponent(new CameraComponent(new Vector2(screenWidth / 2, screenHeight / 2)));
+            worldMapEntity = new Entity(1, State.ScreenState.WORLD_MAP);
+            worldMapEntity.AddComponent(new SpriteComponent(true, Vector2.Zero, worldMapTexture));
             worldMapComponent = new WorldMapComponent();
             worldMapEntity.AddComponent(worldMapComponent);
             EntityManager.AddEntity(worldMapEntity);
@@ -420,7 +419,7 @@ namespace SeniorProjectGame
                         for (int p = 0; p < worldMapComponent.GetNodeEntityList().Count; p++)
                         {
                             ClickableComponent click = worldMapComponent.GetNodeEntityList()[p].GetComponent("ClickableComponent") as ClickableComponent;
-                            if (click.isColliding(new Vector2(Mouse.GetState().X, Mouse.GetState().Y)))
+                            if (click.isColliding(new Vector2(InputState.GetMousePosition().X, InputState.GetMousePosition().Y)))
                             {
                                 selectSound.Play();
                                 NodeComponent node = click._parent.GetComponent("NodeComponent") as NodeComponent;
@@ -428,10 +427,11 @@ namespace SeniorProjectGame
 
 
                                 boardEntity = ProcessHexMapBin(worldMapComponent.SelectCurrentNode());
+                                boardEntity = ProcessHexMapBin("Tutorial_Level");
                                 boardComponent = boardEntity.GetComponent("BoardComponent") as BoardComponent;
 
-                                boardComponent.CreateUnit(true, 2, new Vector2(0, 2), unitTexture, 50, 50);
-                                boardComponent.CreateUnit(true, 2, new Vector2(0, 5), unitTexture, 50, 50);
+                                boardComponent.CreateUnit(true, 2, new Vector2(0, 2), unitTexture, 50, 100);
+                                boardComponent.CreateUnit(true, 2, new Vector2(0, 3), unitTexture, 50, 100);
 
 
                                 State.screenState = State.ScreenState.SKIRMISH;
@@ -441,6 +441,10 @@ namespace SeniorProjectGame
                     if (singleMiddleClick.Evaluate())
                     {
                         State.screenState = State.ScreenState.SKIRMISH;
+                    }
+                    if (singleRightClick.Evaluate())
+                    {
+                        Camera.Move(new Vector2(5, 5));
                     }
 
                     break;
@@ -572,8 +576,8 @@ namespace SeniorProjectGame
                     }
                     else if (singleRightClick.Evaluate())
                     {
-
-                        EntityManager.FollowEntity(hexEntity);
+                        Camera.Move(new Vector2(5, 5));
+                        
                     }
                     if (singleMiddleClick.Evaluate())
                     {
@@ -647,18 +651,18 @@ namespace SeniorProjectGame
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
+            
+            EntityManager.Draw(spriteBatch,graphics);
+
             spriteBatch.Begin();
-
-
-            EntityManager.Draw(spriteBatch);
 
             numberOfFrames++;
             string fps = string.Format("fps: {0}", framesPerSecond);
             spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);
-
             spriteBatch.Draw(markerTexture, new Vector2(640, 340), Color.White);
 
             spriteBatch.End();
+
             base.Draw(gameTime);
         }
 
