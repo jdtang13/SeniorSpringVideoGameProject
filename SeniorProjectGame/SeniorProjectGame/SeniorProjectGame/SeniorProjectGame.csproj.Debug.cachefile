@@ -12,6 +12,10 @@ Content\Graphics\TileTextures\Bases\hexGravel.xnb
 Content\Graphics\TileTextures\Bases\hexWood2.xnb
 Content\Graphics\TileTextures\Bases\hexStonePath0.xnb
 Content\Graphics\TileTextures\Bases\hexStonePath1.xnb
+<<<<<<< HEAD
+=======
+Content\Graphics\Menu\selectionIcon.xnb
+>>>>>>> origin/Oliver
 Content\Graphics\TileTextures\Bases\hexStonePath3.xnb
 Content\Graphics\TileTextures\Bases\hexStonePath4.xnb
 Content\Graphics\TileTextures\Bases\hexWater0.xnb
@@ -24,3 +28,7 @@ Content\Audio\Sounds\selects.xnb
 Content\Audio\Sounds\selectss.xnb
 Content\Audio\Sounds\select.xnb
 Content\Audio\Sounds\Powerup27.xnb
+<<<<<<< HEAD
+=======
+Content\Graphics\Other\marker.xnb
+>>>>>>> origin/Oliver

@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using EntityEngine.Components.Sprites;
 using Microsoft.Xna.Framework.Graphics;
 using EntityEngine.Input;
+using EntityEngine.Components.Component_Parents;
 
 namespace EntityEngine.Components.TileComponents
 {
@@ -97,7 +98,11 @@ namespace EntityEngine.Components.TileComponents
         public Vector2 screenCoordinatesOfHex(int x, int y)
         {
             SpriteComponent sprite = GetHex(new Vector2(x,y))._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+<<<<<<< HEAD
             return sprite.getTopLeftPosition();
+=======
+            return sprite.getCenterPosition();
+>>>>>>> origin/Oliver
 
             /*Vector2 screenPosition;
 
@@ -152,10 +157,20 @@ namespace EntityEngine.Components.TileComponents
                         screenPosition.Y = y * gridTexture.Height + gridTexture.Height / 2f + gridTexture.Height / 2f;
                     }
                     screenPosition.X = x * (gridTexture.Width / 4f * 3f) + gridTexture.Width / 2f;
+                    
+                    CameraComponent cam = new CameraComponent(screenPosition);
+                    SpriteComponent hexSprite = new SpriteComponent( true, screenPosition, gridTexture);
+                    
+                    hexSprite.AddDependantOfPosition(cam.PositionHasChanged);
 
+<<<<<<< HEAD
                     SpriteComponent hexSprite = new SpriteComponent( true, screenPosition, gridTexture);
                     hexEntity.AddComponent(hexSprite);
                     hexEntity.AddComponent(new CameraComponent(screenPosition));
+=======
+                    hexEntity.AddComponent(hexSprite);
+                    hexEntity.AddComponent(cam);
+>>>>>>> origin/Oliver
 
 
                     EntityManager.AddEntity(hexEntity);
@@ -210,8 +225,19 @@ namespace EntityEngine.Components.TileComponents
                 Entity unitEntity = new Entity(5, State.ScreenState.SKIRMISH);
 
                 SpriteComponent hexSprite = GetHex(myCoordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+<<<<<<< HEAD
                 unitEntity.AddComponent(new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), myTexture, 75f, mySpriteFrameWidth, mySpriteFrameHeight));
                 unitEntity.AddComponent(new CameraComponent( hexSprite.getCenterPosition()));
+=======
+
+                AnimatedSpriteComponent unitSprite = new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), myTexture, 75f, mySpriteFrameWidth, mySpriteFrameHeight);
+                CameraComponent camera = new CameraComponent(hexSprite.getCenterPosition());
+                unitSprite.AddDependantOfPosition(new DrawableComponent.PositionHandler(camera.PositionHasChanged));
+
+                unitEntity.AddComponent(unitSprite);
+                unitEntity.AddComponent(camera);
+
+>>>>>>> origin/Oliver
 
                 // TODO: unitData is null right now.
                 UnitComponent unitComp = new UnitComponent(myIsAlly, mySightRadius, GetHex(myCoordinate), true, null);
@@ -245,9 +271,20 @@ namespace EntityEngine.Components.TileComponents
             SpriteComponent hexSprite = hexComponent._parent.GetDrawable("SpriteComponent") as SpriteComponent;
             
             Entity terrainEntity = new Entity(4, State.ScreenState.SKIRMISH);
+<<<<<<< HEAD
             terrainEntity.AddComponent(new SpriteComponent(true, hexSprite.getCenterPosition(), myTerrain.GetTexture()));
             terrainEntity.AddComponent(new CameraComponent(hexSprite.getCenterPosition()));
 
+=======
+            CameraComponent terrainCamera = new CameraComponent(hexSprite.getCenterPosition());
+            SpriteComponent terrainSprite = new SpriteComponent(true, hexSprite.getCenterPosition(), myTerrain.GetTexture());
+            terrainSprite.AddDependantOfPosition(terrainCamera.PositionHasChanged);
+            terrainEntity.AddComponent(terrainCamera);
+            terrainEntity.AddComponent(terrainSprite);
+
+            hexSprite.AddDependantOfPosition(terrainSprite.PositionHasChanged);
+            
+>>>>>>> origin/Oliver
             TerrainComponent terrComp = new TerrainComponent(hexComponent, myTerrain.GetTexture(), myTerrain.GetImpassable());
             terrainEntity.AddComponent(terrComp);
             hexComponent.AddTerrain(terrComp);
@@ -261,7 +298,16 @@ namespace EntityEngine.Components.TileComponents
             float distance = 0;
             Vector2 mousePosition = InputState.getMousePosition();
 
+            if (EntityManager.GetFollowedEntity() != null)
+            {
+                Entity followedCameraEntity = EntityManager.GetFollowedEntity();
+                CameraComponent followedCamera = followedCameraEntity.GetComponent("CameraComponent") as CameraComponent;
+
+                mousePosition -= followedCamera.GetOffset();
+            }
+
             Vector2 mouseHexCoordinate;
+
             mouseHexCoordinate.X = mousePosition.X / (gridTexture.Width * 3f / 4f);
             mouseHexCoordinate.Y = roundDown(mousePosition.Y / gridTexture.Height) + roundDown(mouseHexCoordinate.X) / 2f;
 

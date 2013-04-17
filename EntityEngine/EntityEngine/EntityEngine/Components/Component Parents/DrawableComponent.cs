@@ -17,7 +17,7 @@ namespace EntityEngine.Components.Component_Parents
         public Entity _parent;
 
         public Texture2D texture;
-        public Vector2 offset, position, screenPosition;
+        internal Vector2 offset, position, screenPosition;
 
         public string _name = "";
         public bool _enabled = true;
@@ -27,6 +27,37 @@ namespace EntityEngine.Components.Component_Parents
 
         public Boolean isMainSprite;
 
+<<<<<<< HEAD
+=======
+
+        //Managing changing position for mainly cameras
+        public delegate void PositionHandler(object sender, PositionArgs posA);
+        public event PositionHandler positionChange;
+
+
+        //For if certain hexs that are on top of each other move
+        public void PositionHasChanged(object sender, PositionArgs data)
+        {
+            position = data.GetPosition();
+        }
+
+        public void SetPosition(Vector2 myVector)
+        {
+            PositionArgs pa = new PositionArgs(myVector);
+
+            //Call the event
+            positionChange(this, pa); 
+        }
+        public Vector2 GetPosition()
+        {
+            return position;
+        }
+        public void AddDependantOfPosition(PositionHandler myHandler)
+        {
+            positionChange += myHandler;
+        }
+
+>>>>>>> origin/Oliver
         public DrawableComponent(bool myMain)
         {
             isMainSprite = myMain;

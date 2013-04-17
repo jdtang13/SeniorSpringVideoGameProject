@@ -38,11 +38,14 @@ namespace EntityEngine.Components.Sprites
             color = myColor;
         }
 
+<<<<<<< HEAD
         public void setPosition(Vector2 pos)
         {
             position = pos;
         }
 
+=======
+>>>>>>> origin/Oliver
         bool animating;//Turns the animating on and off
         public void SetAnimated(bool myTruth)
         {
@@ -116,7 +119,7 @@ namespace EntityEngine.Components.Sprites
         {
             CameraComponent cam = _parent.GetComponent("CameraComponent") as CameraComponent;
 
-            screenPosition = cam.getDrawPosition(position) - offset;
+            screenPosition = cam.GetDrawPosition(position) - offset;
 
             spriteBatch.Draw(texture, screenPosition,
                 new Rectangle(spriteWidth * (int)currentFrame.X, spriteHeight * (int)currentFrame.Y, spriteWidth, spriteHeight), color);
