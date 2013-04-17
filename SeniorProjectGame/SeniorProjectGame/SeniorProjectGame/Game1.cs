@@ -247,7 +247,7 @@ namespace SeniorProjectGame
             spellOrderTexture = Content.Load<Texture2D>("Graphics\\Menu\\selectionIcon");
             noOrderTexture = Content.Load<Texture2D>("Graphics\\Menu\\selectionIcon");
 
-            markerTexture =  Content.Load<Texture2D>("Graphics\\Other\\marker");
+            markerTexture = Content.Load<Texture2D>("Graphics\\Other\\marker");
         }
 
         void ConvertTxtToBin(string myFilePath)
@@ -521,44 +521,40 @@ namespace SeniorProjectGame
                 #region Skirmish
                 case State.ScreenState.SKIRMISH:
 
+                    HexComponent hexComp = boardComponent.GetMouseHex();
+                    Entity hexEntity = hexComp._parent;
+
                     if (singleLeftClick.Evaluate())
                     {
+                        if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection)
+                        {
+                            UnitComponent unit = hexComp.GetUnit();
+                            State.selectionState = State.SelectionState.SelectingUnit;
+                            State.originalHexClicked = hexComp;
+                            State.unitMenuState = State.MenuState.NONE;
 
-                        HexComponent hexComp = boardComponent.GetMouseHex();
-                        Entity hexEntity = hexComp._parent;
+                            ////Show the buttons
+                            //for (int y = 0; y < orderButtonEntityList.Count; y++)
+                            //{
+                            //    Entity parent = orderButtonEntityList[y];
+                            //    SpriteComponent sprite = parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                        EntityManager.FollowEntity(hexEntity);
-                        boardComponent.UpdateVisibilityAllies();
+                            //    //sprite._visible = true;
+                            //}
 
-                        //EntityManager.FollowEntity(hexEntity);
+                            boardComponent.UpdateVisibilityAllies();
 
-                        //if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection)
-                        //{
-                        //    UnitComponent unit = hexComp.GetUnit();
-                        //    State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
-                        //    State.originalHexClicked = hexComp;
-                        //    State.unitMenuState = State.MenuState.NONE;
+                        }
 
-                        //    //Show the buttons
-                        //    for (int y = 0; y < orderButtonEntityList.Count; y++)
-                        //    {
-                        //        Entity parent = orderButtonEntityList[y];
-                        //        SpriteComponent sprite = parent.GetDrawable("SpriteComponent") as SpriteComponent;
-
-                        //        sprite._visible = true;
-                        //    }
-
-                        //}
-
-                        //else if (!hexComp.HasUnit() && State.selectionState == State.SelectionState.SelectingUnit)
-                        //{
-                        //    if (hexComp.ContainsImpassable() == false)
-                        //    {
-                        //        MoveUnit(State.originalHexClicked, boardComponent.GetMouseHex());
-                        //        State.selectionState = State.SelectionState.NoSelection;
-                        //        State.originalHexClicked = null;
-                        //    }
-                        //}
+                        else if (!hexComp.HasUnit() && State.selectionState == State.SelectionState.SelectingUnit)
+                        {
+                            if (hexComp.ContainsImpassable() == false)
+                            {
+                                MoveUnit(State.originalHexClicked, boardComponent.GetMouseHex());
+                                State.selectionState = State.SelectionState.NoSelection;
+                                State.originalHexClicked = null;
+                            }
+                        }
 
                         //else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits)
                         //{
@@ -576,12 +572,12 @@ namespace SeniorProjectGame
                     }
                     else if (singleRightClick.Evaluate())
                     {
-                        
+
+                        EntityManager.FollowEntity(hexEntity);
                     }
                     if (singleMiddleClick.Evaluate())
                     {
-                        //boardComponent.alliedUnitList[0].MoveDirection(Orient.se);
-                        //boardComponent.UpdateVisibilityAllies();
+
                     }
                     break;
                 #endregion
@@ -661,7 +657,7 @@ namespace SeniorProjectGame
             spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);
 
             spriteBatch.Draw(markerTexture, new Vector2(640, 340), Color.White);
-            
+
             spriteBatch.End();
             base.Draw(gameTime);
         }
