@@ -28,9 +28,16 @@ namespace EntityEngine.Components.Component_Parents
         public Boolean isMainSprite;
 
 
-        //Managing changing position
+        //Managing changing position for mainly cameras
         public delegate void PositionHandler(object sender, PositionArgs posA);
         public event PositionHandler positionChange;
+
+
+        //For if certain hexs that are on top of each other move
+        public void PositionHasChanged(object sender, PositionArgs data)
+        {
+            position = data.GetPosition();
+        }
 
         public void SetPosition(Vector2 myVector)
         {

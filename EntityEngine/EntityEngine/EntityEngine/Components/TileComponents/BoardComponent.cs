@@ -153,10 +153,14 @@ namespace EntityEngine.Components.TileComponents
                         screenPosition.Y = y * gridTexture.Height + gridTexture.Height / 2f + gridTexture.Height / 2f;
                     }
                     screenPosition.X = x * (gridTexture.Width / 4f * 3f) + gridTexture.Width / 2f;
-
+                    
+                    CameraComponent cam = new CameraComponent(screenPosition);
                     SpriteComponent hexSprite = new SpriteComponent( true, screenPosition, gridTexture);
+                    
+                    hexSprite.AddDependantOfPosition(cam.PositionHasChanged);
+
                     hexEntity.AddComponent(hexSprite);
-                    hexEntity.AddComponent(new CameraComponent(screenPosition));
+                    hexEntity.AddComponent(cam);
 
 
                     EntityManager.AddEntity(hexEntity);
@@ -252,9 +256,14 @@ namespace EntityEngine.Components.TileComponents
             SpriteComponent hexSprite = hexComponent._parent.GetDrawable("SpriteComponent") as SpriteComponent;
             
             Entity terrainEntity = new Entity(4, State.ScreenState.SKIRMISH);
-            terrainEntity.AddComponent(new SpriteComponent(true, hexSprite.getCenterPosition(), myTerrain.GetTexture()));
-            terrainEntity.AddComponent(new CameraComponent(hexSprite.getCenterPosition()));
+            CameraComponent terrainCamera = new CameraComponent(hexSprite.getCenterPosition());
+            SpriteComponent terrainSprite = new SpriteComponent(true, hexSprite.getCenterPosition(), myTerrain.GetTexture());
+            terrainSprite.AddDependantOfPosition(terrainCamera.PositionHasChanged);
+            terrainEntity.AddComponent(terrainCamera);
+            terrainEntity.AddComponent(terrainSprite);
 
+            hexSprite.AddDependantOfPosition(terrainSprite.PositionHasChanged);
+            
             TerrainComponent terrComp = new TerrainComponent(hexComponent, myTerrain.GetTexture(), myTerrain.GetImpassable());
             terrainEntity.AddComponent(terrComp);
             hexComponent.AddTerrain(terrComp);

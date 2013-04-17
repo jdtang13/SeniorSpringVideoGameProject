@@ -56,13 +56,15 @@ namespace EntityEngine
             for (int p = 0; p < masterList.Count; p++)
             {
                 CameraComponent followingCamera = masterList[p].GetComponent("CameraComponent") as CameraComponent;
-                if(followedCamera != null)
+                if (followingCamera != null)
                 {
                     if (followingCamera != followedCamera)
                     {
-                        followingCamera.SetFollowingOffset(followedCamera.GetFollowedOffset());
+                        followingCamera.SetOffset(followedCamera.GetOffset());
+                        followingCamera.SetCameraState(CameraComponent.CameraState.following);
                     }
                 }
+              
             }
             followedCamera.SetCameraState(CameraComponent.CameraState.followed);
         }
