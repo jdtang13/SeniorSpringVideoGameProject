@@ -8,7 +8,6 @@ using EntityEngine.Components.Sprites;
 using EntityEngine.Components.Component_Parents;
 using EntityEngine.Input;
 
-
 namespace EntityEngine
 {
     public static class EntityManager
@@ -19,7 +18,6 @@ namespace EntityEngine
         //There is only one entity manager, as it is a static class. Meaning you don't need to create an instance of it or use a 
         //constructor. If you want to add an entity:
         //      EntityManager.AddEntity(SpaceShip);
-
 
         public static List<Entity> masterList = new List<Entity>();
 
@@ -78,7 +76,6 @@ namespace EntityEngine
                 }
             }
         }
-
 
         public static void Draw(SpriteBatch myBatch)
         {

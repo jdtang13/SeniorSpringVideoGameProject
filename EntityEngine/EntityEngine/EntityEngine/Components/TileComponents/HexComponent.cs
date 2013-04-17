@@ -19,6 +19,7 @@ namespace EntityEngine.Components.TileComponents
         }
 
         public HexComponent n, ne, se, s, sw, nw;
+
         public HexComponent GetAdjacent(Orient myOar)
         {
             switch (myOar)
@@ -38,7 +39,6 @@ namespace EntityEngine.Components.TileComponents
 
                 default:
                     return this;
-
             }
         }
 
@@ -138,7 +138,9 @@ namespace EntityEngine.Components.TileComponents
         {
             terrainList.Remove(myTerrain);
         }
+
         public List<TerrainComponent> GetTerrain()
+
         {
             return terrainList;
         }

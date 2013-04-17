@@ -142,77 +142,61 @@ namespace EntityEngine.Components.TileComponents
                             hex.n.SetUnit(this);
                             SetHex(hex.n);
                             hex.RemoveUnit();
-                            
                         }
                     }
                     break;
                 case Orient.ne:
                     if (hex.ne != null)
                     {
-                        if (hex.ne != null)
+                        if (!hex.ne.HasUnit())
                         {
-                            if (!hex.ne.HasUnit())
-                            {
-                                hex.ne.SetUnit(this);
-                                SetHex(hex.ne);
-                                hex.RemoveUnit();
-                            }
+                            hex.ne.SetUnit(this);
+                            SetHex(hex.ne);
+                            hex.RemoveUnit();
                         }
                     }
                     break;
                 case Orient.se:
                     if (hex.se != null)
                     {
-                        if (hex.se != null)
+                        if (!hex.se.HasUnit())
                         {
-                            if (!hex.se.HasUnit())
-                            {
-                                hex.se.SetUnit(this);
-                                SetHex(hex.se);
-                                hex.RemoveUnit();
-                            }
+                            hex.se.SetUnit(this);
+                            SetHex(hex.se);
+                            hex.RemoveUnit();
                         }
                     }
                     break;
                 case Orient.s:
                     if (hex.s != null)
                     {
-                        if (hex.s != null)
+                        if (!hex.s.HasUnit())
                         {
-                            if (!hex.s.HasUnit())
-                            {
-                                hex.s.SetUnit(this);
-                                SetHex(hex.s);
-                                hex.RemoveUnit();
-                            }
+                            hex.s.SetUnit(this);
+                            SetHex(hex.s);
+                            hex.RemoveUnit();
                         }
                     }
                     break;
                 case Orient.sw:
                     if (hex.sw != null)
                     {
-                        if (hex.sw != null)
+                        if (!hex.sw.HasUnit())
                         {
-                            if (!hex.sw.HasUnit())
-                            {
-                                hex.sw.SetUnit(this);
-                                SetHex(hex.sw);
-                                hex.RemoveUnit();
-                            }
+                            hex.sw.SetUnit(this);
+                            SetHex(hex.sw);
+                            hex.RemoveUnit();
                         }
                     }
                     break;
                 case Orient.nw:
                     if (hex.nw != null)
                     {
-                        if (hex.nw != null)
+                        if (!hex.nw.HasUnit())
                         {
-                            if (!hex.nw.HasUnit())
-                            {
-                                hex.nw.SetUnit(this);
-                                SetHex(hex.nw);
-                                hex.RemoveUnit();
-                            }
+                            hex.nw.SetUnit(this);
+                            SetHex(hex.nw);
+                            hex.RemoveUnit();
                         }
                     }
                     break;
@@ -226,5 +210,31 @@ namespace EntityEngine.Components.TileComponents
             sprite.position = hexSprite.position;
 
         }
+
+        //public void PathInput()
+        //{
+        //    List <HexComponent> pathCue = new List<HexComponent>();
+        //    while shift is held down
+        //    {
+        //        ghostHex = startingHex
+        //        if (GetHex(mouseCurrentHex) is not in pathCue && is next to ghostHex)
+        //        {
+        //            add hex to list
+        //            ghostHex = mouseCurrentHex
+        //        }
+        //        if (GetHex(mouseCurrentHex) is in pathCue)
+        //        {
+        //            remove hex from cue and all others added after it
+        //            ghostHex = hex last in cue
+        //        }
+        //    }
+
+        //    for (loop through pathCue)
+        //    {
+        //        move unit to hex in cue
+        //        updateallyvisibility
+        //        wait miliseconds
+        //    }
+        //}
     }
 }

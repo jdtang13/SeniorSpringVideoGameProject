@@ -93,6 +93,7 @@ namespace EntityEngine.Components.TileComponents
         {
             this.name = "TerrainComponent";
             impassable = myImpassable;
+
             texture = myTex;
         }
 

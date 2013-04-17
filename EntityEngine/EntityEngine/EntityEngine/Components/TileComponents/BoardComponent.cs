@@ -159,11 +159,9 @@ namespace EntityEngine.Components.TileComponents
                     hexEntity.AddComponent(hexSprite);
                     hexEntity.AddComponent(new CameraComponent(screenPosition));
 
-
                     EntityManager.AddEntity(hexEntity);
 
                     GetHex(coordPosition).SetVisibility(Visibility.Unexplored);
-
 
                     ////Adding text to label the coordinates of the hex entity
                     //Vector2 debugTextPosition = new Vector2(hexSprite.getCenterPosition().X, hexSprite.getCenterPosition().Y);
@@ -392,7 +390,6 @@ namespace EntityEngine.Components.TileComponents
                     {
                         ring.Add(GetHex(ghostCoord));
                     }
-
                     times--;
                 }
             }

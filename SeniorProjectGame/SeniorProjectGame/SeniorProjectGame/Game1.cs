@@ -599,7 +599,6 @@ namespace SeniorProjectGame
 
                     else if (singleRightClick.Evaluate())
                     {
-
                     }
                     if (singleMiddleClick.Evaluate())
                     {
