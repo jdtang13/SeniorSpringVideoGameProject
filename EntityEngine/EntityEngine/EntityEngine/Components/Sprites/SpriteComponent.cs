@@ -73,7 +73,7 @@ namespace EntityEngine.Components.Sprites
         {
             CameraComponent cam = _parent.GetComponent("CameraComponent") as CameraComponent;
 
-            screenPosition = cam.GetDrawPosition(position) - offset;
+            screenPosition = cam.GetDrawPosition(position - offset);
 
             centerScreenPosition = position;
 

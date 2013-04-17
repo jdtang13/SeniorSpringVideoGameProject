@@ -27,13 +27,13 @@ namespace EntityEngine.Components.Sprites
         public void PositionHasChanged(object sender, PositionArgs data)
         {
             position = data.GetPosition();
-            offset = centerScreen - position;
-            
+
             //Send pulse to tell it refresh
-            if (cameraState == CameraState.followed)
-            {
-                EntityManager.FollowEntity(this._parent);
-            }
+            //if (cameraState == CameraState.followed)
+            //{
+            //    EntityManager.FollowEntity(this._parent);
+            //    offset = centerScreen - position;
+            //}
         }
 
         public enum CameraState
@@ -45,6 +45,10 @@ namespace EntityEngine.Components.Sprites
         public void SetCameraState(CameraState myState)
         {
             cameraState = myState;
+            if (cameraState == CameraState.followed)
+            {
+                offset = centerScreen - position;
+            }
         }
 
         //Pass in the position of the sprite for teh vector

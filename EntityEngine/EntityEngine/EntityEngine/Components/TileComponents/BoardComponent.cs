@@ -277,7 +277,16 @@ namespace EntityEngine.Components.TileComponents
             float distance = 0;
             Vector2 mousePosition = InputState.getMousePosition();
 
+            if (EntityManager.GetFollowedEntity() != null)
+            {
+                Entity followedCameraEntity = EntityManager.GetFollowedEntity();
+                CameraComponent followedCamera = followedCameraEntity.GetComponent("CameraComponent") as CameraComponent;
+
+                mousePosition -= followedCamera.GetOffset();
+            }
+
             Vector2 mouseHexCoordinate;
+
             mouseHexCoordinate.X = mousePosition.X / (gridTexture.Width * 3f / 4f);
             mouseHexCoordinate.Y = roundDown(mousePosition.Y / gridTexture.Height) + roundDown(mouseHexCoordinate.X) / 2f;
 

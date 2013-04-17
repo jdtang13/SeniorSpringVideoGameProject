@@ -62,6 +62,7 @@ namespace SeniorProjectGame
 
         Texture2D hexBaseTexture, hexDirtTexture, hexGrassTexture, hexGravelTexture, hexSandTexture, hexWoodTexture, hexWaterTexture, hexStoneTexture;
         Texture2D hexTreeTexture;
+        Texture2D markerTexture;
 
         Texture2D unitTexture;
 
@@ -245,6 +246,8 @@ namespace SeniorProjectGame
             moveOrderTexture = Content.Load<Texture2D>("Graphics\\Menu\\selectionIcon");
             spellOrderTexture = Content.Load<Texture2D>("Graphics\\Menu\\selectionIcon");
             noOrderTexture = Content.Load<Texture2D>("Graphics\\Menu\\selectionIcon");
+
+            markerTexture =  Content.Load<Texture2D>("Graphics\\Other\\marker");
         }
 
         void ConvertTxtToBin(string myFilePath)
@@ -520,10 +523,14 @@ namespace SeniorProjectGame
 
                     if (singleLeftClick.Evaluate())
                     {
+
                         HexComponent hexComp = boardComponent.GetMouseHex();
                         Entity hexEntity = hexComp._parent;
 
                         EntityManager.FollowEntity(hexEntity);
+                        boardComponent.UpdateVisibilityAllies();
+
+                        //EntityManager.FollowEntity(hexEntity);
 
                         //if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection)
                         //{
@@ -569,7 +576,7 @@ namespace SeniorProjectGame
                     }
                     else if (singleRightClick.Evaluate())
                     {
-
+                        
                     }
                     if (singleMiddleClick.Evaluate())
                     {
@@ -653,7 +660,8 @@ namespace SeniorProjectGame
             string fps = string.Format("fps: {0}", framesPerSecond);
             spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);
 
-
+            spriteBatch.Draw(markerTexture, new Vector2(640, 340), Color.White);
+            
             spriteBatch.End();
             base.Draw(gameTime);
         }

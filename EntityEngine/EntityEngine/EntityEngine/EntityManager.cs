@@ -22,8 +22,12 @@ namespace EntityEngine
 
 
         public static List<Entity> masterList = new List<Entity>();
+        static Entity followedEntity;
+        public static Entity GetFollowedEntity()
+        {
+            return followedEntity;
+        }
 
-        
         public static void AddEntity(Entity myEntity)
         {
             masterList.Add(myEntity);
@@ -51,22 +55,24 @@ namespace EntityEngine
 
         public static void FollowEntity(Entity myEntity)
         {
+            followedEntity = myEntity; 
             CameraComponent followedCamera = myEntity.GetComponent("CameraComponent") as CameraComponent;
+            Vector2 followedOffset = followedCamera.GetOffset();
 
-            for (int p = 0; p < masterList.Count; p++)
+            if (followedCamera != null)
             {
-                CameraComponent followingCamera = masterList[p].GetComponent("CameraComponent") as CameraComponent;
-                if (followingCamera != null)
+                for (int p = 0; p < masterList.Count; p++)
                 {
-                    if (followingCamera != followedCamera)
+                    CameraComponent followingCamera = masterList[p].GetComponent("CameraComponent") as CameraComponent;
+
+                    if (followingCamera != null)
                     {
-                        followingCamera.SetOffset(followedCamera.GetOffset());
+                        followingCamera.SetOffset(followedOffset);
                         followingCamera.SetCameraState(CameraComponent.CameraState.following);
                     }
                 }
-              
+                followedCamera.SetCameraState(CameraComponent.CameraState.followed);
             }
-            followedCamera.SetCameraState(CameraComponent.CameraState.followed);
         }
 
 
