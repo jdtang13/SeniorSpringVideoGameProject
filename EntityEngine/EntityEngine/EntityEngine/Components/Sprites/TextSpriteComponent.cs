@@ -54,7 +54,7 @@ namespace EntityEngine.Components.Sprites
         {
             CameraComponent cam = _parent.GetComponent("CameraComponent") as CameraComponent;
 
-            screenPosition = cam.getDrawPosition(position) - offset;
+            screenPosition = cam.GetDrawPosition(position) - offset;
 
             spriteBatch.DrawString(font, text, screenPosition, color);
         }

@@ -64,7 +64,7 @@ namespace EntityEngine
                 if (draw.isMainSprite)
                 {
                     //Set the camerea to followed cameras offset using the screenPosition of the main sprite
-                    followedCamera.setFollowed(draw.position);
+                    followedCamera.SetFollowed(draw.position);
                 }
             }
             for (int p = 0; p < masterList.Count; p++)
@@ -74,7 +74,7 @@ namespace EntityEngine
                 if (cam != null)
                 {
                     //Set the camera to following by the followed entity's offset
-                    cam.setFollowingCamera(followedCamera.getOffset());
+                    cam.SetFollowingCamera(followedCamera.GetOffset());
                 }
             }
         }

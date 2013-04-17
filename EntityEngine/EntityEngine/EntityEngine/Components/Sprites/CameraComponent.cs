@@ -13,7 +13,7 @@ namespace EntityEngine.Components.Sprites
         //with the camera. Very useful indeed.
 
         Vector2 offset, followedPosition;
-        public Vector2 getOffset()
+        public Vector2 GetOffset()
         {
             return offset;
         }
@@ -27,21 +27,21 @@ namespace EntityEngine.Components.Sprites
         public CameraState cameraState = CameraState.noCamera;
 
         //Call this method to set the offset to another cameras offset
-        public void setFollowingCamera(Vector2 myOffset)
+        public void SetFollowingCamera(Vector2 myOffset)
         {
             cameraState = CameraState.following;
             offset = myOffset;
         }
 
         //Call this method to calc to set this camera to following itself
-        public void setFollowed(Vector2 myPosition)
+        public void SetFollowed(Vector2 myPosition)
         {
             cameraState = CameraState.followed;
             offset = followedPosition - myPosition;
         }
 
         // TODO: added by jon. ask oliver to debug.
-        public void setPosition(Vector2 pos)
+        public void SetPosition(Vector2 pos)
         {
             offset = followedPosition - pos;
         }
@@ -55,7 +55,7 @@ namespace EntityEngine.Components.Sprites
         }
 
         //Followed means its centered on this sprite, following means its following another sprite
-        public Vector2 getDrawPosition(Vector2 myVector)
+        public Vector2 GetDrawPosition(Vector2 myVector)
         {
             if (cameraState == CameraState.following)
             {

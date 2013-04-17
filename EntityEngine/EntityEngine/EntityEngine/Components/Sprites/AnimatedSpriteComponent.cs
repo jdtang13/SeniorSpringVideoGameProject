@@ -116,7 +116,7 @@ namespace EntityEngine.Components.Sprites
         {
             CameraComponent cam = _parent.GetComponent("CameraComponent") as CameraComponent;
 
-            screenPosition = cam.getDrawPosition(position) - offset;
+            screenPosition = cam.GetDrawPosition(position) - offset;
 
             spriteBatch.Draw(texture, screenPosition,
                 new Rectangle(spriteWidth * (int)currentFrame.X, spriteHeight * (int)currentFrame.Y, spriteWidth, spriteHeight), color);
