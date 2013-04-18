@@ -233,12 +233,12 @@ namespace EntityEngine.Components.TileComponents
             }
         }
         
-        public void AddTerrain(Vector2 myCoordinate, TerrainPackage myTerrain)
+        public void AddTerrain(Vector2 myCoordinate,int myLayer, TerrainPackage myTerrain)
         {
             HexComponent hexComponent = GetHex(myCoordinate);
             SpriteComponent hexSprite = hexComponent._parent.GetDrawable("SpriteComponent") as SpriteComponent;
             
-            Entity terrainEntity = new Entity(4, State.ScreenState.SKIRMISH);
+            Entity terrainEntity = new Entity(4+myLayer, State.ScreenState.SKIRMISH);
             terrainEntity.AddComponent(new SpriteComponent(true, hexSprite.getCenterPosition(), myTerrain.GetTexture()));
             
             TerrainComponent terrComp = new TerrainComponent(hexComponent, myTerrain.GetTexture(), myTerrain.GetImpassable());

@@ -372,7 +372,7 @@ namespace SeniorProjectGame
 
                         if (line[x] != "*")
                         {
-                            tempBoardComponent.AddTerrain(ConvertToHexCoordinate(terrainCoordinate), GetTerrain(line[x]));
+                            tempBoardComponent.AddTerrain(ConvertToHexCoordinate(terrainCoordinate),layer, GetTerrain(line[x]));
                         }
                     }
                 }
@@ -418,6 +418,7 @@ namespace SeniorProjectGame
             {
                 Camera.Move(new Vector2(-5, 0));
             }
+
             EntityManager.Update(gameTime);
 
             switch (State.screenState)
