@@ -672,8 +672,6 @@ namespace SeniorProjectGame
             return convertedVector;
         }
 
-
-
         void MoveUnit(HexComponent original, HexComponent final)
         {
             UnitComponent unit = original.GetUnit();
