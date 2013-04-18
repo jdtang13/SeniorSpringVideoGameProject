@@ -202,6 +202,12 @@ namespace SeniorProjectGame
         void InitializeInput()
         {
             escapeClick = new InputAction(new Keys[] { Keys.Escape }, true);
+
+            wClick = new InputAction(new Keys[] { Keys.W,Keys.Up },     false);
+            dClick = new InputAction(new Keys[] { Keys.D, Keys.Right }, false);
+            sClick = new InputAction(new Keys[] { Keys.S, Keys.Down },  false);
+            aClick = new InputAction(new Keys[] { Keys.A, Keys.Left },  false);
+
             singleLeftClick = new InputAction(MouseButton.left, true);
             singleRightClick = new InputAction(MouseButton.right, false);
             singleMiddleClick = new InputAction(MouseButton.middle, true);
@@ -396,7 +402,22 @@ namespace SeniorProjectGame
             {
                 this.Exit();
             }
-
+            if(wClick.Evaluate())
+            {
+                Camera.Move(new Vector2(0, -5));
+            }
+            if(dClick.Evaluate())
+            {
+                Camera.Move(new Vector2(5, 0));
+            }
+            if(sClick.Evaluate())
+            {
+                Camera.Move(new Vector2(0, 5));
+            }
+            if (aClick.Evaluate())
+            {
+                Camera.Move(new Vector2(-5, 0));
+            }
             EntityManager.Update(gameTime);
 
             switch (State.screenState)
@@ -444,7 +465,7 @@ namespace SeniorProjectGame
                     }
                     if (singleRightClick.Evaluate())
                     {
-                        Camera.Move(new Vector2(5, 5));
+ 
                     }
 
                     break;
@@ -655,6 +676,8 @@ namespace SeniorProjectGame
             EntityManager.Draw(spriteBatch,graphics);
 
             spriteBatch.Begin();
+
+            spriteBatch.DrawString(font, InputState.GetMousePosition().ToString(), new Vector2(0, font.LineSpacing), Color.White);
 
             numberOfFrames++;
             string fps = string.Format("fps: {0}", framesPerSecond);

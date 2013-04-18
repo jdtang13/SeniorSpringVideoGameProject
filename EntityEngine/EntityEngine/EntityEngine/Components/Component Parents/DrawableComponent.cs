@@ -42,9 +42,9 @@ namespace EntityEngine.Components.Component_Parents
         public void SetPosition(Vector2 myVector)
         {
             PositionArgs pa = new PositionArgs(myVector);
-
+            position = myVector;
             //Call the event
-            positionChange(this, pa); 
+            //positionChange(this, pa); 
         }
         public Vector2 GetPosition()
         {
