@@ -391,8 +391,8 @@ namespace SeniorProjectGame
                                 boardEntity = ProcessHexMapBin(worldMapComponent.SelectCurrentNode());
                                 boardComponent = boardEntity.GetComponent("BoardComponent") as BoardComponent;
 
-                                boardComponent.CreateUnit(true, 5, new Vector2(0, 2), unitTexture, 50, 50);
-                                boardComponent.CreateUnit(true, 5, new Vector2(0, 5), unitTexture, 50, 50);
+                                boardComponent.CreateUnit(true, 5, new Vector2(0, 2), unitTexture, 50, 100);
+                                boardComponent.CreateUnit(true, 5, new Vector2(0, 5), unitTexture, 50, 100);
 
 
                                 State.screenState = State.ScreenState.SKIRMISH;
@@ -565,7 +565,7 @@ namespace SeniorProjectGame
                     {
                         elapsedTimeForMove += gameTime.ElapsedGameTime;
                       
-                        if (elapsedTimeForMove > TimeSpan.FromMilliseconds(500))
+                        if (elapsedTimeForMove > TimeSpan.FromMilliseconds(100))
                         {
                             elapsedTimeForMove = TimeSpan.FromMilliseconds(0);
 
@@ -592,8 +592,12 @@ namespace SeniorProjectGame
                         else
                         {
                             State.selectionState = State.SelectionState.NoSelection;
-                            State.originalHexClicked.GetUnit().SetSelected(false);
-                            State.originalHexClicked = null;
+
+                            if (State.originalHexClicked != null)
+                            {
+                                State.originalHexClicked.GetUnit().SetSelected(false);
+                                State.originalHexClicked = null;
+                            }
                         }
                     }
 

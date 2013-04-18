@@ -224,7 +224,7 @@ namespace EntityEngine.Components.TileComponents
                 Entity unitEntity = new Entity(5, State.ScreenState.SKIRMISH);
 
                 SpriteComponent hexSprite = GetHex(myCoordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
-                unitEntity.AddComponent(new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), myTexture, 75f, mySpriteFrameWidth, mySpriteFrameHeight));
+                unitEntity.AddComponent(new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), myTexture, 200f, mySpriteFrameWidth, mySpriteFrameHeight));
                 unitEntity.AddComponent(new CameraComponent( hexSprite.getCenterPosition()));
 
                 // TODO: unitData is null right now.

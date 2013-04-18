@@ -79,13 +79,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Graphics\UnitTextures\unitSample.png">
-      <Name>unitSample</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Graphics\Backgrounds\island.png">
       <Name>island</Name>
       <Importer>TextureImporter</Importer>
@@ -200,6 +193,11 @@
     </Compile>
     <Compile Include="Graphics\TileTextures\Decorations\tree.png">
       <Name>tree</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Graphics\UnitTextures\unitSample.png">
+      <Name>unitSample</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
