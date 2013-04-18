@@ -344,7 +344,7 @@ namespace SeniorProjectGame
             List<string> binLines = ReadBin(myID);
 
             int layers = Convert.ToInt32(binLines[0]);
-            Vector2 dimensions = new Vector2(float.Parse(binLines[1].Split(' ')[0]), float.Parse(binLines[1].Split(' ')[0]));
+            Vector2 dimensions = new Vector2(float.Parse(binLines[1].Split(' ')[0]), float.Parse(binLines[1].Split(' ')[1]));
 
             Entity tempBoard = new Entity(0, State.ScreenState.SKIRMISH);
             BoardComponent tempBoardComponent = new BoardComponent(dimensions, hexBaseTexture, font);
@@ -449,15 +449,15 @@ namespace SeniorProjectGame
 
 
                                 boardEntity = ProcessHexMapBin(worldMapComponent.SelectCurrentNode());
-                                boardEntity = ProcessHexMapBin("Tutorial_Level");
+                                //boardEntity = ProcessHexMapBin("Tutorial_Level");
                                 boardComponent = boardEntity.GetComponent("BoardComponent") as BoardComponent;
 
-                                boardComponent.CreateUnit(true, 2, new Vector2(0, 2), unitTexture, 50, 100);
-                                boardComponent.CreateUnit(true, 2, new Vector2(0, 3), unitTexture, 50, 100);
-                                boardComponent.CreateUnit(true, 2, new Vector2(0, 4), unitTexture, 50, 100);
-                                boardComponent.CreateUnit(true, 2, new Vector2(0, 5), unitTexture, 50, 100);
-                                boardComponent.CreateUnit(true, 2, new Vector2(0, 6), unitTexture, 50, 100);
-                                boardComponent.CreateUnit(true, 2, new Vector2(0, 7), unitTexture, 50, 100);
+                                boardComponent.CreateUnit(true, 3, new Vector2(0, 2), unitTexture, 50, 100);
+                                boardComponent.CreateUnit(true, 3, new Vector2(0, 3), unitTexture, 50, 100);
+                                boardComponent.CreateUnit(true, 3, new Vector2(0, 4), unitTexture, 50, 100);
+                                boardComponent.CreateUnit(true, 3, new Vector2(0, 5), unitTexture, 50, 100);
+                                boardComponent.CreateUnit(true, 3, new Vector2(0, 6), unitTexture, 50, 100);
+                                boardComponent.CreateUnit(true, 3, new Vector2(0, 7), unitTexture, 50, 100);
 
 
                                 State.screenState = State.ScreenState.SKIRMISH;
