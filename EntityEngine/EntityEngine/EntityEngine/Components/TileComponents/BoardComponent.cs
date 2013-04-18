@@ -417,6 +417,7 @@ namespace EntityEngine.Components.TileComponents
             }
 
             newVisible.Clear();
+
             for (int p = 0; p < alliedUnitList.Count; p++)
             {
                 newVisible.AddRange(GetAllRings(alliedUnitList[p]));
@@ -426,6 +427,7 @@ namespace EntityEngine.Components.TileComponents
             {
                 newVisible[i].SetVisibility(Visibility.Visible);
             }
+
             oldVisible = newVisible;
         }
     }

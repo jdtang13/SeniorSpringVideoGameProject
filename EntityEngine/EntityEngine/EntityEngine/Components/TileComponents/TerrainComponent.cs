@@ -57,11 +57,15 @@ namespace EntityEngine.Components.TileComponents
             Entity hexEntity = _parent;
             SpriteComponent sprite = hexEntity.GetDrawable("SpriteComponent") as SpriteComponent;
 
-            if (myTruth == true)
+            if (myTruth)
             {
                 sprite.setColor(Color.Green);
             }
-            if (myTruth == false)
+            else if (visibility == Visibility.Explored)
+            {
+                sprite.setColor(Color.SlateGray);
+            }
+            else if (visibility == Visibility.Visible)
             {
                 sprite.setColor(Color.White);
             }

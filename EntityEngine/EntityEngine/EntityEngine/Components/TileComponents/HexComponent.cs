@@ -50,7 +50,7 @@ namespace EntityEngine.Components.TileComponents
         }
         public void SetUnit(UnitComponent myUnit)
         {
-            unit = myUnit;   
+            unit = myUnit;
         }
         public void RemoveUnit()
         {
@@ -58,7 +58,7 @@ namespace EntityEngine.Components.TileComponents
         }
         public bool HasUnit()
         {
-            return (unit!=null);
+            return (unit != null);
         }
 
         Visibility visibility;
@@ -89,13 +89,13 @@ namespace EntityEngine.Components.TileComponents
                 sprite._visible = true;
             }
 
-            if (myVis == Visibility.Explored)
+            else if (myVis == Visibility.Explored)
             {
                 sprite.setColor(Color.SlateGray);
                 sprite._visible = true;
             }
 
-            if (myVis == Visibility.Unexplored)
+            else if (myVis == Visibility.Unexplored)
             {
                 sprite.setColor(Color.White);
                 sprite._visible = false;
@@ -119,14 +119,6 @@ namespace EntityEngine.Components.TileComponents
                 terrain.SetInQueue(myTruth);
             }
 
-            if (myTruth == true)
-            {
-                sprite.setColor(Color.Green);
-            }
-            if (myTruth == false)
-            {
-                sprite.setColor(Color.White);
-            }
         }
 
         List<TerrainComponent> terrainList = new List<TerrainComponent>();
@@ -140,14 +132,13 @@ namespace EntityEngine.Components.TileComponents
         }
 
         public List<TerrainComponent> GetTerrain()
-
         {
             return terrainList;
         }
 
         public Boolean ContainsImpassable()
         {
-            for (int p = 0; p < terrainList.Count ; p++)
+            for (int p = 0; p < terrainList.Count; p++)
             {
                 if (terrainList[p].GetImpassable() == true)
                 {
@@ -157,7 +148,7 @@ namespace EntityEngine.Components.TileComponents
             return false;
         }
 
-        public HexComponent(Vector2 myCoordPosition) 
+        public HexComponent(Vector2 myCoordPosition)
         {
             this.name = "HexComponent";
             coordPosition = myCoordPosition;

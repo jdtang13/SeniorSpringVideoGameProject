@@ -162,6 +162,7 @@ namespace SeniorProjectGame
         void InitializeInput()
         {
             escapeClick = new InputAction(new Keys[] { Keys.Escape }, true);
+            enterClick = new InputAction(new Keys[] { Keys.Enter }, true);
 
             wClick = new InputAction(new Keys[] { Keys.W, Keys.Up }, false);
             dClick = new InputAction(new Keys[] { Keys.D, Keys.Right }, false);
@@ -171,7 +172,7 @@ namespace SeniorProjectGame
             singleLeftClick = new InputAction(MouseButton.left, true);
             singleRightClick = new InputAction(MouseButton.right, false);
             singleMiddleClick = new InputAction(MouseButton.middle, true);
-
+            
         }
 
         #endregion
