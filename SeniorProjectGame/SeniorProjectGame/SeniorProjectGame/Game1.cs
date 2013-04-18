@@ -233,8 +233,8 @@ namespace SeniorProjectGame
             hexGrassTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexGrass");
             hexGravelTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexGravel");
             hexSandTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexSand");
-            hexWoodTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexWood0");
-            hexWaterTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexWater0");
+            hexWoodTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexWood2");
+            hexWaterTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexWater1");
             hexStoneTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexStonePath0");
             hexDirtTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexDirt");
 
@@ -454,6 +454,10 @@ namespace SeniorProjectGame
 
                                 boardComponent.CreateUnit(true, 2, new Vector2(0, 2), unitTexture, 50, 100);
                                 boardComponent.CreateUnit(true, 2, new Vector2(0, 3), unitTexture, 50, 100);
+                                boardComponent.CreateUnit(true, 2, new Vector2(0, 4), unitTexture, 50, 100);
+                                boardComponent.CreateUnit(true, 2, new Vector2(0, 5), unitTexture, 50, 100);
+                                boardComponent.CreateUnit(true, 2, new Vector2(0, 6), unitTexture, 50, 100);
+                                boardComponent.CreateUnit(true, 2, new Vector2(0, 7), unitTexture, 50, 100);
 
 
                                 State.screenState = State.ScreenState.SKIRMISH;
