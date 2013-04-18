@@ -21,7 +21,7 @@ namespace EntityEngine
 
         public static List<Entity> masterList = new List<Entity>();
 
-        
+
         public static void AddEntity(Entity myEntity)
         {
             masterList.Add(myEntity);
@@ -29,10 +29,8 @@ namespace EntityEngine
         public static void ClearEntities()
         {
             masterList.Clear();
-            //currentList.Clear();
         }
 
-        //Max of twenty different layers that an entity can exist on. Obviously you can change this number.
         static int LAYER_LIMIT = 20;
 
         public static void Update(GameTime myTime)
@@ -48,43 +46,16 @@ namespace EntityEngine
             }
         }
 
-        public static void FollowEntity(Entity myEntity)
-        {
-            //Grab the followed entity's camera so we can edit it later, we assume it has a camera object
-            CameraComponent followedCamera = myEntity.GetComponent("CameraComponent") as CameraComponent;
-
-            //Cycle through every drawable component the followed entity has
-            for (int o = 0; o < myEntity.drawableComponentList.Count; o++)
-            {
-                DrawableComponent draw = myEntity.drawableComponentList[o] as DrawableComponent;
-
-                //Check if its the draw component is the main drawable component
-                if (draw.isMainSprite)
-                {
-                    //Set the camerea to followed cameras offset using the screenPosition of the main sprite
-                    followedCamera.SetFollowed(draw.position);
-                }
-            }
-            for (int p = 0; p < masterList.Count; p++)
-            {
-                //Grab every entities cam object,if it has one, and apply its transformation to all
-                CameraComponent cam = masterList[p].GetComponent("CameraComponent") as CameraComponent;
-                if (cam != null)
-                {
-                    //Set the camera to following by the followed entity's offset
-                    cam.SetFollowingCamera(followedCamera.GetOffset());
-                }
-            }
-        }
-
-        public static void Draw(SpriteBatch myBatch)
+        public static void Draw(SpriteBatch myBatch,GraphicsDeviceManager myGraph)
         {
             //Cycle through the layers of all the entities, 0 being the most background
-            for (int q = 0; q < LAYER_LIMIT; q++)
+            for (int layer = 0; layer < LAYER_LIMIT; layer++)
             {
+                myBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, null, null, null, null, Camera.GetTransformation(myGraph.GraphicsDevice));
+                
                 for (int p = 0; p < masterList.Count; p++)
                 {
-                    if (masterList[p].layer == q)
+                    if (masterList[p].layer == layer)
                     {
                         if (masterList[p].GetAssociatedState() == State.screenState)
                         {
@@ -92,6 +63,7 @@ namespace EntityEngine
                         }
                     }
                 }
+                myBatch.End();
             }
         }
     }

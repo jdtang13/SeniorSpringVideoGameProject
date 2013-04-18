@@ -99,7 +99,8 @@ namespace EntityEngine.Components.TileComponents
         public Vector2 screenCoordinatesOfHex(int x, int y)
         {
             SpriteComponent sprite = GetHex(new Vector2(x,y))._parent.GetDrawable("SpriteComponent") as SpriteComponent;
-            return sprite.getTopLeftPosition();
+
+            return sprite.getCenterPosition();
 
             /*Vector2 screenPosition;
 
@@ -155,17 +156,12 @@ namespace EntityEngine.Components.TileComponents
                     }
                     screenPosition.X = x * (gridTexture.Width / 4f * 3f) + gridTexture.Width / 2f;
 
-                    SpriteComponent hexSprite = new SpriteComponent( true, screenPosition, gridTexture);
+                    SpriteComponent hexSprite = new SpriteComponent(true, screenPosition, gridTexture);
                     hexEntity.AddComponent(hexSprite);
-                    hexEntity.AddComponent(new CameraComponent(screenPosition));
 
                     EntityManager.AddEntity(hexEntity);
 
                     GetHex(coordPosition).SetVisibility(Visibility.Unexplored);
-
-                    ////Adding text to label the coordinates of the hex entity
-                    //Vector2 debugTextPosition = new Vector2(hexSprite.getCenterPosition().X, hexSprite.getCenterPosition().Y);
-                    //hexEntity.AddComponent(new TextSpriteComponent(false, coordPosition.X.ToString() + "," + coordPosition.Y.ToString(), Color.Black, debugTextPosition, gridFont));
                 }
             }
 
@@ -224,8 +220,9 @@ namespace EntityEngine.Components.TileComponents
                 Entity unitEntity = new Entity(5, State.ScreenState.SKIRMISH);
 
                 SpriteComponent hexSprite = GetHex(myCoordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
-                unitEntity.AddComponent(new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), myTexture, 200f, mySpriteFrameWidth, mySpriteFrameHeight));
-                unitEntity.AddComponent(new CameraComponent( hexSprite.getCenterPosition()));
+
+                AnimatedSpriteComponent unitSprite = new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), myTexture, 400f, mySpriteFrameWidth, mySpriteFrameHeight);
+                unitEntity.AddComponent(unitSprite);
 
                 // TODO: unitData is null right now.
                 UnitComponent unitComp = new UnitComponent(myIsAlly, mySightRadius, GetHex(myCoordinate), true, null);
@@ -253,14 +250,13 @@ namespace EntityEngine.Components.TileComponents
             }
         }
         
-        public void AddTerrain(Vector2 myCoordinate, TerrainPackage myTerrain)
+        public void AddTerrain(Vector2 myCoordinate,int myLayer, TerrainPackage myTerrain)
         {
             HexComponent hexComponent = GetHex(myCoordinate);
             SpriteComponent hexSprite = hexComponent._parent.GetDrawable("SpriteComponent") as SpriteComponent;
-            
-            Entity terrainEntity = new Entity(4, State.ScreenState.SKIRMISH);
+
+            Entity terrainEntity = new Entity(4+myLayer, State.ScreenState.SKIRMISH);
             terrainEntity.AddComponent(new SpriteComponent(true, hexSprite.getCenterPosition(), myTerrain.GetTexture()));
-            terrainEntity.AddComponent(new CameraComponent(hexSprite.getCenterPosition()));
 
             TerrainComponent terrComp = new TerrainComponent(hexComponent, myTerrain.GetTexture(), myTerrain.GetImpassable());
             terrainEntity.AddComponent(terrComp);
@@ -273,9 +269,10 @@ namespace EntityEngine.Components.TileComponents
         public HexComponent GetMouseHex()
         {
             float distance = 0;
-            Vector2 mousePosition = InputState.getMousePosition();
+            Vector2 mousePosition = InputState.GetMousePosition();
 
             Vector2 mouseHexCoordinate;
+
             mouseHexCoordinate.X = mousePosition.X / (gridTexture.Width * 3f / 4f);
             mouseHexCoordinate.Y = roundDown(mousePosition.Y / gridTexture.Height) + roundDown(mouseHexCoordinate.X) / 2f;
 

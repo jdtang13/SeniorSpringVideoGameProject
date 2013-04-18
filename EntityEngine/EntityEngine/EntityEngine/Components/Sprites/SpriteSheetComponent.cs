@@ -55,22 +55,12 @@ namespace EntityEngine.Components.Sprites
             base.Initialize();
         }
 
-        public override void Update(GameTime myTime)
-        {
-
-            base.Update(myTime);
-        }
-
         public override void Draw(SpriteBatch spriteBatch)
         {
-            CameraComponent cam = _parent.GetComponent("CameraComponent") as CameraComponent;
 
-            screenPosition = cam.GetDrawPosition(position) - offset;
-
-            spriteBatch.Draw(texture, screenPosition,
+            spriteBatch.Draw(texture, position-offset,
                 new Rectangle(spriteWidth * (int)currentFrame.X, spriteHeight * (int)currentFrame.Y, spriteWidth, spriteHeight), 
                 color);
-
 
         }
 

@@ -3,7 +3,6 @@ Content\Graphics\Fonts\Debug.xnb
 Content\Graphics\TileTextures\Bases\hexDirt.xnb
 Content\Graphics\TileTextures\Bases\hexGrass.xnb
 Content\Graphics\TileTextures\Bases\hexBase.xnb
-Content\Graphics\UnitTextures\unitSample.xnb
 Content\Graphics\Backgrounds\island.xnb
 Content\Graphics\Other\node.xnb
 Content\Graphics\Other\pointer.xnb
@@ -24,3 +23,21 @@ Content\Audio\Sounds\selects.xnb
 Content\Audio\Sounds\selectss.xnb
 Content\Audio\Sounds\select.xnb
 Content\Audio\Sounds\Powerup27.xnb
+Content\Graphics\Menu\selectionIcon.xnb
+Content\Graphics\Other\marker.xnb
+Content\Graphics\UnitTextures\Axe.xnb
+Content\Graphics\UnitTextures\Battlemage.xnb
+Content\Graphics\UnitTextures\Bow.xnb
+Content\Graphics\UnitTextures\Crossbow.xnb
+Content\Graphics\UnitTextures\Flail.xnb
+Content\Graphics\UnitTextures\Halberd.xnb
+Content\Graphics\UnitTextures\Knight.xnb
+Content\Graphics\UnitTextures\Mage assassin.xnb
+Content\Graphics\UnitTextures\Man-at-Arms.xnb
+Content\Graphics\UnitTextures\Pike.xnb
+Content\Graphics\UnitTextures\Rifle.xnb
+Content\Graphics\UnitTextures\Slime.xnb
+Content\Graphics\UnitTextures\Spear.xnb
+Content\Graphics\UnitTextures\Sword.xnb
+Content\Graphics\UnitTextures\Wizard.xnb
+Content\Graphics\UnitTextures\le homunkey face.xnb

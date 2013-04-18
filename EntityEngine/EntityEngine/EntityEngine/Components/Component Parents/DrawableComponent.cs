@@ -17,7 +17,7 @@ namespace EntityEngine.Components.Component_Parents
         public Entity _parent;
 
         public Texture2D texture;
-        public Vector2 offset, position, screenPosition;
+        internal Vector2 offset, position, screenPosition;
 
         public string _name = "";
         public bool _enabled = true;
@@ -26,6 +26,17 @@ namespace EntityEngine.Components.Component_Parents
         public int _updateOrder=0;
 
         public Boolean isMainSprite;
+
+
+
+        public void SetPosition(Vector2 myVector)
+        {
+            position = myVector;
+        }
+        public Vector2 GetPosition()
+        {
+            return position;
+        }
 
         public DrawableComponent(bool myMain)
         {

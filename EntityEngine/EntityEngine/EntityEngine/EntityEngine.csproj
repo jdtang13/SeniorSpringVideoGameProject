@@ -42,9 +42,10 @@
     <Compile Include="Components\Component Parents\ComponentInterfaces\IEntityDrawable.cs" />
     <Compile Include="Components\Component Parents\ComponentInterfaces\IEntityUpdateable.cs" />
     <Compile Include="Components\Component Parents\DrawableComponent.cs" />
+    <Compile Include="Components\Component Parents\PositionArgs.cs" />
     <Compile Include="Components\Component Parents\UpdateableComponent.cs" />
     <Compile Include="Components\Sprites\AnimatedSpriteComponent.cs" />
-    <Compile Include="Components\Sprites\CameraComponent.cs" />
+    <Compile Include="Components\Sprites\Camera.cs" />
     <Compile Include="Components\Sprites\SpriteComponent.cs" />
     <Compile Include="Components\Sprites\SpriteSheetComponent.cs" />
     <Compile Include="Components\Sprites\TextSpriteComponent.cs" />
