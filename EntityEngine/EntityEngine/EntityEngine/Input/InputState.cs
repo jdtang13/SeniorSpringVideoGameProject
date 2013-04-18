@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using EntityEngine.Input;
+using EntityEngine.Components.Sprites;
 
 
 namespace EntityEngine.Input
@@ -17,9 +18,11 @@ namespace EntityEngine.Input
         public static KeyboardState newKeyboardState = new KeyboardState();
         public static KeyboardState oldKeyboardState = new KeyboardState();
 
-        public static Vector2 getMousePosition()
+        public static Vector2 GetMousePosition()
         {
-            return new Vector2(newMouseState.X, newMouseState.Y);
+            int screenWidth = 1280;
+            int screenHeight = 680;
+            return new Vector2(newMouseState.X + Camera.Pos.X - screenWidth/2, newMouseState.Y + Camera.Pos.Y - screenHeight/2);
         }
 
         public static void Update()
