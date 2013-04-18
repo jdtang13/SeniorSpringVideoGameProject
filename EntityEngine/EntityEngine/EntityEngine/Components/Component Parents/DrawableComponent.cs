@@ -14,10 +14,10 @@ namespace EntityEngine.Components.Component_Parents
     {
         //Parent of any component that needs to be drawn
 
-        public readonly Entity _parent;
+        public Entity _parent;
 
         public Texture2D texture;
-        public Vector2 offset, position, screenPosition;
+        internal Vector2 offset, position, screenPosition;
 
         public string _name = "";
         public bool _enabled = true;
@@ -27,9 +27,19 @@ namespace EntityEngine.Components.Component_Parents
 
         public Boolean isMainSprite;
 
-        public DrawableComponent(Entity myParent, bool myMain)
+
+
+        public void SetPosition(Vector2 myVector)
         {
-            _parent = myParent;
+            position = myVector;
+        }
+        public Vector2 GetPosition()
+        {
+            return position;
+        }
+
+        public DrawableComponent(bool myMain)
+        {
             isMainSprite = myMain;
         }
 
@@ -63,6 +73,18 @@ namespace EntityEngine.Components.Component_Parents
             get
             {
                 return _updateOrder;
+            }
+        }
+
+        public Entity Parent
+        {
+            get
+            {
+                return _parent;
+            }
+            set
+            {
+                _parent = value;
             }
         }
 

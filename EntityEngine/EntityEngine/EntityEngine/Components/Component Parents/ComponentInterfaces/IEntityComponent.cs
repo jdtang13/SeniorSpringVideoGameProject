@@ -7,11 +7,15 @@ namespace EntityEngine.Components.Component_Parents.Entity_Bases
 {
     public interface IEntityComponent
     {
-        //DO NOT CHANGE
-
         string name
         {
             get;
+        }
+
+        Entity Parent
+        {
+            get;
+            set;
         }
 
         void Initialize();

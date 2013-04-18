@@ -26,39 +26,60 @@ namespace EntityEngine.Components.Sprites
         {
             currentFrame.X = y;
         }
-        public int spriteWidth, spriteHeight;
+        public int frameWidth, frameHeight;
 
         float timer = 0;
         float interval;
         int numberFrames;
 
+        Color color;
+        public void SetColor(Color myColor)
+        {
+            color = myColor;
+        }
+
         bool animating;//Turns the animating on and off
-        public void setAnimated(bool myTruth)
+        public void SetAnimated(bool myTruth)
         {
             animating = myTruth;
         }
 
         //You have to pass in the size of the frame of the spite within the spritesheet
 
-        public AnimatedSpriteComponent(Entity myParent, bool myMain, Vector2 myPosition, Texture2D myTex,
+        public AnimatedSpriteComponent(bool myMain, Vector2 myPosition, Texture2D myTex,
                 float myInterval, int mySpriteWidth, int mySpriteHeight)
-            : base(myParent,myMain)
+            : base(myMain)
         {
             this.name = "AnimatedSpriteComponent";
             this.position = myPosition;
 
             this.texture = myTex;
-            spriteWidth = mySpriteWidth;
-            spriteHeight = mySpriteHeight;
+            frameWidth = mySpriteWidth;
+            frameHeight = mySpriteHeight;
 
-            numberFrames = this.texture.Width / spriteWidth;
+            numberFrames = this.texture.Width / frameWidth -1;
+            interval = myInterval;
+            animating = true;
+        }
+        public AnimatedSpriteComponent(bool myMain, Vector2 myPosition, Texture2D myTex,
+                float myInterval, int myFrameWidth, int myFrameHeight, int myXOffset, int myYOffset)
+            : base( myMain)
+        {
+            this.name = "AnimatedSpriteComponent";
+            this.position = myPosition;
+
+            this.texture = myTex;
+            frameWidth = myFrameWidth;
+            frameHeight = myFrameHeight;
+
+            numberFrames = this.texture.Width / frameWidth -1;
             interval = myInterval;
             animating = true;
         }
 
         public override void Initialize()
         {
-            this.offset = new Vector2(spriteWidth / 2, spriteHeight / 2);
+            this.offset = new Vector2(frameWidth / 2, frameHeight / 2);
             this._updateOrder = 1;
             base.Initialize();
         }
@@ -82,18 +103,13 @@ namespace EntityEngine.Components.Sprites
                     }
                 }
             }
-
             base.Update(myTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            CameraComponent cam = _parent.getUpdateable("CameraComponent") as CameraComponent;
-
-            screenPosition = cam.getDrawPosition(position) - offset;
-
-            spriteBatch.Draw(texture, screenPosition,
-                new Rectangle(spriteWidth * (int)currentFrame.X, spriteHeight * (int)currentFrame.Y, spriteWidth, spriteHeight), Color.White);
+            spriteBatch.Draw(texture, position - offset,
+                new Rectangle(frameWidth * (int)currentFrame.X, frameHeight * (int)currentFrame.Y, frameWidth, frameHeight), color);
         }
     }
 }
