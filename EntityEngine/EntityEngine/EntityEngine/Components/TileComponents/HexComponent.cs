@@ -68,37 +68,40 @@ namespace EntityEngine.Components.TileComponents
         }
         public void SetVisibility(Visibility myVis)
         {
-            visibility = myVis;
-
-            Entity hexEntity = _parent;
-            SpriteComponent sprite = hexEntity.GetDrawable("SpriteComponent") as SpriteComponent;
-
-            if (HasUnit())
+            if (!inQueue)
             {
-                unit.SetVisbility(visibility);
-            }
+                visibility = myVis;
 
-            for (int p = 0; p < terrainList.Count; p++)
-            {
-                terrainList[p].SetVisbility(visibility);
-            }
+                Entity hexEntity = _parent;
+                SpriteComponent sprite = hexEntity.GetDrawable("SpriteComponent") as SpriteComponent;
 
-            if (myVis == Visibility.Visible)
-            {
-                sprite.setColor(Color.White);
-                sprite._visible = true;
-            }
+                if (HasUnit())
+                {
+                    unit.SetVisbility(visibility);
+                }
 
-            else if (myVis == Visibility.Explored)
-            {
-                sprite.setColor(Color.SlateGray);
-                sprite._visible = true;
-            }
+                for (int p = 0; p < terrainList.Count; p++)
+                {
+                    terrainList[p].SetVisbility(visibility);
+                }
 
-            else if (myVis == Visibility.Unexplored)
-            {
-                sprite.setColor(Color.White);
-                sprite._visible = false;
+                if (myVis == Visibility.Visible)
+                {
+                    sprite.setColor(Color.White);
+                    sprite._visible = true;
+                }
+
+                else if (myVis == Visibility.Explored)
+                {
+                    sprite.setColor(Color.SlateGray);
+                    sprite._visible = true;
+                }
+
+                else if (myVis == Visibility.Unexplored)
+                {
+                    sprite.setColor(Color.White);
+                    sprite._visible = false;
+                }
             }
         }
 
