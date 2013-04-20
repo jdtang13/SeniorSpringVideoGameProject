@@ -79,13 +79,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Graphics\Backgrounds\island.png">
-      <Name>island</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Graphics\Other\node.png">
       <Name>node</Name>
       <Importer>TextureImporter</Importer>
@@ -148,11 +141,6 @@
     </Compile>
     <Compile Include="Graphics\Other\marker.png">
       <Name>marker</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Graphics\Backgrounds\island.png">
-      <Name>island</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -314,6 +302,13 @@
     </Compile>
     <Compile Include="Graphics\TileTextures\Decorations\wall.png">
       <Name>wooden Walls</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Graphics\Backgrounds\island.png">
+      <Name>island</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

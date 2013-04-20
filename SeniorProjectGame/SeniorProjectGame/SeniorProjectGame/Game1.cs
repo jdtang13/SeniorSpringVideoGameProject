@@ -173,16 +173,12 @@ namespace SeniorProjectGame
             aClick = new InputAction(new Keys[] { Keys.A, Keys.Left }, false);
 
             singleLeftClick = new InputAction(MouseButton.left, true);
-<<<<<<< HEAD
-            singleRightClick = new InputAction(MouseButton.right, false);
-            singleMiddleClick = new InputAction(MouseButton.middle, true);
 
-=======
             LeftClick = new InputAction(MouseButton.left, false);
             
             singleRightClick = new InputAction(MouseButton.right, false);
             singleMiddleClick = new InputAction(MouseButton.middle, true);            
->>>>>>> origin/lionel
+
         }
 
         #endregion
