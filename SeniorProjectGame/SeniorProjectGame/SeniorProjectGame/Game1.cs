@@ -95,7 +95,6 @@ namespace SeniorProjectGame
 
         #endregion
 
-
         #region Initialization
 
         public Game1()
@@ -171,8 +170,7 @@ namespace SeniorProjectGame
 
             singleLeftClick = new InputAction(MouseButton.left, true);
             singleRightClick = new InputAction(MouseButton.right, false);
-            singleMiddleClick = new InputAction(MouseButton.middle, true);
-            
+            singleMiddleClick = new InputAction(MouseButton.middle, true);            
         }
 
         #endregion
@@ -689,7 +687,7 @@ namespace SeniorProjectGame
 
             boardComponent.UpdateVisibilityAllies();
 
-            original.RemoveUnit(); //todo: removeunit()
+            original.RemoveUnit();
         }
 
         public bool AreAdjacent(HexComponent one, HexComponent two)
