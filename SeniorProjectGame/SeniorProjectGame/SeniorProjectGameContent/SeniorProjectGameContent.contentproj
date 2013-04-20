@@ -141,17 +141,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Graphics\TileTextures\Bases\hexStonePath0.png">
-      <Name>hexStonePath0</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Graphics\TileTextures\Bases\hexStonePath1.png">
-      <Name>hexStonePath1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-
     <Compile Include="Graphics\Menu\selectionIcon.png">
       <Name>selectionIcon</Name>
       <Importer>TextureImporter</Importer>
@@ -167,19 +156,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-
-    <Content Include="Graphics\TileTextures\Bases\hexStonePath2.png">
-      <Name>hexStonePath2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Content>
-    <Compile Include="Graphics\TileTextures\Bases\hexStonePath3.png">
-      <Name>hexStonePath3</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Graphics\TileTextures\Bases\hexStonePath4.png">
-      <Name>hexStonePath4</Name>
+    <Compile Include="Graphics\Other\questionTexture.png">
+      <Name>questionTexture</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -290,6 +268,52 @@
     </Compile>
     <Compile Include="Graphics\UnitTextures\le homunkey face.png">
       <Name>le homunkey face</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Graphics\TileTextures\Bases\lava.png">
+      <Name>lava</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Graphics\TileTextures\Bases\offical dirt.png">
+      <Name>offical dirt</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Graphics\TileTextures\Bases\offical sand hex.png">
+      <Name>offical sand hex</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Graphics\TileTextures\Bases\official gravel hex.png">
+      <Name>official gravel hex</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Graphics\TileTextures\Bases\red carpet.png">
+      <Name>red carpet</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Graphics\TileTextures\Bases\stone path.png">
+      <Name>stone path</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Graphics\TileTextures\Decorations\bush.png">
+      <Name>bush</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Graphics\TileTextures\Decorations\wall.png">
+      <Name>wooden Walls</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

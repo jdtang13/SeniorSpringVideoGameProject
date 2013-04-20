@@ -10,18 +10,21 @@ namespace EntityEngine.Input
         //A class that does not need to be instatiated to work. I'ts update function is called in the entity manager for ease of use.
         //Keeps a picture of what your keyboard looks like so you can ask it questions later.
 
-       
         public static MouseState newMouseState = new MouseState();
         public static MouseState oldMouseState = new MouseState();
 
         public static KeyboardState newKeyboardState = new KeyboardState();
         public static KeyboardState oldKeyboardState = new KeyboardState();
 
-        public static Vector2 GetMousePosition()
+        public static Vector2 GetMouseIngamePosition()
         {
             int screenWidth = 1280;
             int screenHeight = 680;
             return new Vector2(newMouseState.X + Camera.Pos.X - screenWidth/2, newMouseState.Y + Camera.Pos.Y - screenHeight/2);
+        }
+        public static Vector2 GetMouseScreenPosition()
+        {
+            return new Vector2(newMouseState.X, newMouseState.Y);
         }
 
         public static void Update()

@@ -12,8 +12,7 @@ namespace EntityEngine.Components.TileComponents
 {
     public class BoardComponent : Component
     {
-        //Use this component to make an entity into a board. This component handles the creation of the other hex entities.
-
+        bool fogOfWarToggle = true;
         List<HexComponent> oldVisible;
         List<HexComponent> newVisible;
 
@@ -28,27 +27,20 @@ namespace EntityEngine.Components.TileComponents
         SpriteFont gridFont;
 
         Vector2 mouseCurrentHex;
-
         List<HexComponent> adjacentList = new List<HexComponent>();
 
         Entity[,] hexEntityGrid;
-
-        //UnitComponent selectedUnit;
-        //public void SetSelectedUnit(UnitComponent myUnit)
-        //{
-        //    selectedUnit = myUnit;
-        //}
 
         public List<UnitComponent> alliedUnitList = new List<UnitComponent>();
         List<UnitComponent> nonAlliedUnitList = new List<UnitComponent>();
 
         //You must handle nulls for this dictionary
-        Dictionary<Vector2, HexComponent> HexDictionary = new Dictionary<Vector2, HexComponent>();
+        Dictionary<Vector2, HexComponent> hexDictionary = new Dictionary<Vector2, HexComponent>();
         public HexComponent GetHex(Vector2 myVec)
         {
-            if (this.HexDictionary.ContainsKey(myVec))
+            if (this.hexDictionary.ContainsKey(myVec))
             {
-                return HexDictionary[myVec];
+                return hexDictionary[myVec];
             }
             else
             {
@@ -141,7 +133,7 @@ namespace EntityEngine.Components.TileComponents
 
                     HexComponent hexComp = new HexComponent(coordPosition);
                     hexEntity.AddComponent(hexComp);
-                    HexDictionary.Add(coordPosition, hexComp);
+                    hexDictionary.Add(coordPosition, hexComp);
                     HexEntityDictionary.Add(coordPosition, hexEntity);
 
                     //Creating the sprite for the hex entity
@@ -166,7 +158,7 @@ namespace EntityEngine.Components.TileComponents
             }
 
             //Giving all the hex's their adjacents
-            foreach (KeyValuePair<Vector2, HexComponent> entry in HexDictionary)
+            foreach (KeyValuePair<Vector2, HexComponent> entry in hexDictionary)
             {
                 HexComponent hex = entry.Value;
                 Vector2 coords = hex.getCoordPosition();
@@ -217,7 +209,7 @@ namespace EntityEngine.Components.TileComponents
 
             if (hexComp.GetUnit() == null)
             {
-                Entity unitEntity = new Entity(5, State.ScreenState.SKIRMISH);
+                Entity unitEntity = new Entity(15, State.ScreenState.SKIRMISH);
 
                 SpriteComponent hexSprite = GetHex(myCoordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
@@ -269,7 +261,7 @@ namespace EntityEngine.Components.TileComponents
         public HexComponent GetMouseHex()
         {
             float distance = 0;
-            Vector2 mousePosition = InputState.GetMousePosition();
+            Vector2 mousePosition = InputState.GetMouseIngamePosition();
 
             Vector2 mouseHexCoordinate;
 
@@ -411,24 +403,41 @@ namespace EntityEngine.Components.TileComponents
         //IMPORTANT: Call this function every time anyone on your team moves
         public void UpdateVisibilityAllies()
         {
-            for (int u = 0; u < oldVisible.Count; u++)
+            if (fogOfWarToggle)
             {
-                oldVisible[u].SetVisibility(Visibility.Explored);
+                for (int u = 0; u < oldVisible.Count; u++)
+                {
+                    oldVisible[u].SetVisibility(Visibility.Explored);
+                }
+
+                newVisible.Clear();
+
+                for (int p = 0; p < alliedUnitList.Count; p++)
+                {
+                    newVisible.AddRange(GetAllRings(alliedUnitList[p]));
+                }
+
+                for (int i = 0; i < newVisible.Count; i++)
+                {
+                    newVisible[i].SetVisibility(Visibility.Visible);
+                }
+
+                oldVisible = newVisible;
+            }
+        }
+
+        public void ToggleFogofWar(bool myTruth)
+        {
+            //True means fog of war is on, false means fog of war is disabled
+            if (myTruth == false)
+            {
+                foreach (KeyValuePair<Vector2, HexComponent> hex in hexDictionary)
+                {
+                    hex.Value.SetVisibility(Visibility.Visible);
+                }
             }
 
-            newVisible.Clear();
-
-            for (int p = 0; p < alliedUnitList.Count; p++)
-            {
-                newVisible.AddRange(GetAllRings(alliedUnitList[p]));
-            }
-
-            for (int i = 0; i < newVisible.Count; i++)
-            {
-                newVisible[i].SetVisibility(Visibility.Visible);
-            }
-
-            oldVisible = newVisible;
+            fogOfWarToggle = myTruth;
         }
     }
 }

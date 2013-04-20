@@ -52,7 +52,7 @@ namespace SeniorProjectGame
             }
             else
             {
-                throw new Exception(myKey + " doesn't exist in the terrain dictionary");
+                return new TerrainPackage(questionTexture, false);
             }
         }
 
@@ -60,11 +60,11 @@ namespace SeniorProjectGame
 
         Texture2D worldMapTexture, nodeTexture, pointerTexture;
 
-        Texture2D hexBaseTexture, hexDirtTexture, hexGrassTexture, hexGravelTexture, hexSandTexture, hexWoodTexture, hexWaterTexture, hexStoneTexture;
-        Texture2D hexTreeTexture;
+        Texture2D hexBaseTexture, dirtTexture, grassTexture, gravelTexture, sandTexture, woodTexture,
+            waterTexture, stoneTexture;
+        Texture2D treeTexture, wallTexture,bushTexture, tableTexture, carpetTexture, throneTexture, tentTexture;
 
-        Texture2D markerTexture;
-
+        Texture2D markerTexture, questionTexture;
 
         Texture2D unitTexture;
 
@@ -95,7 +95,6 @@ namespace SeniorProjectGame
 
         #endregion
 
-
         #region Initialization
 
         public Game1()
@@ -112,7 +111,6 @@ namespace SeniorProjectGame
         {
             IsMouseVisible = true;
 
-
             LoadContent();
 
             PopulateTerrainDictionary();
@@ -125,7 +123,6 @@ namespace SeniorProjectGame
 
             base.Initialize();
         }
-
 
 
         void InitializeState()
@@ -148,15 +145,20 @@ namespace SeniorProjectGame
 
         void PopulateTerrainDictionary()
         {
-            terrainDictionary["G"] = new TerrainPackage(hexGrassTexture, false);//Grass
-            terrainDictionary["D"] = new TerrainPackage(hexDirtTexture, false);//Dirt
-            terrainDictionary["L"] = new TerrainPackage(hexWaterTexture, true);//Water
-            terrainDictionary["W"] = new TerrainPackage(hexWoodTexture, false);//Wood
-            terrainDictionary["S"] = new TerrainPackage(hexStoneTexture, false);//Stone
-            terrainDictionary["A"] = new TerrainPackage(hexSandTexture, false);//Sand
-            terrainDictionary["R"] = new TerrainPackage(hexGravelTexture, false);//Gravel
+            terrainDictionary["G"] = new TerrainPackage(grassTexture, false);//Grass
+            terrainDictionary["D"] = new TerrainPackage(dirtTexture, false);//Dirt
+            terrainDictionary["L"] = new TerrainPackage(waterTexture, true);//Water
+            terrainDictionary["W"] = new TerrainPackage(woodTexture, false);//Wood
+            terrainDictionary["S"] = new TerrainPackage(stoneTexture, false);//Stone
+            terrainDictionary["A"] = new TerrainPackage(sandTexture, false);//Sand
+            terrainDictionary["g"] = new TerrainPackage(gravelTexture, false);//Gravel
 
-            terrainDictionary["T"] = new TerrainPackage(hexTreeTexture, true);//Tree
+            terrainDictionary["T"] = new TerrainPackage(treeTexture, true);//Tree
+            terrainDictionary["B"] = new TerrainPackage(bushTexture, false);//Bush
+            //terrainDictionary["t"] = new TerrainPackage(treeTexture, true);//Table
+            terrainDictionary["C"] = new TerrainPackage(carpetTexture, false);//Carpet
+            //terrainDictionary["h"] = new TerrainPackage(treeTexture, true);//Throne
+            //terrainDictionary["n"] = new TerrainPackage(treeTexture, true);//Tent
         }
 
         void InitializeInput()
@@ -172,7 +174,7 @@ namespace SeniorProjectGame
             singleLeftClick = new InputAction(MouseButton.left, true);
             singleRightClick = new InputAction(MouseButton.right, false);
             singleMiddleClick = new InputAction(MouseButton.middle, true);
-            
+
         }
 
         #endregion
@@ -186,20 +188,26 @@ namespace SeniorProjectGame
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
             Globals.font = font;
 
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Laboratory.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Alchemist's_Laboratory.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Ambushed.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Pavilion.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Throne_Room.txt");
 
             hexBaseTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexBase");
-            hexGrassTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexGrass");
-            hexGravelTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexGravel");
-            hexSandTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexSand");
-            hexWoodTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexWood2");
-            hexWaterTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexWater1");
-            hexStoneTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexStonePath0");
-            hexDirtTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexDirt");
+            grassTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexGrass");
+            gravelTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexGravel");
+            sandTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexSand");
+            woodTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexWood2");
+            waterTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexWater1");
+            stoneTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\stone path");
+            carpetTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\red carpet");
 
-            hexTreeTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\tree");
+            treeTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\tree");
+            bushTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\bush");
+            //wallTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\wall");
 
             unitTexture = Content.Load<Texture2D>("Graphics\\UnitTextures\\Flail");
 
@@ -208,6 +216,8 @@ namespace SeniorProjectGame
             worldMapTexture = Content.Load<Texture2D>("Graphics\\Backgrounds\\island");
             pointerTexture = Content.Load<Texture2D>("Graphics\\Other\\pointer");
             nodeTexture = Content.Load<Texture2D>("Graphics\\Other\\node");
+
+            questionTexture = Content.Load<Texture2D>("Graphics\\Other\\questionTexture");
         }
 
         void ConvertTxtToBin(string myFilePath)
@@ -356,15 +366,15 @@ namespace SeniorProjectGame
             {
                 this.Exit();
             }
-            if(wClick.Evaluate())
+            if (wClick.Evaluate())
             {
                 Camera.Move(new Vector2(0, -5));
             }
-            if(dClick.Evaluate())
+            if (dClick.Evaluate())
             {
                 Camera.Move(new Vector2(5, 0));
             }
-            if(sClick.Evaluate())
+            if (sClick.Evaluate())
             {
                 Camera.Move(new Vector2(0, 5));
             }
@@ -395,7 +405,7 @@ namespace SeniorProjectGame
                         for (int p = 0; p < worldMapComponent.GetNodeEntityList().Count; p++)
                         {
                             ClickableComponent click = worldMapComponent.GetNodeEntityList()[p].GetComponent("ClickableComponent") as ClickableComponent;
-                            if (click.isColliding(new Vector2(InputState.GetMousePosition().X, InputState.GetMousePosition().Y)))
+                            if (click.isColliding(new Vector2(InputState.GetMouseIngamePosition().X, InputState.GetMouseIngamePosition().Y)))
                             {
                                 selectSound.Play();
                                 NodeComponent node = click._parent.GetComponent("NodeComponent") as NodeComponent;
@@ -423,7 +433,7 @@ namespace SeniorProjectGame
                     }
                     if (singleRightClick.Evaluate())
                     {
- 
+                        
                     }
 
                     break;
@@ -511,8 +521,6 @@ namespace SeniorProjectGame
 
                             Entity hexEntity = hexComp._parent;
 
-                            //boardComponent.UpdateVisibilityAllies();
-
                             if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection)
                             {
                                 UnitComponent unit = hexComp.GetUnit();
@@ -586,7 +594,7 @@ namespace SeniorProjectGame
                     if (moving)
                     {
                         elapsedTimeForMove += gameTime.ElapsedGameTime;
-                      
+
                         if (elapsedTimeForMove > TimeSpan.FromMilliseconds(100))
                         {
                             elapsedTimeForMove = TimeSpan.FromMilliseconds(0);
@@ -602,7 +610,7 @@ namespace SeniorProjectGame
                                 State.originalHexClicked.GetUnit().SetSelected(false);
                                 State.originalHexClicked = null;
                                 moving = false;
-                            }                            
+                            }
                         }
                     }
                     if (enterClick.Evaluate())
@@ -626,11 +634,11 @@ namespace SeniorProjectGame
 
                     else if (singleRightClick.Evaluate())
                     {
+                        //boardComponent.ToggleFogofWar(false);
                     }
                     if (singleMiddleClick.Evaluate())
                     {
-                        //boardComponent.alliedUnitList[0].MoveDirection(Orient.se);
-                        //boardComponent.UpdateVisibilityAllies();
+                        
                     }
                     break;
                 #endregion
@@ -718,7 +726,7 @@ namespace SeniorProjectGame
 
             spriteBatch.Begin();
 
-            spriteBatch.DrawString(font, InputState.GetMousePosition().ToString(), new Vector2(0, font.LineSpacing), Color.White);
+            spriteBatch.DrawString(font, InputState.GetMouseIngamePosition().ToString(), new Vector2(0, font.LineSpacing), Color.White);
 
             numberOfFrames++;
             string fps = string.Format("fps: {0}", framesPerSecond);
