@@ -77,6 +77,7 @@ namespace SeniorProjectGame
 
         InputAction singleLeftClick, singleRightClick, singleMiddleClick;
         InputAction wClick, aClick, sClick, dClick, enterClick, escapeClick;
+        InputAction LeftClick;
 
         Entity worldMapEntity; WorldMapComponent worldMapComponent;
         Entity boardEntity; BoardComponent boardComponent;
@@ -169,6 +170,8 @@ namespace SeniorProjectGame
             aClick = new InputAction(new Keys[] { Keys.A, Keys.Left }, false);
 
             singleLeftClick = new InputAction(MouseButton.left, true);
+            LeftClick = new InputAction(MouseButton.left, false);
+            
             singleRightClick = new InputAction(MouseButton.right, false);
             singleMiddleClick = new InputAction(MouseButton.middle, true);            
         }
@@ -503,7 +506,7 @@ namespace SeniorProjectGame
                 case State.ScreenState.SKIRMISH:
                     if (!moving)
                     {
-                        if (singleLeftClick.Evaluate())
+                        if (LeftClick.Evaluate())
                         {
                             HexComponent hexComp = boardComponent.GetMouseHex();
 
