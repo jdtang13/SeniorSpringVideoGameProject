@@ -2,14 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using EntityEngine.Stat_Attribute_Classes;
 
 namespace EntityEngine
 {
-    public enum Alignment
-    {
-        PLAYER, ENEMY, NEUTRAL       // declares what allighments this unit can be 
-    }
-
     public class UnitData
     {
         string name;
@@ -21,8 +17,8 @@ namespace EntityEngine
 
         int level;// = 1;
 
-        //int health = 20;
-        //int mana = 10;
+        int health; int totalHealth;
+        int mana = 10; int totalMana;
         int exp = 0;
         int movement;// = 2;
 
@@ -33,10 +29,11 @@ namespace EntityEngine
         int attackRange; // the range a character can attack
 
 
-        public UnitData(int str, int mag, int dex, int agi, int def, int res, int spd,
+        public UnitData(string name, Role role, Alignment ali, int level,
+            int str, int mag, int dex, int agi, int def, int res, int spd,
             float strGrowth, float magGrowth, float dexGrowth, float agiGrowth, float defGrowth, float resGrowth, float spdGrowth,
             int strCap, int magCap, int dexCap, int agiCap, int defCap, int resCap, int spdCap,
-            string name, Alignment ali, Role role, int level, int movement)
+            int movement)
         {
             attributes = new Dictionary<string, int>();
             caps = new Dictionary<string, int>();
@@ -70,15 +67,21 @@ namespace EntityEngine
             growths["speed"] = spdGrowth;
 
             alignment = ali;
+
+            CalculateValues();
+        }
+
+        public void CalculateValues()
+        {
+            totalHealth = 2 * attributes["strength"] + role.health;   
         }
 
 
-        //health, manna, and movement calculated by adding the attributed based on the characters role with the 
+        //health, mana, and movement calculated by adding the attributed based on the characters role with the TODO: pls finish this sentence
         public int Health()
         {
-            // health = 2 * strength
 
-            return 2*attributes["strength"] + role.health;   
+            return 2 * attributes["strength"] + role.health;
         }
 
         public int Movement()

@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using EntityEngine.Components.Sprites;
 using Microsoft.Xna.Framework.Graphics;
 using EntityEngine.Input;
+using EntityEngine.Stat_Attribute_Classes;
 
 namespace EntityEngine.Components.TileComponents
 {
@@ -33,6 +34,20 @@ namespace EntityEngine.Components.TileComponents
 
         public List<UnitComponent> alliedUnitList = new List<UnitComponent>();
         List<UnitComponent> nonAlliedUnitList = new List<UnitComponent>();
+
+        List<Vector2> alliedSpawnPoints = new List<Vector2>();
+        public void AddAlliedSpawnPoint(Vector2 myVector)
+        {
+            alliedSpawnPoints.Add(myVector);
+        }
+        public Vector2 GetOneAlliedSpawnPoint(Random rand)
+        {
+            int chosenIndex = rand.Next(0, alliedSpawnPoints.Count);
+            Vector2 spawn = alliedSpawnPoints[chosenIndex];
+            alliedSpawnPoints.RemoveAt(chosenIndex);
+
+            return spawn;
+        }
 
         //You must handle nulls for this dictionary
         Dictionary<Vector2, HexComponent> hexDictionary = new Dictionary<Vector2, HexComponent>();
@@ -203,7 +218,9 @@ namespace EntityEngine.Components.TileComponents
             return adjacentList;
         }
 
-        public void CreateUnit(bool myIsAlly, int mySightRadius, Vector2 myCoordinate, Texture2D myTexture, int mySpriteFrameWidth, int mySpriteFrameHeight)
+        //public void CreateUnitWithData(Vector2 myCoordinate,Texture2D myTexture, int
+
+        public void CreateUnit(bool isAlly, int mySightRadius, Vector2 myCoordinate, Texture2D myTexture, int mySpriteFrameWidth, int mySpriteFrameHeight)
         {
             HexComponent hexComp = GetHex(myCoordinate);
 
@@ -217,14 +234,14 @@ namespace EntityEngine.Components.TileComponents
                 unitEntity.AddComponent(unitSprite);
 
                 // TODO: unitData is null right now.
-                UnitComponent unitComp = new UnitComponent(myIsAlly, mySightRadius, GetHex(myCoordinate), true, null);
+                UnitComponent unitComp = new UnitComponent(isAlly, mySightRadius, GetHex(myCoordinate), true, null);
                 unitEntity.AddComponent(unitComp);
 
                 GetHex(myCoordinate).SetUnit(unitComp);
 
                 EntityManager.AddEntity(unitEntity);
 
-                if (myIsAlly)
+                if (isAlly)
                 {
                     alliedUnitList.Add(unitComp);
                 }
@@ -242,6 +259,7 @@ namespace EntityEngine.Components.TileComponents
             }
         }
         
+        //TODO: Add row layer support
         public void AddTerrain(Vector2 myCoordinate,int myLayer, TerrainPackage myTerrain)
         {
             HexComponent hexComponent = GetHex(myCoordinate);

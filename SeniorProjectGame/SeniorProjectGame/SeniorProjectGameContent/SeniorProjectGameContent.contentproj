@@ -300,15 +300,17 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Graphics\TileTextures\Decorations\wall.png">
-      <Name>wooden Walls</Name>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Graphics\Backgrounds\island.png">
+      <Name>island</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Graphics\Backgrounds\island.png">
-      <Name>island</Name>
+    <Compile Include="Graphics\TileTextures\Decorations\wooden Walls .png">
+      <Name>wooden Walls</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

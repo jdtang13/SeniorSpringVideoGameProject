@@ -49,6 +49,7 @@
     <Compile Include="Components\Sprites\SpriteComponent.cs" />
     <Compile Include="Components\Sprites\SpriteSheetComponent.cs" />
     <Compile Include="Components\Sprites\TextSpriteComponent.cs" />
+    <Compile Include="Components\Sprites\Texture2DFramed.cs" />
     <Compile Include="Components\TileComponents\BoardComponent.cs" />
     <Compile Include="Components\TileComponents\Orient.cs" />
     <Compile Include="Components\TileComponents\HexComponent.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="Input\InputAction.cs" />
     <Compile Include="Input\InputState.cs" />
     <Compile Include="Input\MouseButton.cs" />
+    <Compile Include="Stat Attribute Classes\Alignment.cs" />
     <Compile Include="Stat Attribute Classes\Armor.cs" />
     <Compile Include="Stat Attribute Classes\Consumable.cs" />
     <Compile Include="Stat Attribute Classes\Item.cs" />

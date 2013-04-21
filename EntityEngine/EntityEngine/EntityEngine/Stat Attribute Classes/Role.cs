@@ -7,28 +7,28 @@ namespace EntityEngine
 {
     public class Role  //attributes growths and caps for the roll of characters
     {
-        public Dictionary<string, int> attributes;
+        public Dictionary<string, int> attributes = new Dictionary<string, int>();
+        public Dictionary<string, float> growths = new Dictionary<string, float>();
+        public Dictionary<string, int> caps = new Dictionary<string, int>();
 
-        public Dictionary<string, bool> weapons;
-        public Dictionary<string, float> growths;
+        public string weapon;
 
-        public Dictionary<string, int> caps;
-
+        //TODO: Calculate these if they need to be calc'd
+        //Aren't these unitdata specific and not class specific?
         public int health;
         public int mana;
         public int movement;
 
-        public Role(int str, int mag, int dex, int agi, int def, int res, int spd,
-             float strGrowth, float magGrowth, float dexGrowth, float agiGrowth, float defGrowth, float resGrowth, float spdGrowth,
-             int strCap, int magCap, int dexCap, int agiCap, int defCap, int resCap, int spdCap,
-                    bool sword, bool lance, bool axe, bool light, bool anima, bool dark, bool bow, int movement)
+        public Role(
+                    int str, int mag, int dex, int agi, int def, int res, int spd,
+                    float strGrowth, float magGrowth, float dexGrowth, float agiGrowth, float defGrowth, float resGrowth, float spdGrowth,
+                    int strCap, int magCap, int dexCap, int agiCap, int defCap, int resCap, int spdCap,
+                    string weapon,
+                    bool light, bool anima, bool dark,
+                    int movement)
         {
-            attributes = new Dictionary<string, int>();
-            growths = new Dictionary<string, float>();
-            caps = new Dictionary<string, int>();
-            weapons = new Dictionary<string, bool>();
-
             this.movement = movement;
+            this.weapon = weapon;
 
             attributes["strength"] = str;
             attributes["magic"] = mag;
@@ -54,13 +54,13 @@ namespace EntityEngine
             caps["resistance"] = resCap;
             caps["speed"] = spdCap;
 
-            weapons["sword"] = sword;
-            weapons["lance"] = lance;
-            weapons["axe"] = axe;
-            weapons["light"] = light;
-            weapons["anima"] = anima;
-            weapons["dark"] = dark;
-            weapons["bow"] = bow;
+            //weapons["sword"] = sword;
+            //weapons["lance"] = lance;
+            //weapons["axe"] = axe;
+            //weapons["light"] = light;
+            //weapons["anima"] = anima;
+            //weapons["dark"] = dark;
+            //weapons["bow"] = bow;
         }
 
     }

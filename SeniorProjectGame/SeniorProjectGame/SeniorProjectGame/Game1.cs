@@ -21,10 +21,29 @@ namespace SeniorProjectGame
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         #region Variables
+
+        Random rand = new Random();
+
+        //Graphics and Content Vars
         GraphicsDeviceManager graphics;
         int screenWidth = 1280;
         int screenHeight = 680;
         SpriteBatch spriteBatch;
+
+        Texture2D worldMapTexture, nodeTexture, pointerTexture;
+        Texture2D hexBaseTexture, dirtTexture, grassTexture, gravelTexture, sandTexture, woodTexture,
+            waterTexture, stoneTexture;
+        Texture2D treeTexture, wallTexture, bushTexture, tableTexture, carpetTexture, throneTexture, tentTexture;
+        Texture2D markerTexture, questionTexture;
+        Texture2D unitTexture;
+
+        SoundEffect selectSound;
+
+        SpriteFont font;
+
+        //Hex Vars
+        Entity worldMapEntity; WorldMapComponent worldMapComponent;
+        Entity boardEntity; BoardComponent boardComponent;
 
         Dictionary<string, BoardComponent> hexMapDictionary = new Dictionary<string, BoardComponent>();
         public void AddHexMap(string myID, BoardComponent myBoard)
@@ -55,44 +74,31 @@ namespace SeniorProjectGame
                 return new TerrainPackage(questionTexture, false);
             }
         }
-
-        Random rand = new Random();
-
-        Texture2D worldMapTexture, nodeTexture, pointerTexture;
-
-        Texture2D hexBaseTexture, dirtTexture, grassTexture, gravelTexture, sandTexture, woodTexture,
-            waterTexture, stoneTexture;
-        Texture2D treeTexture, wallTexture,bushTexture, tableTexture, carpetTexture, throneTexture, tentTexture;
-
-        Texture2D markerTexture, questionTexture;
-
-        Texture2D unitTexture;
-
-        SoundEffect selectSound;
-
-        List<HexComponent> pathQueue = new List<HexComponent>();
         HexComponent ghostHex = null;
+        List<HexComponent> pathQueue = new List<HexComponent>();
 
-        SpriteFont font;
+        bool moving = false;
+        bool yourTurn = true;
 
-        InputAction singleLeftClick, singleRightClick, singleMiddleClick;
+        //Player Vars
+        Dictionary<String, Role> classes = new Dictionary<String, Role>();
+
+        //Input Vars
+        InputAction singleLeftClick, singleRightClick, singleMiddleClick; 
+        InputAction leftHold;
+
         InputAction wClick, aClick, sClick, dClick, enterClick, escapeClick;
-        InputAction LeftClick;
-
-        Entity worldMapEntity; WorldMapComponent worldMapComponent;
-        Entity boardEntity; BoardComponent boardComponent;
-
-
+       
+        //Menu Vars
         List<Entity> orderButtonEntityList = new List<Entity>();
         Entity attackOrderEntity, moveOrderEntity, noOrderEntity, spellOrderEntity;
         Texture2D attackOrderTexture, moveOrderTexture, noOrderTexture, spellOrderTexture;
 
+        //FPS Vars
         float framesPerSecond = 60;
         float numberOfFrames;
         TimeSpan elapsedTimeForFps;
         TimeSpan elapsedTimeForMove;
-
-        bool moving = false;
 
         #endregion
 
@@ -114,52 +120,15 @@ namespace SeniorProjectGame
 
             LoadContent();
 
-            PopulateTerrainDictionary();
-
             InitializeInput();
 
             ProcessWorldMapBin();
 
-            InitializeState();
+            ProcessEnemyBin();
 
-            base.Initialize();
-        }
-
-
-        void InitializeState()
-        {
             State.Initialize();
 
-            Dictionary<String, Role> classes = new Dictionary<String, Role>();
-            Role lordClass = new Role(3, 2, 4, 4, 2, 0, 3,
-                .1f, .2f, .2f, .3f, .4f, .1f, .3f,
-                4, 2, 3, 5, 3, 2, 4,
-                true, false, false, false, false, false, false, 3);
-
-            classes["lord"] = lordClass;
-
-            UnitData myUnitData = new UnitData(5, 5, 4, 3, 7, 2, 5,
-                .6f, .5f, .4f, .5f, .7f, .3f, .6f,
-                40, 40, 40, 35, 45, 35, 45, "myUnit",
-                Alignment.PLAYER, classes["lord"], 1, 0);
-        }
-
-        void PopulateTerrainDictionary()
-        {
-            terrainDictionary["G"] = new TerrainPackage(grassTexture, false);//Grass
-            terrainDictionary["D"] = new TerrainPackage(dirtTexture, false);//Dirt
-            terrainDictionary["L"] = new TerrainPackage(waterTexture, true);//Water
-            terrainDictionary["W"] = new TerrainPackage(woodTexture, false);//Wood
-            terrainDictionary["S"] = new TerrainPackage(stoneTexture, false);//Stone
-            terrainDictionary["A"] = new TerrainPackage(sandTexture, false);//Sand
-            terrainDictionary["g"] = new TerrainPackage(gravelTexture, false);//Gravel
-
-            terrainDictionary["T"] = new TerrainPackage(treeTexture, true);//Tree
-            terrainDictionary["B"] = new TerrainPackage(bushTexture, false);//Bush
-            //terrainDictionary["t"] = new TerrainPackage(treeTexture, true);//Table
-            terrainDictionary["C"] = new TerrainPackage(carpetTexture, false);//Carpet
-            //terrainDictionary["h"] = new TerrainPackage(treeTexture, true);//Throne
-            //terrainDictionary["n"] = new TerrainPackage(treeTexture, true);//Tent
+            base.Initialize();
         }
 
         void InitializeInput()
@@ -174,10 +143,10 @@ namespace SeniorProjectGame
 
             singleLeftClick = new InputAction(MouseButton.left, true);
 
-            LeftClick = new InputAction(MouseButton.left, false);
-            
+            leftHold = new InputAction(MouseButton.left, false);
+
             singleRightClick = new InputAction(MouseButton.right, false);
-            singleMiddleClick = new InputAction(MouseButton.middle, true);            
+            singleMiddleClick = new InputAction(MouseButton.middle, true);
 
         }
 
@@ -191,6 +160,8 @@ namespace SeniorProjectGame
 
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
             Globals.font = font;
+
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Enemies.txt");
 
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
@@ -211,7 +182,7 @@ namespace SeniorProjectGame
 
             treeTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\tree");
             bushTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\bush");
-            //wallTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\wall");
+            wallTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\wooden Walls");
 
             unitTexture = Content.Load<Texture2D>("Graphics\\UnitTextures\\Flail");
 
@@ -222,6 +193,28 @@ namespace SeniorProjectGame
             nodeTexture = Content.Load<Texture2D>("Graphics\\Other\\node");
 
             questionTexture = Content.Load<Texture2D>("Graphics\\Other\\questionTexture");
+
+            PopulateTerrainDictionary();
+        }
+
+        void PopulateTerrainDictionary()
+        {
+            terrainDictionary["G"] = new TerrainPackage(grassTexture, false);//Grass
+            terrainDictionary["D"] = new TerrainPackage(dirtTexture, false);//Dirt
+            terrainDictionary["L"] = new TerrainPackage(waterTexture, true);//Water
+            terrainDictionary["W"] = new TerrainPackage(woodTexture, false);//Wood
+            terrainDictionary["S"] = new TerrainPackage(stoneTexture, false);//Stone
+            terrainDictionary["A"] = new TerrainPackage(sandTexture, false);//Sand
+            terrainDictionary["g"] = new TerrainPackage(gravelTexture, false);//Gravel
+
+            terrainDictionary["T"] = new TerrainPackage(treeTexture, true);//Tree
+            terrainDictionary["B"] = new TerrainPackage(bushTexture, false);//Bush
+            //terrainDictionary["t"] = new TerrainPackage(treeTexture, true);//Table
+            terrainDictionary["C"] = new TerrainPackage(carpetTexture, false);//Carpet
+            //terrainDictionary["h"] = new TerrainPackage(treeTexture, true);//Throne
+            //terrainDictionary["n"] = new TerrainPackage(treeTexture, true);//Tent
+
+            terrainDictionary["X"] = new TerrainPackage(wallTexture, true);
         }
 
         void ConvertTxtToBin(string myFilePath)
@@ -307,7 +300,6 @@ namespace SeniorProjectGame
             worldMapComponent.CreatePointer(worldMapComponent.GetNodeEntity(0), new Vector2(0, -20), pointerTexture);
 
         }
-
         Entity ProcessHexMapBin(string myID)
         {
             List<string> binLines = ReadBin(myID);
@@ -321,6 +313,7 @@ namespace SeniorProjectGame
 
             EntityManager.AddEntity(tempBoard);
 
+            //Removing the user-friendly formatting from the bin
             List<string> hexMapLines = new List<string>();
             for (int line = 2; line < binLines.Count; line++)
             {
@@ -328,6 +321,7 @@ namespace SeniorProjectGame
                     hexMapLines.Add(binLines[line]);
             }
 
+            //Reading the terrian layer
             Vector2 terrainCoordinate = Vector2.Zero;
             for (int layer = 0; layer < layers; layer++)
             {
@@ -346,7 +340,102 @@ namespace SeniorProjectGame
                     }
                 }
             }
+
+            //Reading the objective layer
+            for (int y = 0 + ((int)dimensions.Y * layers); y < dimensions.Y + ((int)dimensions.Y * layers); y++)
+            {
+                string[] line = hexMapLines[y].Split(' ');
+
+                for (int x = 0; x < line.Length; x++)
+                {
+                    if (line[x] != "*")
+                    {
+                        if (line[x] == "O")
+                        {
+                            //Add allied spawn
+                            tempBoardComponent.AddAlliedSpawnPoint(ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
+                        }
+                        else if (line[x] == "X")
+                        {
+                            //Enemy Spawn
+                        }
+                        else if (line[x] == "V")
+                        {
+                            //Victory condition
+                        }
+                    }
+                }
+            }
             return tempBoard;
+        }
+        List<Entity> ProcessEnemyBin()
+        {
+            List<Entity> enemyEntityList = new List<Entity>();
+            List<string> binLines = ReadBin("Enemies");
+
+            List<string> relevantLines = new List<string>();
+
+            for (int line = 0; line < binLines.Count; line++)
+            {
+                if (!binLines[line].Contains("//") && binLines[line] != "")
+                {
+                    relevantLines.Add(binLines[line]);
+                }
+            }
+
+            for (int line = 0; line < relevantLines.Count; line++)
+            {
+                if (relevantLines[line].Contains("-"))
+                {
+                    string name = relevantLines[line].Split(' ')[1];
+                    string[] statLine = relevantLines[line + 1].Split(' ');
+                    string[] growthLine = relevantLines[line + 2].Split(' ');
+                    string[] capLine = relevantLines[line + 3].Split(' ');
+                    string weapon = relevantLines[line + 4];
+                    string[] magicLine = relevantLines[line + 5].Split(' ');
+                    int movement = Convert.ToInt32(relevantLines[line + 6]);
+
+                    int str = Convert.ToInt32(statLine[0]);
+                    int mag = Convert.ToInt32(statLine[1]);
+                    int dex = Convert.ToInt32(statLine[2]);
+                    int agi = Convert.ToInt32(statLine[3]);
+                    int def = Convert.ToInt32(statLine[4]);
+                    int res = Convert.ToInt32(statLine[5]);
+                    int spd = Convert.ToInt32(statLine[6]);
+
+                    float strGrowth = float.Parse(growthLine[0]);
+                    float magGrowth = float.Parse(growthLine[1]);
+                    float dexGrowth = float.Parse(growthLine[2]);
+                    float agiGrowth = float.Parse(growthLine[3]);
+                    float defGrowth = float.Parse(growthLine[4]);
+                    float resGrowth = float.Parse(growthLine[5]);
+                    float spdGrowth = float.Parse(growthLine[6]);
+
+                    int strCap = Convert.ToInt32(capLine[0]);
+                    int magCap = Convert.ToInt32(capLine[1]);
+                    int dexCap = Convert.ToInt32(capLine[2]);
+                    int agiCap = Convert.ToInt32(capLine[3]);
+                    int defCap = Convert.ToInt32(capLine[4]);
+                    int resCap = Convert.ToInt32(capLine[5]);
+                    int spdCap = Convert.ToInt32(capLine[6]);
+         
+
+                    bool light = bool.Parse(magicLine[0]);
+                    bool anima = bool.Parse(magicLine[0]);
+                    bool dark = bool.Parse(magicLine[0]);
+
+                    Role role = new Role(
+                                        str,       mag,       dex,       agi,       def,       res,       spd,
+                                        strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
+                                        strCap,    magCap,    dexCap,    agiCap,    defCap,    resCap,    spdCap,
+                                        weapon, 
+                                        light, anima, dark, 
+                                        movement);
+                    classes[name] = role;
+                }
+            }
+
+            return enemyEntityList;
         }
 
         #endregion
@@ -414,30 +503,16 @@ namespace SeniorProjectGame
                                 selectSound.Play();
                                 NodeComponent node = click._parent.GetComponent("NodeComponent") as NodeComponent;
                                 worldMapComponent.SetSelectedNode(node);
-
-
-                                boardEntity = ProcessHexMapBin(worldMapComponent.SelectCurrentNode());
-                                //boardEntity = ProcessHexMapBin("Tutorial_Level");
-                                boardComponent = boardEntity.GetComponent("BoardComponent") as BoardComponent;
-
-                                boardComponent.CreateUnit(true, 3, new Vector2(0, 2), unitTexture, 50, 100);
-                                boardComponent.CreateUnit(true, 3, new Vector2(0, 3), unitTexture, 50, 100);
-                                boardComponent.CreateUnit(true, 3, new Vector2(0, 4), unitTexture, 50, 100);
-                                boardComponent.CreateUnit(true, 3, new Vector2(0, 5), unitTexture, 50, 100);
-                                boardComponent.CreateUnit(true, 3, new Vector2(0, 6), unitTexture, 50, 100);
-                                boardComponent.CreateUnit(true, 3, new Vector2(0, 7), unitTexture, 50, 100);
-
-                                State.screenState = State.ScreenState.SKIRMISH;
                             }
                         }
+                        //TODO: See if you are clicking on "START LEVEL" button and use that instead
+                        //Also have a nice gui that shows the level and what not
                     }
-                    if (singleMiddleClick.Evaluate())
+                    if(enterClick.Evaluate())
                     {
-                        State.screenState = State.ScreenState.SKIRMISH;
-                    }
-                    if (singleRightClick.Evaluate())
-                    {
-                        
+                        //TODO: Play a resounding start node sound
+                        //For now enter click will do
+                        StartNode();
                     }
 
                     break;
@@ -519,7 +594,7 @@ namespace SeniorProjectGame
                 case State.ScreenState.SKIRMISH:
                     if (!moving)
                     {
-                        if (LeftClick.Evaluate())
+                        if (leftHold.Evaluate())
                         {
                             HexComponent hexComp = boardComponent.GetMouseHex();
 
@@ -642,7 +717,7 @@ namespace SeniorProjectGame
                     }
                     if (singleMiddleClick.Evaluate())
                     {
-                        
+
                     }
                     break;
                 #endregion
@@ -665,6 +740,25 @@ namespace SeniorProjectGame
                 #endregion
             }
             base.Update(gameTime);
+        }
+
+        public void StartNode()
+        {
+            boardEntity = ProcessHexMapBin(worldMapComponent.GetCurrentNodeID());
+            boardComponent = boardEntity.GetComponent("BoardComponent") as BoardComponent;
+
+            //TODO: HAVE AN ACTIVE PARTY MEMBERS LIST
+            //TODO: PULL YOUR ACTIVE PARTY MEMBERS instead of creating this nondescript
+            //Also send your player info
+            //If there aren't enough spaces for them the highest in your queue will go
+            //You should be able to reorder your party
+          
+            boardComponent.CreateUnit(true, 3, boardComponent.GetOneAlliedSpawnPoint(rand), unitTexture, 50, 100);
+
+            //TODO: Read the X_Enemies.txt and add that to the enemies
+            //TODO: Somehow we have to read the number and place a certain unit
+
+            State.screenState = State.ScreenState.SKIRMISH;
         }
 
         Vector2 ConvertToHexCoordinate(Vector2 myVec)
