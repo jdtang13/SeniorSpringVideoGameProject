@@ -6,16 +6,20 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace EntityEngine.Components.Sprites
 {
-    class Texture2DFramed
+    public class Texture2DFramed
     {
-        public Texture2D texture;
-        public int width, height;
+        //A class that holds the important stuff of a animation so that it can be set earlier in loadcontent process
 
-        public Texture2DFramed(Texture2D myTexture, int myWidth, int myHeight)
+        public Texture2D texture;
+        public int frameWidth, frameHeight;
+        public float animationSpeed;
+
+        public Texture2DFramed(Texture2D myTexture,float myAnimationSpeed, int myWidth, int myHeight)
         {
+            animationSpeed = myAnimationSpeed;
             texture = myTexture;
-            width = myWidth;
-            height = myHeight;
+            frameWidth = myWidth;
+            frameHeight = myHeight;
         }
     }
 }

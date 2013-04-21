@@ -35,7 +35,7 @@ namespace SeniorProjectGame
             waterTexture, stoneTexture;
         Texture2D treeTexture, wallTexture, bushTexture, tableTexture, carpetTexture, throneTexture, tentTexture;
         Texture2D markerTexture, questionTexture;
-        Texture2D unitTexture;
+        Texture2DFramed unitFramedTexture;
 
         SoundEffect selectSound;
 
@@ -82,6 +82,8 @@ namespace SeniorProjectGame
 
         //Player Vars
         Dictionary<String, Role> classes = new Dictionary<String, Role>();
+        Dictionary<String, Entity> partyMembers = new Dictionary<String, Entity>();
+        Entity player;
 
         //Input Vars
         InputAction singleLeftClick, singleRightClick, singleMiddleClick; 
@@ -184,7 +186,7 @@ namespace SeniorProjectGame
             bushTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\bush");
             wallTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\wooden Walls");
 
-            unitTexture = Content.Load<Texture2D>("Graphics\\UnitTextures\\Flail");
+            unitFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Rifle"),400f, 50, 100);
 
             selectSound = Content.Load<SoundEffect>("Audio\\Sounds\\Powerup27");
 
@@ -393,7 +395,7 @@ namespace SeniorProjectGame
                     string[] capLine = relevantLines[line + 3].Split(' ');
                     string weapon = relevantLines[line + 4];
                     string[] magicLine = relevantLines[line + 5].Split(' ');
-                    int movement = Convert.ToInt32(relevantLines[line + 6]);
+                    string[] movementLine = relevantLines[line + 6].Split(' ');
 
                     int str = Convert.ToInt32(statLine[0]);
                     int mag = Convert.ToInt32(statLine[1]);
@@ -424,13 +426,17 @@ namespace SeniorProjectGame
                     bool anima = bool.Parse(magicLine[0]);
                     bool dark = bool.Parse(magicLine[0]);
 
+                    int movement = Convert.ToInt32(movementLine[0]);
+                    int sightRange = Convert.ToInt32(movementLine[1]);
+                    int attackRange = Convert.ToInt32(movementLine[2]);
+
                     Role role = new Role(
                                         str,       mag,       dex,       agi,       def,       res,       spd,
                                         strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
                                         strCap,    magCap,    dexCap,    agiCap,    defCap,    resCap,    spdCap,
                                         weapon, 
                                         light, anima, dark, 
-                                        movement);
+                                        movement, sightRange, attackRange);
                     classes[name] = role;
                 }
             }
@@ -753,7 +759,7 @@ namespace SeniorProjectGame
             //If there aren't enough spaces for them the highest in your queue will go
             //You should be able to reorder your party
           
-            boardComponent.CreateUnit(true, 3, boardComponent.GetOneAlliedSpawnPoint(rand), unitTexture, 50, 100);
+            boardComponent.CreateUnit(true, 3, boardComponent.GetOneAlliedSpawnPoint(rand), unitFramedTexture);
 
             //TODO: Read the X_Enemies.txt and add that to the enemies
             //TODO: Somehow we have to read the number and place a certain unit

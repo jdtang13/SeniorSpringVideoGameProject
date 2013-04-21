@@ -19,13 +19,16 @@ namespace EntityEngine
         public int mana;
         public int movement;
 
+        public int sightRange;
+        public int attackRange;
+
         public Role(
                     int str, int mag, int dex, int agi, int def, int res, int spd,
                     float strGrowth, float magGrowth, float dexGrowth, float agiGrowth, float defGrowth, float resGrowth, float spdGrowth,
                     int strCap, int magCap, int dexCap, int agiCap, int defCap, int resCap, int spdCap,
                     string weapon,
                     bool light, bool anima, bool dark,
-                    int movement)
+                    int movement, int sightRange, int attackRange)
         {
             this.movement = movement;
             this.weapon = weapon;

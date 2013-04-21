@@ -220,25 +220,25 @@ namespace EntityEngine.Components.TileComponents
 
         //public void CreateUnitWithData(Vector2 myCoordinate,Texture2D myTexture, int
 
-        public void CreateUnit(bool isAlly, int mySightRadius, Vector2 myCoordinate, Texture2D myTexture, int mySpriteFrameWidth, int mySpriteFrameHeight)
+        public void CreateUnit(Role myRole,UnitData myUnitData, Texture2DFramed myFramedTexture, Vector2 myCoordinate)
         {
             HexComponent hexComp = GetHex(myCoordinate);
 
             if (hexComp.GetUnit() == null)
             {
-                Entity unitEntity = new Entity(15, State.ScreenState.SKIRMISH);
-
                 SpriteComponent hexSprite = GetHex(myCoordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                AnimatedSpriteComponent unitSprite = new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), myTexture, 400f, mySpriteFrameWidth, mySpriteFrameHeight);
+                Entity unitEntity = new Entity(15, State.ScreenState.SKIRMISH);           
+
+                AnimatedSpriteComponent unitSprite = new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), myFramedTexture);
                 unitEntity.AddComponent(unitSprite);
 
-                // TODO: unitData is null right now.
                 UnitComponent unitComp = new UnitComponent(isAlly, mySightRadius, GetHex(myCoordinate), true, null);
                 unitEntity.AddComponent(unitComp);
 
-                GetHex(myCoordinate).SetUnit(unitComp);
 
+
+                GetHex(myCoordinate).SetUnit(unitComp);
                 EntityManager.AddEntity(unitEntity);
 
                 if (isAlly)
