@@ -15,12 +15,12 @@ namespace EntityEngine
 
         //TODO: Calculate these if they need to be calc'd
         //Aren't these unitdata specific and not class specific?
-        public int health;
-        public int mana;
+        //public int health;
+        //public int mana;
         public int movement;
 
-        public int sightRange;
-        public int attackRange;
+        public int sightRadius;
+        public int attackRadius;
 
         public Role(
                     int str, int mag, int dex, int agi, int def, int res, int spd,
@@ -31,6 +31,8 @@ namespace EntityEngine
                     int movement, int sightRange, int attackRange)
         {
             this.movement = movement;
+            this.sightRadius = sightRange;
+            this.attackRadius = attackRange;
             this.weapon = weapon;
 
             attributes["strength"] = str;

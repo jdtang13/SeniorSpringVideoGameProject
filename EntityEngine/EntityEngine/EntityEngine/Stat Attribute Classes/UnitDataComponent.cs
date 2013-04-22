@@ -118,11 +118,8 @@ namespace EntityEngine
         {
             this.name = "UnitDataComponent";
             this.unitName = name;
-
             this.role = role;
-
             this.alignment = ali;
-
             this.level = level;
 
             attributes = new Dictionary<string, int>();
@@ -131,99 +128,106 @@ namespace EntityEngine
 
             this.level = level;
             this.movement = movement;
+            this.sightRadius = sightRange;
+            this.attackRadius = attackRange;
 
-            attributes["strength"] = str;
-            attributes["magic"] = mag; 
-            attributes["dexterity"] = dex;
-            attributes["agility"] = agi;
-            attributes["defense"] = def;
-            attributes["resistance"] = res;
-            attributes["speed"] = spd;
+            attributes["strength"] = str + role.attributes["strength"];
+            attributes["magic"] = mag + role.attributes["magic"];
+            attributes["dexterity"] = dex + role.attributes["dexterity"];
+            attributes["agility"] = agi + role.attributes["agility"];
+            attributes["defense"] = def + role.attributes["defense"];
+            attributes["resistance"] = res + role.attributes["resistance"];
+            attributes["speed"] = spd + role.attributes["speed"];
 
-            caps["strength"] = strCap;
-            caps["magic"] = magCap;
-            caps["dexterity"] = dexCap;
-            caps["agility"] = agiCap;
-            caps["defense"] = defCap;
-            caps["resistance"] = resCap;
-            caps["speed"] = spdCap;
+            caps["strength"] = strCap + role.caps["strength"];
+            caps["magic"] = magCap + role.caps["magic"];
+            caps["dexterity"] = dexCap + role.caps["dexterity"];
+            caps["agility"] = agiCap + role.caps["agility"];
+            caps["defense"] = defCap + role.caps["defense"];
+            caps["resistance"] = resCap + role.caps["resistance"];
+            caps["speed"] = spdCap + role.caps["speed"];
 
-            growths["strength"] = strGrowth;
-            growths["magic"] = magGrowth;
-            growths["dexterity"] = dexGrowth;
-            growths["agility"] = agiGrowth;
-            growths["defense"] = defGrowth;
-            growths["resistance"] = resGrowth;
-            growths["speed"] = spdGrowth;
+            growths["strength"] = strGrowth + role.growths["strength"];
+            growths["magic"] = magGrowth + role.growths["magic"];
+            growths["dexterity"] = dexGrowth + role.growths["dexterity"];
+            growths["agility"] = agiGrowth + role.growths["agility"];
+            growths["defense"] = defGrowth + role.growths["defense"];
+            growths["resistance"] = resGrowth + role.growths["resistance"];
+            growths["speed"] = spdGrowth + role.growths["speed"];
 
-            alignment = ali;
+           
 
             CalculateValues();
         }
 
         public void CalculateValues()
         {
-            totalHealth = 2 * attributes["strength"] + role.health;   
+            movement += role.movement;
+            sightRadius += role.sightRadius;
+            attackRadius += role.attackRadius;
+
+            totalHealth = attributes["strength"] * 2; currentHealth = totalHealth;
+            totalMana = attributes["magic"] * 2; currentMana = totalMana;
         }
 
 
-        //currentHealth, mana, and movement calculated by adding the attributed based on the characters role with the TODO: pls finish this sentence
-        public int Health()
-        {
+        ////currentHealth, mana, and movement calculated by adding the attributed based on the characters role with the TODO: pls finish this sentence
+        //public int Health()
+        //{
 
-            return 2 * attributes["strength"] + role.health;
-        }
+        //    return 2 * attributes["strength"] + role.health;
+        //}
 
-        public int Movement()
-        {
-            return movement + role.movement;   
-        }
-        public int Mana()
-        {
-            //  mana = 2 * magic
-            return 2*attributes["magic"] + role.mana;
-        }
+        //public int Movement()
+        //{
+        //    return movement + role.movement;   
+        //}
+        //public int Mana()
+        //{
+        //    //  mana = 2 * magic
+        //    return 2*attributes["magic"] + role.mana;
+        //}
 
-        public int Strength()
-        {
-            return attributes["strength"] + role.attributes["strength"];
-        }
+        //public int Strength()
+        //{
+        //    return attributes["strength"] + role.attributes["strength"];
+        //}
 
-        public Dictionary<string, int> Attributes()
-        {
-            Dictionary<string, int> tmp = new Dictionary<string, int>();
+        //public Dictionary<string, int> Attributes()
+        //{
+        //    Dictionary<string, int> tmp = new Dictionary<string, int>();
 
-            foreach (KeyValuePair<string, int> kvp in attributes)
-            {
-                tmp[kvp.Key] = attributes[kvp.Key] + role.attributes[kvp.Key];
-            }
+        //    foreach (KeyValuePair<string, int> kvp in attributes)
+        //    {
+        //        tmp[kvp.Key] = attributes[kvp.Key] + role.attributes[kvp.Key];
+        //    }
 
-            return tmp;
-        }
+        //    return tmp;
+        //}
 
-        public Dictionary<string, float> Growths()
-        {
-            Dictionary<string, float> tmp = new Dictionary<string, float>();
+        //public Dictionary<string, float> Growths()
+        //{
+        //    Dictionary<string, float> tmp = new Dictionary<string, float>();
 
-            foreach (KeyValuePair<string, float> kvp in growths)
-            {
-                tmp[kvp.Key] = growths[kvp.Key] + role.growths[kvp.Key];
-            }
+        //    foreach (KeyValuePair<string, float> kvp in growths)
+        //    {
+        //        tmp[kvp.Key] = growths[kvp.Key] + role.growths[kvp.Key];
+        //    }
 
-            return tmp;
-        }
+        //    return tmp;
+        //}
 
-        public Dictionary<string, int> Caps()
-        {
-            Dictionary<string, int> tmp = new Dictionary<string, int>();
+        //public Dictionary<string, int> Caps()
+        //{
+        //    Dictionary<string, int> tmp = new Dictionary<string, int>();
 
-            foreach (KeyValuePair<string, int> kvp in caps)
-            {
-                tmp[kvp.Key] = caps[kvp.Key] + role.caps[kvp.Key];
-            }
+        //    foreach (KeyValuePair<string, int> kvp in caps)
+        //    {
+        //        tmp[kvp.Key] = caps[kvp.Key] + role.caps[kvp.Key];
+        //    }
 
-            return tmp;
-        }
+        //    return tmp;
+        //}
 
         // ....
 

@@ -32,10 +32,10 @@ namespace EntityEngine.Components.TileComponents
 
         Entity[,] hexEntityGrid;
 
-        public List<UnitComponent> alliedUnitList = new List<UnitComponent>();
-        List<UnitComponent> nonAlliedUnitList = new List<UnitComponent>();
+        public List<Entity> alliedUnitList = new List<Entity>();
+        public List<Entity> nonAlliedUnitList = new List<Entity>();
 
-        //
+
         List<Vector2> alliedSpawnPoints = new List<Vector2>();
         public void AddAlliedSpawnPoint(Vector2 myVector)
         {
@@ -50,7 +50,8 @@ namespace EntityEngine.Components.TileComponents
             return spawn;
         }
 
-        Dictionary<int,List<Vector2>> enemySpawnPoints = new Dictionary<int,List<Vector2>>();
+
+        Dictionary<int, List<Vector2>> enemySpawnPoints = new Dictionary<int, List<Vector2>>();
         public Vector2 GetEnemySpawnPointForType(int myUnitNumber, Random myRand)
         {
             List<Vector2> listOfAvailableSpawnsForUnitType = enemySpawnPoints[myUnitNumber];
@@ -101,7 +102,7 @@ namespace EntityEngine.Components.TileComponents
             }
         }
 
-        public BoardComponent(Vector2 mySize,Texture2D myGridTexture,SpriteFont myFont)
+        public BoardComponent(Vector2 mySize, Texture2D myGridTexture, SpriteFont myFont)
         {
             this.name = "BoardComponent";
             gridTexture = myGridTexture;
@@ -121,12 +122,13 @@ namespace EntityEngine.Components.TileComponents
         }
 
         // TODO: broken. have lionel or oliver fix "screen coordinates of hex"
-        public Vector2 screenCoordinatesOfHex(Vector2 pos) {
+        public Vector2 screenCoordinatesOfHex(Vector2 pos)
+        {
             return screenCoordinatesOfHex((int)pos.X, (int)pos.Y);
         }
         public Vector2 screenCoordinatesOfHex(int x, int y)
         {
-            SpriteComponent sprite = GetHex(new Vector2(x,y))._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+            SpriteComponent sprite = GetHex(new Vector2(x, y))._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
             return sprite.getCenterPosition();
 
@@ -239,54 +241,47 @@ namespace EntityEngine.Components.TileComponents
             return adjacentList;
         }
 
-        //public void CreateUnitWithData(Vector2 myCoordinate,Texture2D myTexture, int
+        public void CreateUnit(Vector2 myCoordinate, Texture2DFramed myFramedTexture, UnitDataComponent myData)
+        {
 
-        //public void CreateUnit(Role myRole,UnitData myUnitData, Texture2DFramed myFramedTexture, Vector2 myCoordinate)
-        //{
-        //    HexComponent hexComp = GetHex(myCoordinate);
+            HexComponent hexComp = GetHex(myCoordinate);
 
-        //    if (hexComp.GetUnit() == null)
-        //    {
-        //        SpriteComponent hexSprite = GetHex(myCoordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+            if (hexComp.GetUnit() == null)
+            {
+                SpriteComponent hexSprite = GetHex(myCoordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-        //        Entity unitEntity = new Entity(15, State.ScreenState.SKIRMISH);           
+                Entity unitEntity = new Entity(15, State.ScreenState.SKIRMISH);
 
-        //        AnimatedSpriteComponent unitSprite = new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), myFramedTexture);
-        //        unitEntity.AddComponent(unitSprite);
+                unitEntity.AddComponent(myData);
 
-        //        UnitComponent unitComp = new UnitComponent(isAlly, mySightRadius, GetHex(myCoordinate), true, null);
-        //        unitEntity.AddComponent(unitComp);
+                AnimatedSpriteComponent unitSprite = new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), myFramedTexture);
+                unitEntity.AddComponent(unitSprite);
 
-        //        UnitDataCom
+                UnitComponent unitComp = new UnitComponent(GetHex(myCoordinate), true);
+                unitEntity.AddComponent(unitComp);
 
-        //        GetHex(myCoordinate).SetUnit(unitComp);
-        //        EntityManager.AddEntity(unitEntity);
+                EntityManager.AddEntity(unitEntity);
 
-        //        if (isAlly)
-        //        {
-        //            alliedUnitList.Add(unitComp);
-        //        }
-        //        else
-        //        {
-        //            nonAlliedUnitList.Add(unitComp);
-        //        }
+                alliedUnitList.Add(unitEntity);
 
-        //        hexComp.SetUnit(unitComp);
-        //        UpdateVisibilityAllies();
-        //    }
-        //    else
-        //    {
-        //        throw new Exception("There is already a unit where you are trying to create one.");
-        //    }
-        //}
-        
+                hexComp.SetUnit(unitComp);
+                UpdateVisibilityAllies();
+            }
+            else
+            {
+                throw new Exception("There is already a unit where you are trying to create one.");
+            }
+
+        }
+
+
         //TODO: Add row layer support
-        public void AddTerrain(Vector2 myCoordinate,int myLayer, TerrainPackage myTerrain)
+        public void AddTerrain(Vector2 myCoordinate, int myLayer, TerrainPackage myTerrain)
         {
             HexComponent hexComponent = GetHex(myCoordinate);
             SpriteComponent hexSprite = hexComponent._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-            Entity terrainEntity = new Entity(4+myLayer, State.ScreenState.SKIRMISH);
+            Entity terrainEntity = new Entity(4 + myLayer, State.ScreenState.SKIRMISH);
             terrainEntity.AddComponent(new SpriteComponent(true, hexSprite.getCenterPosition(), myTerrain.GetTexture()));
 
             TerrainComponent terrComp = new TerrainComponent(hexComponent, myTerrain.GetTexture(), myTerrain.GetImpassable());
@@ -393,15 +388,30 @@ namespace EntityEngine.Components.TileComponents
             return rounded;
         }
 
-        //#region Visibility
+        #region Visibility
+
+        public void ToggleFogofWar(bool myTruth)
+        {
+            //True means fog of war is on, false means fog of war is disabled
+            if (myTruth == false)
+            {
+                foreach (KeyValuePair<Vector2, HexComponent> hex in hexDictionary)
+                {
+                    hex.Value.SetVisibility(Visibility.Visible);
+                }
+            }
+
+            fogOfWarToggle = myTruth;
+        }
+
         //returns ring of hexes distance radius away from mouseCurrentHex
-        public List<HexComponent> GetRing(UnitComponent myUnit, int myRadius)
+        public List<HexComponent> GetRing(Vector2 myCoordinate, int myRadius)
         {
             List<HexComponent> ring = new List<HexComponent>();
 
-            HexComponent unitHex = myUnit.GetHex();
+            HexComponent startingHex = GetHex(myCoordinate);
 
-            Vector2 startCoord = new Vector2(unitHex.getCoordPosition().X, unitHex.getCoordPosition().Y - myRadius);
+            Vector2 startCoord = new Vector2(myCoordinate.X, myCoordinate.Y - myRadius);
             Vector2 ghostCoord = startCoord;
 
             //                              N                  NE                 SE                S                  SW                   NW
@@ -426,18 +436,18 @@ namespace EntityEngine.Components.TileComponents
         }
 
         //returns all rings of hexes distance radius or less away from mouseCurrentHex
-        public List<HexComponent> GetAllRings(UnitComponent myUnit)
+        public List<HexComponent> GetAllRings(Vector2 myCoordinate, int myRadius)
         {
             List<HexComponent> allRings = new List<HexComponent>();
 
-            UnitDataComponent unitData = myUnit._parent.GetComponent("UnitDataComponent") as UnitDataComponent;
+            //UnitDataComponent unitData = myUnit._parent.GetComponent("UnitDataComponent") as UnitDataComponent;
 
-            for (int r = 0; r <= unitData.GetSightRadius(); r++)
+            for (int r = 0; r <= myRadius; r++)
             {
-                allRings.AddRange(GetRing(myUnit, r));
+                allRings.AddRange(GetRing(myCoordinate,myRadius-r));
             }
 
-            allRings.Add(GetHex(myUnit.GetHex().getCoordPosition()));
+            allRings.Add(GetHex(myCoordinate));
 
             return allRings;
         }
@@ -456,7 +466,10 @@ namespace EntityEngine.Components.TileComponents
 
                 for (int p = 0; p < alliedUnitList.Count; p++)
                 {
-                    newVisible.AddRange(GetAllRings(alliedUnitList[p]));
+                    UnitComponent unitComp = alliedUnitList[p].GetComponent("UnitComponent") as UnitComponent;
+                    UnitDataComponent unitDataComp = alliedUnitList[p].GetComponent("UnitDataComponent") as UnitDataComponent;
+
+                    newVisible.AddRange(GetAllRings(unitComp.GetHex().getCoordPosition(),unitDataComp.GetSightRadius()));
                 }
 
                 for (int i = 0; i < newVisible.Count; i++)
@@ -468,19 +481,6 @@ namespace EntityEngine.Components.TileComponents
             }
         }
 
-        public void ToggleFogofWar(bool myTruth)
-        {
-            //True means fog of war is on, false means fog of war is disabled
-            if (myTruth == false)
-            {
-                foreach (KeyValuePair<Vector2, HexComponent> hex in hexDictionary)
-                {
-                    hex.Value.SetVisibility(Visibility.Visible);
-                }
-            }
-
-            fogOfWarToggle = myTruth;
-        }
-
+        #endregion
     }
 }

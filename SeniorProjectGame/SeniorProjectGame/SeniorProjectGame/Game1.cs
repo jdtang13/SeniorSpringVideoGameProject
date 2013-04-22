@@ -83,15 +83,15 @@ namespace SeniorProjectGame
 
         //Player Vars
         Dictionary<String, Role> classes = new Dictionary<String, Role>();
-        Dictionary<String, Entity> partyMembers = new Dictionary<String, Entity>();
-        Entity player;
+        List<UnitDataComponent> partyUnitData = new List<UnitDataComponent>();
+
 
         //Input Vars
-        InputAction singleLeftClick, singleRightClick, singleMiddleClick; 
+        InputAction singleLeftClick, singleRightClick, singleMiddleClick;
         InputAction leftHold;
 
         InputAction wClick, aClick, sClick, dClick, enterClick, escapeClick;
-       
+
         //Menu Vars
         List<Entity> orderButtonEntityList = new List<Entity>();
         Entity attackOrderEntity, moveOrderEntity, noOrderEntity, spellOrderEntity;
@@ -120,12 +120,15 @@ namespace SeniorProjectGame
         protected override void Initialize()
         {
             IsMouseVisible = true;
-            
+
             LoadContent();
 
-            ProcessEnemyBestiaryBin();
             ProcessWorldMapBin();
-            
+            ProcessPlayerRolesBin();
+
+            ProcessEnemyBestiaryBin();
+
+
             InitializeInput();
 
             State.Initialize();
@@ -165,6 +168,9 @@ namespace SeniorProjectGame
 
             //Only run the conversions for developement purposes
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Enemies.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Player_Roles.txt");
+
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Party_Members.txt");
 
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
@@ -196,7 +202,7 @@ namespace SeniorProjectGame
 
             PopulateTerrainDictionary();
 
-            unitFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Rifle"),400f, 50, 100);
+            unitFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Rifle"), 400f, 50, 100);
 
             selectSound = Content.Load<SoundEffect>("Audio\\Sounds\\Powerup27");
         }
@@ -303,6 +309,77 @@ namespace SeniorProjectGame
             worldMapComponent.CreatePointer(worldMapComponent.GetNodeEntity(0), new Vector2(0, -20), pointerTexture);
 
         }
+        void ProcessPlayerRolesBin()
+        {
+            List<string> binLines = ReadBin("Player_Roles");
+
+            List<string> relevantLines = new List<string>();
+
+            for (int line = 0; line < binLines.Count; line++)
+            {
+                if (!binLines[line].Contains("//") && binLines[line] != "")
+                {
+                    relevantLines.Add(binLines[line]);
+                }
+            }
+
+            for (int line = 0; line < relevantLines.Count; line++)
+            {
+                if (relevantLines[line].Contains("-"))
+                {
+                    string nameOfRole = relevantLines[line].Split(' ')[1];
+                    string[] statLine = relevantLines[line + 1].Split(' ');
+                    string[] growthLine = relevantLines[line + 2].Split(' ');
+                    string[] capLine = relevantLines[line + 3].Split(' ');
+                    string weapon = relevantLines[line + 4];
+                    string[] magicLine = relevantLines[line + 5].Split(' ');
+                    string[] movementLine = relevantLines[line + 6].Split(' ');
+
+                    int str = Convert.ToInt32(statLine[0]);
+                    int mag = Convert.ToInt32(statLine[1]);
+                    int dex = Convert.ToInt32(statLine[2]);
+                    int agi = Convert.ToInt32(statLine[3]);
+                    int def = Convert.ToInt32(statLine[4]);
+                    int res = Convert.ToInt32(statLine[5]);
+                    int spd = Convert.ToInt32(statLine[6]);
+
+                    float strGrowth = float.Parse(growthLine[0]);
+                    float magGrowth = float.Parse(growthLine[1]);
+                    float dexGrowth = float.Parse(growthLine[2]);
+                    float agiGrowth = float.Parse(growthLine[3]);
+                    float defGrowth = float.Parse(growthLine[4]);
+                    float resGrowth = float.Parse(growthLine[5]);
+                    float spdGrowth = float.Parse(growthLine[6]);
+
+                    int strCap = Convert.ToInt32(capLine[0]);
+                    int magCap = Convert.ToInt32(capLine[1]);
+                    int dexCap = Convert.ToInt32(capLine[2]);
+                    int agiCap = Convert.ToInt32(capLine[3]);
+                    int defCap = Convert.ToInt32(capLine[4]);
+                    int resCap = Convert.ToInt32(capLine[5]);
+                    int spdCap = Convert.ToInt32(capLine[6]);
+
+
+                    bool light = bool.Parse(magicLine[0]);
+                    bool anima = bool.Parse(magicLine[0]);
+                    bool dark = bool.Parse(magicLine[0]);
+
+                    int movement = Convert.ToInt32(movementLine[0]);
+                    int sightRange = Convert.ToInt32(movementLine[1]);
+                    int attackRange = Convert.ToInt32(movementLine[2]);
+
+                    Role role = new Role(
+                                        str, mag, dex, agi, def, res, spd,
+                                        strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
+                                        strCap, magCap, dexCap, agiCap, defCap, resCap, spdCap,
+                                        weapon,
+                                        light, anima, dark,
+                                        movement, sightRange, attackRange);
+                    classes[nameOfRole] = role;
+                }
+            }
+
+        }
         void ProcessEnemyBestiaryBin()
         {
             //List<Entity> enemyEntityList = new List<Entity>();
@@ -373,6 +450,74 @@ namespace SeniorProjectGame
                     classes[nameOfRole] = role;
                 }
             }
+        }
+
+        List<UnitDataComponent> ProcessPartyMembersBin()
+        {
+            List<string> binLines = ReadBin("Party_Members");
+
+            List<string> relevantLines = new List<string>();
+            for (int line = 2; line < binLines.Count; line++)
+            {
+                if (binLines[line] != "" && !binLines[line].Contains("//"))
+                    relevantLines.Add(binLines[line]);
+            }
+
+            List<UnitDataComponent> partyMemberData = new List<UnitDataComponent>();
+
+            for (int line = 0; line < relevantLines.Count; line++)
+            {
+                if (relevantLines[line].Contains("-"))
+                {
+                    string[] nameLine = relevantLines[line].Split(' ');
+                    string[] statLine = relevantLines[line + 1].Split(' ');
+                    string[] growthLine = relevantLines[line + 2].Split(' ');
+                    string[] capLine = relevantLines[line + 3].Split(' ');
+                    string[] movementLine = relevantLines[line + 4].Split(' ');
+
+                    
+                    string name = nameLine[1];
+                    Role role = classes[nameLine[2]];
+                    int level = Convert.ToInt32(nameLine[3]);
+
+                    int str = Convert.ToInt32(statLine[0]);
+                    int mag = Convert.ToInt32(statLine[1]);
+                    int dex = Convert.ToInt32(statLine[2]);
+                    int agi = Convert.ToInt32(statLine[3]);
+                    int def = Convert.ToInt32(statLine[4]);
+                    int res = Convert.ToInt32(statLine[5]);
+                    int spd = Convert.ToInt32(statLine[6]);
+
+                    float strGrowth = float.Parse(growthLine[0]);
+                    float magGrowth = float.Parse(growthLine[1]);
+                    float dexGrowth = float.Parse(growthLine[2]);
+                    float agiGrowth = float.Parse(growthLine[3]);
+                    float defGrowth = float.Parse(growthLine[4]);
+                    float resGrowth = float.Parse(growthLine[5]);
+                    float spdGrowth = float.Parse(growthLine[6]);
+
+                    int strCap = Convert.ToInt32(capLine[0]);
+                    int magCap = Convert.ToInt32(capLine[1]);
+                    int dexCap = Convert.ToInt32(capLine[2]);
+                    int agiCap = Convert.ToInt32(capLine[3]);
+                    int defCap = Convert.ToInt32(capLine[4]);
+                    int resCap = Convert.ToInt32(capLine[5]);
+                    int spdCap = Convert.ToInt32(capLine[6]);
+
+                    int movement = Convert.ToInt32(movementLine[0]);
+                    int sightRange = Convert.ToInt32(movementLine[1]);
+                    int attackRange = Convert.ToInt32(movementLine[2]);
+
+                    UnitDataComponent unitDataComp = new UnitDataComponent(
+                                        name, role, Alignment.PLAYER, level,
+                                        str, mag, dex, agi, def, res, spd,
+                                        strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
+                                        strCap, magCap, dexCap, agiCap, defCap, resCap, spdCap,
+                                        movement, sightRange, attackRange);
+                    partyMemberData.Add(unitDataComp);
+                }
+            }
+            return partyMemberData;
         }
 
         Entity ProcessHexMapBin(string myID)
@@ -448,7 +593,7 @@ namespace SeniorProjectGame
         }
         void ProcessHexMapEnemyBin(string myID)
         {
-            List<string> binLines = ReadBin(myID+"_Enemies");
+            List<string> binLines = ReadBin(myID + "_Enemies");
 
             List<string> relevantLines = new List<string>();
             for (int line = 2; line < binLines.Count; line++)
@@ -504,23 +649,32 @@ namespace SeniorProjectGame
                     SpriteComponent hexSprite = hex._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
                     Entity blob = new Entity(15, State.ScreenState.SKIRMISH);
-                    blob.AddComponent(new AnimatedSpriteComponent(true,hexSprite.GetPosition(),unitFramedTexture));
-                    blob.AddComponent(new UnitComponent(hex,false));
+                    blob.AddComponent(new AnimatedSpriteComponent(true, hexSprite.GetPosition(), unitFramedTexture));
+                    blob.AddComponent(new UnitComponent(hex, false));
 
                     hex.SetUnit(blob.GetComponent("UnitComponent") as UnitComponent);
 
-                    blob.AddComponent(  new UnitDataComponent(
-                                        name, role,Alignment.ENEMY,level,
+                    blob.AddComponent(new UnitDataComponent(
+                                        name, role, Alignment.ENEMY, level,
                                         str, mag, dex, agi, def, res, spd,
                                         strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
                                         strCap, magCap, dexCap, agiCap, defCap, resCap, spdCap,
                                         movement, sightRange, attackRange));
                     EntityManager.AddEntity(blob);
+                    boardComponent.nonAlliedUnitList.Add(blob);
                 }
             }
         }
 
-        
+
+        #endregion
+
+        #region Saving_Content_and_File_Processing
+
+        void SavePartyMembersBin()
+        {
+
+        }
 
         #endregion
 
@@ -592,7 +746,7 @@ namespace SeniorProjectGame
                         //TODO: See if you are clicking on "START LEVEL" button and use that instead
                         //Also have a nice gui that shows the level and what not
                     }
-                    if(enterClick.Evaluate())
+                    if (enterClick.Evaluate())
                     {
                         //TODO: Play a resounding start node sound
                         //For now enter click will do
@@ -801,7 +955,7 @@ namespace SeniorProjectGame
                     }
                     if (singleMiddleClick.Evaluate())
                     {
-
+                        boardComponent.UpdateVisibilityAllies();
                     }
                     break;
                 #endregion
@@ -828,6 +982,9 @@ namespace SeniorProjectGame
 
         public void StartNode()
         {
+            //Load the state of the party before every level and save the party at end of every
+            partyUnitData = ProcessPartyMembersBin();
+
             boardEntity = ProcessHexMapBin(worldMapComponent.GetCurrentNodeID());
             boardComponent = boardEntity.GetComponent("BoardComponent") as BoardComponent;
 
@@ -838,13 +995,19 @@ namespace SeniorProjectGame
             //Also send your player info
             //If there aren't enough spaces for them the highest in your queue will go
             //You should be able to reorder your party
-          
-            //boardComponent.CreateUnit(true, 3, boardComponent.GetOneAlliedSpawnPoint(rand), unitFramedTexture);
-
+            for(int member = 0 ; member < partyUnitData.Count ; member++)
+            {
+                boardComponent.CreateUnit(boardComponent.GetOneAlliedSpawnPoint(rand),unitFramedTexture,partyUnitData[member]);
+            }
             //TODO: Read the X_Enemies.txt and add that to the enemies
             //TODO: Somehow we have to read the number and place a certain unit
 
             State.screenState = State.ScreenState.SKIRMISH;
+        }
+
+        void EndLevel()
+        {
+            //Save party members to bin
         }
 
         Vector2 ConvertToHexCoordinate(Vector2 myVec)
