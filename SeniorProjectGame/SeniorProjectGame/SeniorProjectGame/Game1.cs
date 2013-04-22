@@ -15,6 +15,7 @@ using EntityEngine.Components.Sprites;
 using EntityEngine.Components.Component_Parents;
 using EntityEngine.Input;
 using EntityEngine.Components.World_Map;
+using EntityEngine.Stat_Attribute_Classes;
 
 namespace SeniorProjectGame
 {
@@ -119,14 +120,13 @@ namespace SeniorProjectGame
         protected override void Initialize()
         {
             IsMouseVisible = true;
-
+            
             LoadContent();
 
-            InitializeInput();
-
+            ProcessEnemyBestiaryBin();
             ProcessWorldMapBin();
-
-            ProcessEnemyBin();
+            
+            InitializeInput();
 
             State.Initialize();
 
@@ -163,15 +163,22 @@ namespace SeniorProjectGame
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
             Globals.font = font;
 
+            //Only run the conversions for developement purposes
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Enemies.txt");
 
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level_Enemies.txt");
+
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Alchemist's_Laboratory.txt");
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Ambushed.txt");
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard.txt");
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Pavilion.txt");
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Throne_Room.txt");
+
+            worldMapTexture = Content.Load<Texture2D>("Graphics\\Backgrounds\\island");
+            pointerTexture = Content.Load<Texture2D>("Graphics\\Other\\pointer");
+            nodeTexture = Content.Load<Texture2D>("Graphics\\Other\\node");
 
             hexBaseTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexBase");
             grassTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexGrass");
@@ -185,18 +192,13 @@ namespace SeniorProjectGame
             treeTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\tree");
             bushTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\bush");
             wallTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\wooden Walls");
+            questionTexture = Content.Load<Texture2D>("Graphics\\Other\\questionTexture");
+
+            PopulateTerrainDictionary();
 
             unitFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Rifle"),400f, 50, 100);
 
             selectSound = Content.Load<SoundEffect>("Audio\\Sounds\\Powerup27");
-
-            worldMapTexture = Content.Load<Texture2D>("Graphics\\Backgrounds\\island");
-            pointerTexture = Content.Load<Texture2D>("Graphics\\Other\\pointer");
-            nodeTexture = Content.Load<Texture2D>("Graphics\\Other\\node");
-
-            questionTexture = Content.Load<Texture2D>("Graphics\\Other\\questionTexture");
-
-            PopulateTerrainDictionary();
         }
 
         void PopulateTerrainDictionary()
@@ -211,8 +213,8 @@ namespace SeniorProjectGame
 
             terrainDictionary["T"] = new TerrainPackage(treeTexture, true);//Tree
             terrainDictionary["B"] = new TerrainPackage(bushTexture, false);//Bush
-            //terrainDictionary["t"] = new TerrainPackage(treeTexture, true);//Table
             terrainDictionary["C"] = new TerrainPackage(carpetTexture, false);//Carpet
+            //terrainDictionary["t"] = new TerrainPackage(treeTexture, true);//Table
             //terrainDictionary["h"] = new TerrainPackage(treeTexture, true);//Throne
             //terrainDictionary["n"] = new TerrainPackage(treeTexture, true);//Tent
 
@@ -226,7 +228,7 @@ namespace SeniorProjectGame
                 FileStream txtFile = new FileStream(myFilePath, System.IO.FileMode.Open);
                 using (StreamReader txtReader = new StreamReader(txtFile))
                 {
-                    //Create a new bin file with read name or overwrite it if it already exists
+                    //Create a new bin file with read unitName or overwrite it if it already exists
                     FileStream binFile = new FileStream("Content/" + txtReader.ReadLine() + ".bin", System.IO.FileMode.Create);
 
                     using (BinaryWriter binWriter = new BinaryWriter(binFile))
@@ -237,7 +239,6 @@ namespace SeniorProjectGame
                         }
                         binWriter.Close();
                     }
-
                 }
             }
             else
@@ -265,7 +266,7 @@ namespace SeniorProjectGame
             }
             else
             {
-                throw new Exception(myID + " doesn't exist. Did you load the txt of it?");
+                throw new Exception("Content//" + myID + ".bin" + " doesn't exist. Did you load the txt of it?");
             }
         }
 
@@ -302,6 +303,7 @@ namespace SeniorProjectGame
             worldMapComponent.CreatePointer(worldMapComponent.GetNodeEntity(0), new Vector2(0, -20), pointerTexture);
 
         }
+
         Entity ProcessHexMapBin(string myID)
         {
             List<string> binLines = ReadBin(myID);
@@ -357,22 +359,99 @@ namespace SeniorProjectGame
                             //Add allied spawn
                             tempBoardComponent.AddAlliedSpawnPoint(ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
                         }
-                        else if (line[x] == "X")
-                        {
-                            //Enemy Spawn
-                        }
+
                         else if (line[x] == "V")
                         {
                             //Victory condition
+                        }
+                        else
+                        {
+                            tempBoardComponent.AddEnemySpawnPoint(Convert.ToInt32(line[x]), ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
                         }
                     }
                 }
             }
             return tempBoard;
+
+
         }
-        List<Entity> ProcessEnemyBin()
+        void ProcessHexMapEnemyBin(string myID)
         {
-            List<Entity> enemyEntityList = new List<Entity>();
+            List<string> binLines = ReadBin(myID+"_Enemies");
+
+            List<string> relevantLines = new List<string>();
+            for (int line = 2; line < binLines.Count; line++)
+            {
+                if (binLines[line] != "" && !binLines[line].Contains("//"))
+                    relevantLines.Add(binLines[line]);
+            }
+            for (int line = 0; line < relevantLines.Count; line++)
+            {
+                if (relevantLines[line].Contains("-"))
+                {
+                    string[] nameLine = relevantLines[line].Split(' ');
+                    string[] statLine = relevantLines[line + 1].Split(' ');
+                    string[] growthLine = relevantLines[line + 2].Split(' ');
+                    string[] capLine = relevantLines[line + 3].Split(' ');
+                    string[] movementLine = relevantLines[line + 4].Split(' ');
+
+                    int unitSpawn = Convert.ToInt32(nameLine[1]);
+                    string name = nameLine[2];
+                    Role role = classes[nameLine[3]];
+                    int level = Convert.ToInt32(nameLine[4]);
+
+                    int str = Convert.ToInt32(statLine[0]);
+                    int mag = Convert.ToInt32(statLine[1]);
+                    int dex = Convert.ToInt32(statLine[2]);
+                    int agi = Convert.ToInt32(statLine[3]);
+                    int def = Convert.ToInt32(statLine[4]);
+                    int res = Convert.ToInt32(statLine[5]);
+                    int spd = Convert.ToInt32(statLine[6]);
+
+                    float strGrowth = float.Parse(growthLine[0]);
+                    float magGrowth = float.Parse(growthLine[1]);
+                    float dexGrowth = float.Parse(growthLine[2]);
+                    float agiGrowth = float.Parse(growthLine[3]);
+                    float defGrowth = float.Parse(growthLine[4]);
+                    float resGrowth = float.Parse(growthLine[5]);
+                    float spdGrowth = float.Parse(growthLine[6]);
+
+                    int strCap = Convert.ToInt32(capLine[0]);
+                    int magCap = Convert.ToInt32(capLine[1]);
+                    int dexCap = Convert.ToInt32(capLine[2]);
+                    int agiCap = Convert.ToInt32(capLine[3]);
+                    int defCap = Convert.ToInt32(capLine[4]);
+                    int resCap = Convert.ToInt32(capLine[5]);
+                    int spdCap = Convert.ToInt32(capLine[6]);
+
+                    int movement = Convert.ToInt32(movementLine[0]);
+                    int sightRange = Convert.ToInt32(movementLine[1]);
+                    int attackRange = Convert.ToInt32(movementLine[2]);
+
+                    Vector2 hexLocation = boardComponent.GetEnemySpawnPointForType(unitSpawn, rand);
+                    HexComponent hex = boardComponent.GetHex(hexLocation);
+                    SpriteComponent hexSprite = hex._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+
+                    Entity blob = new Entity(15, State.ScreenState.SKIRMISH);
+                    blob.AddComponent(new AnimatedSpriteComponent(true,hexSprite.GetPosition(),unitFramedTexture));
+                    blob.AddComponent(new UnitComponent(hex,false));
+
+                    hex.SetUnit(blob.GetComponent("UnitComponent") as UnitComponent);
+
+                    blob.AddComponent(  new UnitDataComponent(
+                                        name, role,Alignment.ENEMY,level,
+                                        str, mag, dex, agi, def, res, spd,
+                                        strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
+                                        strCap, magCap, dexCap, agiCap, defCap, resCap, spdCap,
+                                        movement, sightRange, attackRange));
+                    EntityManager.AddEntity(blob);
+                }
+            }
+        }
+
+        void ProcessEnemyBestiaryBin()
+        {
+            //List<Entity> enemyEntityList = new List<Entity>();
             List<string> binLines = ReadBin("Enemies");
 
             List<string> relevantLines = new List<string>();
@@ -441,7 +520,7 @@ namespace SeniorProjectGame
                 }
             }
 
-            return enemyEntityList;
+            //return enemyEntityList;
         }
 
         #endregion
@@ -719,7 +798,7 @@ namespace SeniorProjectGame
 
                     else if (singleRightClick.Evaluate())
                     {
-                        //boardComponent.ToggleFogofWar(false);
+                        boardComponent.ToggleFogofWar(false);
                     }
                     if (singleMiddleClick.Evaluate())
                     {
@@ -753,13 +832,15 @@ namespace SeniorProjectGame
             boardEntity = ProcessHexMapBin(worldMapComponent.GetCurrentNodeID());
             boardComponent = boardEntity.GetComponent("BoardComponent") as BoardComponent;
 
+            //ProcessHexMapEnemyBin(worldMapComponent.GetCurrentNodeID());
+
             //TODO: HAVE AN ACTIVE PARTY MEMBERS LIST
             //TODO: PULL YOUR ACTIVE PARTY MEMBERS instead of creating this nondescript
             //Also send your player info
             //If there aren't enough spaces for them the highest in your queue will go
             //You should be able to reorder your party
           
-            boardComponent.CreateUnit(true, 3, boardComponent.GetOneAlliedSpawnPoint(rand), unitFramedTexture);
+            //boardComponent.CreateUnit(true, 3, boardComponent.GetOneAlliedSpawnPoint(rand), unitFramedTexture);
 
             //TODO: Read the X_Enemies.txt and add that to the enemies
             //TODO: Somehow we have to read the number and place a certain unit

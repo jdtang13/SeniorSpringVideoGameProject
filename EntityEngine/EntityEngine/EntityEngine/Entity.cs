@@ -18,7 +18,7 @@ namespace EntityEngine
         //the functionality of an entity. For instance, a spaceship would have a spritecomponent, a physicscomponent, and a camera
         //component to describe it.
 
-        //Each component is named in the constructor of the component. You call one of these methods method and pass the name string.
+        //Each component is named in the constructor of the component. You call one of these methods method and pass the unitName string.
         //For instance, a sprite component is named "SpriteComponenent" in its code
 
         //So, if you wanted to use the sprite component of an entity named spaceShip(assuming it has one) the code would be:

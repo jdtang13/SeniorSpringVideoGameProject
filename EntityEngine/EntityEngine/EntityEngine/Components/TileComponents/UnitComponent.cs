@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using EntityEngine.Components.TileComponents;
 using EntityEngine.Components.Sprites;
 using EntityEngine;
+using EntityEngine.Stat_Attribute_Classes;
 
 namespace EntityEngine.Components.TileComponents
 {
@@ -61,7 +62,9 @@ namespace EntityEngine.Components.TileComponents
             visibility = myVis;
             AnimatedSpriteComponent sprite = _parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
 
-            if (isAlly)
+            UnitDataComponent unitDataComp = _parent.GetComponent("UnitDataComponent") as UnitDataComponent;
+
+            if (unitDataComp.GetAlignment() == Alignment.PLAYER)
             {
                 sprite.SetColor(Color.White);
                 sprite._visible = true;
@@ -84,50 +87,25 @@ namespace EntityEngine.Components.TileComponents
             }
         }
 
-        bool isAlly;
-        public void SetAlly(bool myTruth)
-        {
-            isAlly = myTruth;
-        }
-        public bool GetAlly()
-        {
-            return isAlly;
-        }
-
-        int sightRadius;
-        public int GetSightRadius()
-        {
-            return sightRadius;
-        }
-
         CommandState commandState;
         public void SetCommandState(CommandState myState)
         {
             commandState = myState;
         }
 
-        UnitData unitData;
-        public UnitData GetUnitData()
-        {
-            return unitData;
-        }
-        public void SetUnitData(UnitData u) { unitData = u; }
+        //UnitData unitData;
+        //public UnitData GetUnitData()
+        //{
+        //    return unitData;
+        //}
+        //public void SetUnitData(UnitData u) { unitData = u; }
 
-        public UnitComponent(bool myIsAlly, int mySightRadius, HexComponent myHex, bool mySelectable, UnitData unitData)
+        public UnitComponent(HexComponent myHex, bool mySelectable)//, UnitData unitData)
         {
             hex = myHex;
             this.name = "UnitComponent";
-            this.unitData = unitData;
-            sightRadius = mySightRadius;
-            isAlly = myIsAlly;
+            //this.unitData = unitData;
         }
-
-        //public override void Initialize()
-        //{
-        //    AnimatedSpriteComponent sprite = _parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
-        //    sprite._visible = false;
-        //    base.Initialize();
-        //}
 
         public void MoveDirection(Orient myOar)
         {

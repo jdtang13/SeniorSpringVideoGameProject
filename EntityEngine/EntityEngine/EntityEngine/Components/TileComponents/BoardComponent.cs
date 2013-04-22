@@ -35,6 +35,7 @@ namespace EntityEngine.Components.TileComponents
         public List<UnitComponent> alliedUnitList = new List<UnitComponent>();
         List<UnitComponent> nonAlliedUnitList = new List<UnitComponent>();
 
+        //
         List<Vector2> alliedSpawnPoints = new List<Vector2>();
         public void AddAlliedSpawnPoint(Vector2 myVector)
         {
@@ -47,6 +48,26 @@ namespace EntityEngine.Components.TileComponents
             alliedSpawnPoints.RemoveAt(chosenIndex);
 
             return spawn;
+        }
+
+        Dictionary<int,List<Vector2>> enemySpawnPoints = new Dictionary<int,List<Vector2>>();
+        public Vector2 GetEnemySpawnPointForType(int myUnitNumber, Random myRand)
+        {
+            List<Vector2> listOfAvailableSpawnsForUnitType = enemySpawnPoints[myUnitNumber];
+            int randomlySelectedSpawn = myRand.Next(0, listOfAvailableSpawnsForUnitType.Count);
+
+            Vector2 spawnPoint = listOfAvailableSpawnsForUnitType[randomlySelectedSpawn];
+            listOfAvailableSpawnsForUnitType.RemoveAt(randomlySelectedSpawn);
+
+            return spawnPoint;
+        }
+        public void AddEnemySpawnPoint(int myUnitNumber, Vector2 myVector2)
+        {
+            if (!enemySpawnPoints.ContainsKey(myUnitNumber))
+            {
+                enemySpawnPoints.Add(myUnitNumber, new List<Vector2>());
+            }
+            enemySpawnPoints[myUnitNumber].Add(myVector2);
         }
 
         //You must handle nulls for this dictionary
@@ -220,44 +241,44 @@ namespace EntityEngine.Components.TileComponents
 
         //public void CreateUnitWithData(Vector2 myCoordinate,Texture2D myTexture, int
 
-        public void CreateUnit(Role myRole,UnitData myUnitData, Texture2DFramed myFramedTexture, Vector2 myCoordinate)
-        {
-            HexComponent hexComp = GetHex(myCoordinate);
+        //public void CreateUnit(Role myRole,UnitData myUnitData, Texture2DFramed myFramedTexture, Vector2 myCoordinate)
+        //{
+        //    HexComponent hexComp = GetHex(myCoordinate);
 
-            if (hexComp.GetUnit() == null)
-            {
-                SpriteComponent hexSprite = GetHex(myCoordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+        //    if (hexComp.GetUnit() == null)
+        //    {
+        //        SpriteComponent hexSprite = GetHex(myCoordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                Entity unitEntity = new Entity(15, State.ScreenState.SKIRMISH);           
+        //        Entity unitEntity = new Entity(15, State.ScreenState.SKIRMISH);           
 
-                AnimatedSpriteComponent unitSprite = new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), myFramedTexture);
-                unitEntity.AddComponent(unitSprite);
+        //        AnimatedSpriteComponent unitSprite = new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), myFramedTexture);
+        //        unitEntity.AddComponent(unitSprite);
 
-                UnitComponent unitComp = new UnitComponent(isAlly, mySightRadius, GetHex(myCoordinate), true, null);
-                unitEntity.AddComponent(unitComp);
+        //        UnitComponent unitComp = new UnitComponent(isAlly, mySightRadius, GetHex(myCoordinate), true, null);
+        //        unitEntity.AddComponent(unitComp);
 
+        //        UnitDataCom
 
+        //        GetHex(myCoordinate).SetUnit(unitComp);
+        //        EntityManager.AddEntity(unitEntity);
 
-                GetHex(myCoordinate).SetUnit(unitComp);
-                EntityManager.AddEntity(unitEntity);
+        //        if (isAlly)
+        //        {
+        //            alliedUnitList.Add(unitComp);
+        //        }
+        //        else
+        //        {
+        //            nonAlliedUnitList.Add(unitComp);
+        //        }
 
-                if (isAlly)
-                {
-                    alliedUnitList.Add(unitComp);
-                }
-                else
-                {
-                    nonAlliedUnitList.Add(unitComp);
-                }
-
-                hexComp.SetUnit(unitComp);
-                UpdateVisibilityAllies();
-            }
-            else
-            {
-                throw new Exception("There is already a unit where you are trying to create one.");
-            }
-        }
+        //        hexComp.SetUnit(unitComp);
+        //        UpdateVisibilityAllies();
+        //    }
+        //    else
+        //    {
+        //        throw new Exception("There is already a unit where you are trying to create one.");
+        //    }
+        //}
         
         //TODO: Add row layer support
         public void AddTerrain(Vector2 myCoordinate,int myLayer, TerrainPackage myTerrain)
@@ -372,6 +393,7 @@ namespace EntityEngine.Components.TileComponents
             return rounded;
         }
 
+        //#region Visibility
         //returns ring of hexes distance radius away from mouseCurrentHex
         public List<HexComponent> GetRing(UnitComponent myUnit, int myRadius)
         {
@@ -408,7 +430,9 @@ namespace EntityEngine.Components.TileComponents
         {
             List<HexComponent> allRings = new List<HexComponent>();
 
-            for (int r = 0; r <= myUnit.GetSightRadius(); r++)
+            UnitDataComponent unitData = myUnit._parent.GetComponent("UnitDataComponent") as UnitDataComponent;
+
+            for (int r = 0; r <= unitData.GetSightRadius(); r++)
             {
                 allRings.AddRange(GetRing(myUnit, r));
             }
@@ -457,5 +481,6 @@ namespace EntityEngine.Components.TileComponents
 
             fogOfWarToggle = myTruth;
         }
+
     }
 }

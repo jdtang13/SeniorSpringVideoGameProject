@@ -7,26 +7,47 @@ using EntityEngine.Components.Component_Parents;
 
 namespace EntityEngine
 {
-    public class Fraction
-    {
-        public Fraction(int numerator, int denominator)
-        {
-            //Use this storage calss for currentHealth/total currentHealth values?
-        }
-    }
+    //public class Fraction
+    //{
+    //    public Fraction(int numerator, int denominator)
+    //    {
+    //        //Use this storage calss for currentHealth/total currentHealth values?
+    //    }
+    //}
 
-    public class UnitData : Component
+    public class UnitDataComponent : Component
     {
-        string name;
+        string unitName;
+        public string GetName()
+        {
+            return unitName;
+        }
+
         Alignment alignment;
+        public Alignment GetAlignment()
+        {
+            return alignment;
+        }
+        public void SetAlignment(Alignment myAli)
+        {
+            alignment = myAli;
+        }
+
         Role role;
+        public Role GetRole()
+        {
+            return role;
+        }
 
         //setting up consturctor for dictionary to hold character growths, attributs, and stats 
-        Dictionary<string, int> attributes; // stats for units
-        Dictionary<string, float> growths; // growth of attributes with each level
-        Dictionary<string, int> caps;  // attribute cap for units
+        public Dictionary<string, int> attributes; // stats for units
+        public Dictionary<string, float> growths; // growth of attributes with each level
+        public Dictionary<string, int> caps;  // attribute cap for units
 
-        int level = 1;
+        List<string> knownSpells = new List<string>();
+        List<string> knownAttacks = new List<string>();
+
+        int level;
         public int GetCurrentLevel()
         {
             return level;
@@ -69,10 +90,7 @@ namespace EntityEngine
             return totalMana;
         }
         
-       
-       
-        
-        int experienceBounty; // exp dropped when this unit dies
+        int experienceBounty; // exp dropped when this unit dies //Maybe like 1/4 of total exp?
 
         int movement;
         public int GetMovement()
@@ -87,13 +105,25 @@ namespace EntityEngine
         }
 
         int attackRadius;
+        public int GetAttackRadius()
+        {
+            return attackRadius;
+        }
 
-        public UnitData(string name,     Role role,       Alignment ali,   int level,
+        public UnitDataComponent(string name,     Role role,       Alignment ali,   int level,
                         int str,         int mag,         int dex,         int agi,         int def,         int res,         int spd,
                         float strGrowth, float magGrowth, float dexGrowth, float agiGrowth, float defGrowth, float resGrowth, float spdGrowth,
                         int strCap,      int magCap,      int dexCap,      int agiCap,      int defCap,      int resCap,      int spdCap,
                         int movement,    int sightRange,  int attackRange)
         {
+            this.unitName = name;
+
+            this.role = role;
+
+            this.alignment = ali;
+
+            this.level = level;
+
             attributes = new Dictionary<string, int>();
             caps = new Dictionary<string, int>();
             growths = new Dictionary<string, float>();
