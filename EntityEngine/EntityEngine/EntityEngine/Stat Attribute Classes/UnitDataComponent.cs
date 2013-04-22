@@ -116,6 +116,7 @@ namespace EntityEngine
                         int strCap,      int magCap,      int dexCap,      int agiCap,      int defCap,      int resCap,      int spdCap,
                         int movement,    int sightRange,  int attackRange)
         {
+            this.name = "UnitDataComponent";
             this.unitName = name;
 
             this.role = role;

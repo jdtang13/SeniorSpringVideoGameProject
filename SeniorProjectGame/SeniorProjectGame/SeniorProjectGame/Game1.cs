@@ -303,6 +303,77 @@ namespace SeniorProjectGame
             worldMapComponent.CreatePointer(worldMapComponent.GetNodeEntity(0), new Vector2(0, -20), pointerTexture);
 
         }
+        void ProcessEnemyBestiaryBin()
+        {
+            //List<Entity> enemyEntityList = new List<Entity>();
+            List<string> binLines = ReadBin("Enemies");
+
+            List<string> relevantLines = new List<string>();
+
+            for (int line = 0; line < binLines.Count; line++)
+            {
+                if (!binLines[line].Contains("//") && binLines[line] != "")
+                {
+                    relevantLines.Add(binLines[line]);
+                }
+            }
+
+            for (int line = 0; line < relevantLines.Count; line++)
+            {
+                if (relevantLines[line].Contains("-"))
+                {
+                    string nameOfRole = relevantLines[line].Split(' ')[1];
+                    string[] statLine = relevantLines[line + 1].Split(' ');
+                    string[] growthLine = relevantLines[line + 2].Split(' ');
+                    string[] capLine = relevantLines[line + 3].Split(' ');
+                    string weapon = relevantLines[line + 4];
+                    string[] magicLine = relevantLines[line + 5].Split(' ');
+                    string[] movementLine = relevantLines[line + 6].Split(' ');
+
+                    int str = Convert.ToInt32(statLine[0]);
+                    int mag = Convert.ToInt32(statLine[1]);
+                    int dex = Convert.ToInt32(statLine[2]);
+                    int agi = Convert.ToInt32(statLine[3]);
+                    int def = Convert.ToInt32(statLine[4]);
+                    int res = Convert.ToInt32(statLine[5]);
+                    int spd = Convert.ToInt32(statLine[6]);
+
+                    float strGrowth = float.Parse(growthLine[0]);
+                    float magGrowth = float.Parse(growthLine[1]);
+                    float dexGrowth = float.Parse(growthLine[2]);
+                    float agiGrowth = float.Parse(growthLine[3]);
+                    float defGrowth = float.Parse(growthLine[4]);
+                    float resGrowth = float.Parse(growthLine[5]);
+                    float spdGrowth = float.Parse(growthLine[6]);
+
+                    int strCap = Convert.ToInt32(capLine[0]);
+                    int magCap = Convert.ToInt32(capLine[1]);
+                    int dexCap = Convert.ToInt32(capLine[2]);
+                    int agiCap = Convert.ToInt32(capLine[3]);
+                    int defCap = Convert.ToInt32(capLine[4]);
+                    int resCap = Convert.ToInt32(capLine[5]);
+                    int spdCap = Convert.ToInt32(capLine[6]);
+
+
+                    bool light = bool.Parse(magicLine[0]);
+                    bool anima = bool.Parse(magicLine[0]);
+                    bool dark = bool.Parse(magicLine[0]);
+
+                    int movement = Convert.ToInt32(movementLine[0]);
+                    int sightRange = Convert.ToInt32(movementLine[1]);
+                    int attackRange = Convert.ToInt32(movementLine[2]);
+
+                    Role role = new Role(
+                                        str, mag, dex, agi, def, res, spd,
+                                        strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
+                                        strCap, magCap, dexCap, agiCap, defCap, resCap, spdCap,
+                                        weapon,
+                                        light, anima, dark,
+                                        movement, sightRange, attackRange);
+                    classes[nameOfRole] = role;
+                }
+            }
+        }
 
         Entity ProcessHexMapBin(string myID)
         {
@@ -449,79 +520,7 @@ namespace SeniorProjectGame
             }
         }
 
-        void ProcessEnemyBestiaryBin()
-        {
-            //List<Entity> enemyEntityList = new List<Entity>();
-            List<string> binLines = ReadBin("Enemies");
-
-            List<string> relevantLines = new List<string>();
-
-            for (int line = 0; line < binLines.Count; line++)
-            {
-                if (!binLines[line].Contains("//") && binLines[line] != "")
-                {
-                    relevantLines.Add(binLines[line]);
-                }
-            }
-
-            for (int line = 0; line < relevantLines.Count; line++)
-            {
-                if (relevantLines[line].Contains("-"))
-                {
-                    string name = relevantLines[line].Split(' ')[1];
-                    string[] statLine = relevantLines[line + 1].Split(' ');
-                    string[] growthLine = relevantLines[line + 2].Split(' ');
-                    string[] capLine = relevantLines[line + 3].Split(' ');
-                    string weapon = relevantLines[line + 4];
-                    string[] magicLine = relevantLines[line + 5].Split(' ');
-                    string[] movementLine = relevantLines[line + 6].Split(' ');
-
-                    int str = Convert.ToInt32(statLine[0]);
-                    int mag = Convert.ToInt32(statLine[1]);
-                    int dex = Convert.ToInt32(statLine[2]);
-                    int agi = Convert.ToInt32(statLine[3]);
-                    int def = Convert.ToInt32(statLine[4]);
-                    int res = Convert.ToInt32(statLine[5]);
-                    int spd = Convert.ToInt32(statLine[6]);
-
-                    float strGrowth = float.Parse(growthLine[0]);
-                    float magGrowth = float.Parse(growthLine[1]);
-                    float dexGrowth = float.Parse(growthLine[2]);
-                    float agiGrowth = float.Parse(growthLine[3]);
-                    float defGrowth = float.Parse(growthLine[4]);
-                    float resGrowth = float.Parse(growthLine[5]);
-                    float spdGrowth = float.Parse(growthLine[6]);
-
-                    int strCap = Convert.ToInt32(capLine[0]);
-                    int magCap = Convert.ToInt32(capLine[1]);
-                    int dexCap = Convert.ToInt32(capLine[2]);
-                    int agiCap = Convert.ToInt32(capLine[3]);
-                    int defCap = Convert.ToInt32(capLine[4]);
-                    int resCap = Convert.ToInt32(capLine[5]);
-                    int spdCap = Convert.ToInt32(capLine[6]);
-         
-
-                    bool light = bool.Parse(magicLine[0]);
-                    bool anima = bool.Parse(magicLine[0]);
-                    bool dark = bool.Parse(magicLine[0]);
-
-                    int movement = Convert.ToInt32(movementLine[0]);
-                    int sightRange = Convert.ToInt32(movementLine[1]);
-                    int attackRange = Convert.ToInt32(movementLine[2]);
-
-                    Role role = new Role(
-                                        str,       mag,       dex,       agi,       def,       res,       spd,
-                                        strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
-                                        strCap,    magCap,    dexCap,    agiCap,    defCap,    resCap,    spdCap,
-                                        weapon, 
-                                        light, anima, dark, 
-                                        movement, sightRange, attackRange);
-                    classes[name] = role;
-                }
-            }
-
-            //return enemyEntityList;
-        }
+        
 
         #endregion
 
@@ -832,7 +831,7 @@ namespace SeniorProjectGame
             boardEntity = ProcessHexMapBin(worldMapComponent.GetCurrentNodeID());
             boardComponent = boardEntity.GetComponent("BoardComponent") as BoardComponent;
 
-            //ProcessHexMapEnemyBin(worldMapComponent.GetCurrentNodeID());
+            ProcessHexMapEnemyBin(worldMapComponent.GetCurrentNodeID());
 
             //TODO: HAVE AN ACTIVE PARTY MEMBERS LIST
             //TODO: PULL YOUR ACTIVE PARTY MEMBERS instead of creating this nondescript
