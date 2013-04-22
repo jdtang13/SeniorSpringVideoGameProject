@@ -36,7 +36,12 @@ namespace SeniorProjectGame
             waterTexture, stoneTexture;
         Texture2D treeTexture, wallTexture, bushTexture, tableTexture, carpetTexture, throneTexture, tentTexture;
         Texture2D markerTexture, questionTexture;
-        Texture2DFramed unitFramedTexture;
+
+        Dictionary<string, Texture2DFramed> unitTextureDictionary = new Dictionary<string, Texture2DFramed>();
+
+        Texture2DFramed unitFramedTexture, axemanFramedTexture, battlemageFramedTexture, bowmanFramedTexture, crossbowmanFramedTexture,
+            flailmanFramedTexture, halberdierFramedTexture, knightFramedTexture, mageAssassinFramedTexture, manAtArmsFramedTexture,
+            pikemanFramedTexture, riflemanFramedTexture, spearmanFramedTexture, swordsmanFramedTexture, wizardFramedTexture, slimeFramedTexture;
 
         SoundEffect selectSound;
 
@@ -122,12 +127,12 @@ namespace SeniorProjectGame
             IsMouseVisible = true;
 
             LoadContent();
+            PopulateUnitTextureDictionary();
 
             ProcessWorldMapBin();
             ProcessPlayerRolesBin();
 
             ProcessEnemyBestiaryBin();
-
 
             InitializeInput();
 
@@ -202,8 +207,6 @@ namespace SeniorProjectGame
 
             PopulateTerrainDictionary();
 
-            unitFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Rifle"), 400f, 50, 100);
-
             selectSound = Content.Load<SoundEffect>("Audio\\Sounds\\Powerup27");
         }
 
@@ -225,6 +228,53 @@ namespace SeniorProjectGame
             //terrainDictionary["n"] = new TerrainPackage(treeTexture, true);//Tent
 
             terrainDictionary["X"] = new TerrainPackage(wallTexture, true);
+        }
+        void PopulateUnitTextureDictionary()
+        {
+            axemanFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Axe"), 400f, 50, 100);
+            unitTextureDictionary.Add("Axeman", axemanFramedTexture);
+
+            battlemageFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Battlemage"), 400f, 50, 100);
+            unitTextureDictionary.Add("Battlemage", battlemageFramedTexture);
+
+            bowmanFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Bow"), 400f, 50, 100);
+            unitTextureDictionary.Add("Bowman", bowmanFramedTexture);
+
+            crossbowmanFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Crossbow"), 400f, 50, 100);
+            unitTextureDictionary.Add("Crossbowman", crossbowmanFramedTexture);
+
+            flailmanFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Flail"), 400f, 50, 100);
+            unitTextureDictionary.Add("Flailman", flailmanFramedTexture);
+
+            halberdierFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Halberd"), 400f, 50, 100);
+            unitTextureDictionary.Add("Habledier", halberdierFramedTexture);
+
+            knightFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Knight"), 400f, 50, 100);
+            unitTextureDictionary.Add("Knight", knightFramedTexture);
+
+            mageAssassinFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\MageAssassin"), 400f, 50, 100);
+            unitTextureDictionary.Add("MageAssassin", mageAssassinFramedTexture);
+
+            manAtArmsFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Man-at-Arms"), 400f, 50, 100);
+            unitTextureDictionary.Add("ManAtArms", manAtArmsFramedTexture);
+
+            pikemanFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Pike"), 400f, 50, 100);
+            unitTextureDictionary.Add("Pikeman", pikemanFramedTexture);
+
+            riflemanFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Rifle"), 400f, 50, 100);
+            unitTextureDictionary.Add("Rifleman", riflemanFramedTexture);
+
+            spearmanFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Spear"), 400f, 50, 100);
+            unitTextureDictionary.Add("Spearman", spearmanFramedTexture);
+
+            swordsmanFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Sword"), 400f, 50, 100);
+            unitTextureDictionary.Add("Swordsman", swordsmanFramedTexture);
+
+            wizardFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Wizard"), 400f, 50, 100);
+            unitTextureDictionary.Add("Wizard", wizardFramedTexture);
+
+            slimeFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Slime"), 400f, 50, 100);
+            unitTextureDictionary.Add("Slime", slimeFramedTexture);
         }
 
         void ConvertTxtToBin(string myFilePath)
@@ -452,7 +502,7 @@ namespace SeniorProjectGame
             }
         }
 
-        List<UnitDataComponent> ProcessPartyMembersBin()
+        void ProcessPartyMembersBin()
         {
             List<string> binLines = ReadBin("Party_Members");
 
@@ -462,8 +512,6 @@ namespace SeniorProjectGame
                 if (binLines[line] != "" && !binLines[line].Contains("//"))
                     relevantLines.Add(binLines[line]);
             }
-
-            List<UnitDataComponent> partyMemberData = new List<UnitDataComponent>();
 
             for (int line = 0; line < relevantLines.Count; line++)
             {
@@ -475,10 +523,11 @@ namespace SeniorProjectGame
                     string[] capLine = relevantLines[line + 3].Split(' ');
                     string[] movementLine = relevantLines[line + 4].Split(' ');
 
-                    
+
                     string name = nameLine[1];
                     Role role = classes[nameLine[2]];
                     int level = Convert.ToInt32(nameLine[3]);
+                    string graphicName = nameLine[4];
 
                     int str = Convert.ToInt32(statLine[0]);
                     int mag = Convert.ToInt32(statLine[1]);
@@ -508,16 +557,32 @@ namespace SeniorProjectGame
                     int sightRange = Convert.ToInt32(movementLine[1]);
                     int attackRange = Convert.ToInt32(movementLine[2]);
 
+
+
+                    Entity partyMemberEntity = new Entity(15, State.ScreenState.SKIRMISH);
+
                     UnitDataComponent unitDataComp = new UnitDataComponent(
                                         name, role, Alignment.PLAYER, level,
                                         str, mag, dex, agi, def, res, spd,
                                         strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
                                         strCap, magCap, dexCap, agiCap, defCap, resCap, spdCap,
                                         movement, sightRange, attackRange);
-                    partyMemberData.Add(unitDataComp);
+                    partyMemberEntity.AddComponent(unitDataComp);
+
+                    Vector2 coordinate = boardComponent.GetOneAlliedSpawnPoint(rand);
+                    SpriteComponent hexSprite = boardComponent.GetHex(coordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+
+                    partyMemberEntity.AddComponent(new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), unitTextureDictionary[graphicName]));
+
+                    partyMemberEntity.AddComponent(new UnitComponent(boardComponent.GetHex(coordinate), true));
+
+                    EntityManager.AddEntity(partyMemberEntity);
+                    boardComponent.GetHex(coordinate).SetUnit(partyMemberEntity.GetComponent("UnitComponent") as UnitComponent);
+                    boardComponent.alliedUnitList.Add(partyMemberEntity);
+
                 }
             }
-            return partyMemberData;
+            boardComponent.UpdateVisibilityAllies();
         }
 
         Entity ProcessHexMapBin(string myID)
@@ -615,6 +680,7 @@ namespace SeniorProjectGame
                     string name = nameLine[2];
                     Role role = classes[nameLine[3]];
                     int level = Convert.ToInt32(nameLine[4]);
+                    string graphicName = nameLine[5];
 
                     int str = Convert.ToInt32(statLine[0]);
                     int mag = Convert.ToInt32(statLine[1]);
@@ -649,7 +715,7 @@ namespace SeniorProjectGame
                     SpriteComponent hexSprite = hex._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
                     Entity blob = new Entity(15, State.ScreenState.SKIRMISH);
-                    blob.AddComponent(new AnimatedSpriteComponent(true, hexSprite.GetPosition(), unitFramedTexture));
+                    blob.AddComponent(new AnimatedSpriteComponent(true, hexSprite.GetPosition(), unitTextureDictionary[graphicName]));
                     blob.AddComponent(new UnitComponent(hex, false));
 
                     hex.SetUnit(blob.GetComponent("UnitComponent") as UnitComponent);
@@ -983,24 +1049,18 @@ namespace SeniorProjectGame
         public void StartNode()
         {
             //Load the state of the party before every level and save the party at end of every
-            partyUnitData = ProcessPartyMembersBin();
+
 
             boardEntity = ProcessHexMapBin(worldMapComponent.GetCurrentNodeID());
             boardComponent = boardEntity.GetComponent("BoardComponent") as BoardComponent;
 
             ProcessHexMapEnemyBin(worldMapComponent.GetCurrentNodeID());
+            ProcessPartyMembersBin();
 
             //TODO: HAVE AN ACTIVE PARTY MEMBERS LIST
             //TODO: PULL YOUR ACTIVE PARTY MEMBERS instead of creating this nondescript
-            //Also send your player info
             //If there aren't enough spaces for them the highest in your queue will go
             //You should be able to reorder your party
-            for(int member = 0 ; member < partyUnitData.Count ; member++)
-            {
-                boardComponent.CreateUnit(boardComponent.GetOneAlliedSpawnPoint(rand),unitFramedTexture,partyUnitData[member]);
-            }
-            //TODO: Read the X_Enemies.txt and add that to the enemies
-            //TODO: Somehow we have to read the number and place a certain unit
 
             State.screenState = State.ScreenState.SKIRMISH;
         }

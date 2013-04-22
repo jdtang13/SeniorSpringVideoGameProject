@@ -24,7 +24,6 @@ Content\Graphics\UnitTextures\Crossbow.xnb
 Content\Graphics\UnitTextures\Flail.xnb
 Content\Graphics\UnitTextures\Halberd.xnb
 Content\Graphics\UnitTextures\Knight.xnb
-Content\Graphics\UnitTextures\Mage assassin.xnb
 Content\Graphics\UnitTextures\Man-at-Arms.xnb
 Content\Graphics\UnitTextures\Pike.xnb
 Content\Graphics\UnitTextures\Rifle.xnb
@@ -46,3 +45,4 @@ Content\Audio\Sounds\selects.xnb
 Content\Audio\Sounds\selectss.xnb
 Content\Audio\Sounds\select.xnb
 Content\Audio\Sounds\Powerup27.xnb
+Content\Graphics\UnitTextures\MageAssassin.xnb

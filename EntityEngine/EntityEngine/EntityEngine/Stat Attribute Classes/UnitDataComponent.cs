@@ -110,7 +110,7 @@ namespace EntityEngine
             return attackRadius;
         }
 
-        public UnitDataComponent(string name,     Role role,       Alignment ali,   int level,
+        public UnitDataComponent(string name,     Role role,       Alignment ali,   int level, 
                         int str,         int mag,         int dex,         int agi,         int def,         int res,         int spd,
                         float strGrowth, float magGrowth, float dexGrowth, float agiGrowth, float defGrowth, float resGrowth, float spdGrowth,
                         int strCap,      int magCap,      int dexCap,      int agiCap,      int defCap,      int resCap,      int spdCap,

@@ -214,8 +214,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Graphics\UnitTextures\Mage assassin.png">
-      <Name>Mage assassin</Name>
+    <Compile Include="Graphics\UnitTextures\MageAssassin.png">
+      <Name>MageAssassin</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
