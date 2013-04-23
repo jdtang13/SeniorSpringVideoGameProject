@@ -20,18 +20,20 @@ namespace EntityEngine
         //      EntityManager.AddEntity(SpaceShip);
 
         public static List<Entity> masterList = new List<Entity>();
-
+        static int highestLayer = 10;
 
         public static void AddEntity(Entity myEntity)
         {
             masterList.Add(myEntity);
+            if (myEntity.GetLayer() > highestLayer)
+            {
+                highestLayer = myEntity.GetLayer();
+            }
         }
         public static void ClearEntities()
         {
             masterList.Clear();
         }
-
-        static int LAYER_LIMIT = 20;
 
         public static void Update(GameTime myTime)
         {
@@ -49,7 +51,7 @@ namespace EntityEngine
         public static void Draw(SpriteBatch myBatch,GraphicsDeviceManager myGraph)
         {
             //Cycle through the layers of all the entities, 0 being the most background
-            for (int layer = 0; layer < LAYER_LIMIT; layer++)
+            for (int layer = 0; layer < highestLayer; layer++)
             {
                 myBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, null, null, null, null, Camera.GetTransformation(myGraph.GraphicsDevice));
                 

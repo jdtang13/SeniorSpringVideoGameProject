@@ -153,12 +153,6 @@ namespace EntityEngine.Components.TileComponents
             {
                 for (int y = 0; y < gridSize.Y; y++)
                 {
-                    //Each hex will be an entity
-                    Entity hexEntity = new Entity(0, State.ScreenState.SKIRMISH);
-                    hexEntityGrid[x, y] = hexEntity;
-
-
-                    //Creating the hex comp for the hex entity
                     Vector2 coordPosition = new Vector2(x, y);
                     if (coordPosition.X % 2 == 0)
                     {
@@ -168,6 +162,20 @@ namespace EntityEngine.Components.TileComponents
                     {
                         coordPosition.Y = (coordPosition.X + 1f) / 2f + y;
                     }
+
+                    int layer = 0;
+
+                    if (x % 2 == 0)
+                    {
+                       layer = y * 2;
+                    }
+                    else
+                    {
+                        layer = (y * 2)+1;
+                    }
+
+                    Entity hexEntity = new Entity(1+layer, State.ScreenState.SKIRMISH);
+                    hexEntityGrid[x, y] = hexEntity;
 
                     HexComponent hexComp = new HexComponent(coordPosition);
                     hexEntity.AddComponent(hexComp);
@@ -193,7 +201,8 @@ namespace EntityEngine.Components.TileComponents
 
                     GetHex(coordPosition).SetVisibility(Visibility.Unexplored);
                 }
-            }
+
+            } 
 
             //Giving all the hex's their adjacents
             foreach (KeyValuePair<Vector2, HexComponent> entry in hexDictionary)
@@ -274,14 +283,26 @@ namespace EntityEngine.Components.TileComponents
 
         }
 
-
-        //TODO: Add row layer support
-        public void AddTerrain(Vector2 myCoordinate, int myLayer, TerrainPackage myTerrain)
+        //TODO: Add row baseHexLayer support
+        public void AddTerrain(Vector2 myCoordinate, int myTerrainLayer, TerrainPackage myTerrain)
         {
             HexComponent hexComponent = GetHex(myCoordinate);
+            Entity hexEntity = hexComponent._parent;
             SpriteComponent hexSprite = hexComponent._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-            Entity terrainEntity = new Entity(4 + myLayer, State.ScreenState.SKIRMISH);
+            int baseHexLayer = 0;
+            for (int y = 0; y < hexEntityGrid.GetLength(1); y++)
+            {
+                for (int x = 0; x < hexEntityGrid.GetLength(0); x++)
+                {
+                    if (hexEntityGrid[x, y] == hexEntity)
+                    {
+                        baseHexLayer = hexEntityGrid[x, y].GetLayer();
+                    }
+                }
+            }
+
+            Entity terrainEntity = new Entity(2 + baseHexLayer + myTerrainLayer, State.ScreenState.SKIRMISH);
             terrainEntity.AddComponent(new SpriteComponent(true, hexSprite.getCenterPosition(), myTerrain.GetTexture()));
 
             TerrainComponent terrComp = new TerrainComponent(hexComponent, myTerrain.GetTexture(), myTerrain.GetImpassable());
@@ -444,7 +465,7 @@ namespace EntityEngine.Components.TileComponents
 
             for (int r = 0; r <= myRadius; r++)
             {
-                allRings.AddRange(GetRing(myCoordinate,myRadius-r));
+                allRings.AddRange(GetRing(myCoordinate, myRadius - r));
             }
 
             allRings.Add(GetHex(myCoordinate));
@@ -469,7 +490,7 @@ namespace EntityEngine.Components.TileComponents
                     UnitComponent unitComp = alliedUnitList[p].GetComponent("UnitComponent") as UnitComponent;
                     UnitDataComponent unitDataComp = alliedUnitList[p].GetComponent("UnitDataComponent") as UnitDataComponent;
 
-                    newVisible.AddRange(GetAllRings(unitComp.GetHex().getCoordPosition(),unitDataComp.GetSightRadius()));
+                    newVisible.AddRange(GetAllRings(unitComp.GetHex().getCoordPosition(), unitDataComp.GetSightRadius()));
                 }
 
                 for (int i = 0; i < newVisible.Count; i++)

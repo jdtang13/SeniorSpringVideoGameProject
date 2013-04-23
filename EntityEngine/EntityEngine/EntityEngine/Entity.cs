@@ -132,10 +132,10 @@ namespace EntityEngine
 
         //Layer is used so that certain entities are drawn before others, background objects before foreground etc
         public int layer;
-        //public int GetLayer()
-        //{
-
-        //}
+        public int GetLayer()
+        {
+            return layer;
+        }
 
         State.ScreenState screenState;
         public State.ScreenState GetAssociatedState()

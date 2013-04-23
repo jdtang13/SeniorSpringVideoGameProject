@@ -181,9 +181,12 @@ namespace SeniorProjectGame
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level_Enemies.txt");
 
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard_Enemies.txt");
+
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Alchemist's_Laboratory.txt");
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Ambushed.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard.txt");
+            
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Pavilion.txt");
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Throne_Room.txt");
 
@@ -559,7 +562,7 @@ namespace SeniorProjectGame
 
 
 
-                    Entity partyMemberEntity = new Entity(15, State.ScreenState.SKIRMISH);
+                    Entity partyMemberEntity = new Entity(101, State.ScreenState.SKIRMISH);
 
                     UnitDataComponent unitDataComp = new UnitDataComponent(
                                         name, role, Alignment.PLAYER, level,
@@ -606,7 +609,7 @@ namespace SeniorProjectGame
                     hexMapLines.Add(binLines[line]);
             }
 
-            //Reading the terrian layer
+            //Reading the terrian baseHexLayer
             Vector2 terrainCoordinate = Vector2.Zero;
             for (int layer = 0; layer < layers; layer++)
             {
@@ -626,7 +629,7 @@ namespace SeniorProjectGame
                 }
             }
 
-            //Reading the objective layer
+            //Reading the objective baseHexLayer
             for (int y = 0 + ((int)dimensions.Y * layers); y < dimensions.Y + ((int)dimensions.Y * layers); y++)
             {
                 string[] line = hexMapLines[y].Split(' ');
@@ -714,7 +717,7 @@ namespace SeniorProjectGame
                     HexComponent hex = boardComponent.GetHex(hexLocation);
                     SpriteComponent hexSprite = hex._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                    Entity blob = new Entity(15, State.ScreenState.SKIRMISH);
+                    Entity blob = new Entity(100, State.ScreenState.SKIRMISH);
                     blob.AddComponent(new AnimatedSpriteComponent(true, hexSprite.GetPosition(), unitTextureDictionary[graphicName]));
                     blob.AddComponent(new UnitComponent(hex, false));
 
