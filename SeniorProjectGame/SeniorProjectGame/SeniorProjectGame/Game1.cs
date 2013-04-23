@@ -560,9 +560,7 @@ namespace SeniorProjectGame
                     int sightRange = Convert.ToInt32(movementLine[1]);
                     int attackRange = Convert.ToInt32(movementLine[2]);
 
-
-
-                    Entity partyMemberEntity = new Entity(101, State.ScreenState.SKIRMISH);
+                    Entity partyMemberEntity = new Entity(EntityManager.GetHighestLayer()+1, State.ScreenState.SKIRMISH);
 
                     UnitDataComponent unitDataComp = new UnitDataComponent(
                                         name, role, Alignment.PLAYER, level,
@@ -648,6 +646,14 @@ namespace SeniorProjectGame
                         {
                             //Victory condition
                         }
+                        else if (line[x] == "C")
+                        {
+                            //Camera location
+                            HexComponent hex = tempBoardComponent.GetHex(ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
+                            SpriteComponent hexSprite = hex._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+
+                            Camera.MoveTo(hexSprite.centerScreenPosition);
+                        }
                         else
                         {
                             tempBoardComponent.AddEnemySpawnPoint(Convert.ToInt32(line[x]), ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
@@ -717,7 +723,7 @@ namespace SeniorProjectGame
                     HexComponent hex = boardComponent.GetHex(hexLocation);
                     SpriteComponent hexSprite = hex._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                    Entity blob = new Entity(100, State.ScreenState.SKIRMISH);
+                    Entity blob = new Entity(EntityManager.GetHighestLayer() + 1, State.ScreenState.SKIRMISH);
                     blob.AddComponent(new AnimatedSpriteComponent(true, hexSprite.GetPosition(), unitTextureDictionary[graphicName]));
                     blob.AddComponent(new UnitComponent(hex, false));
 
@@ -907,7 +913,7 @@ namespace SeniorProjectGame
 
                             Entity hexEntity = hexComp._parent;
 
-                            if (hexComp.HasUnit() && State.selectionState == State.SelectionState.NoSelection)
+                            if (hexComp.HasUnit() && hexComp.GetUnit().GetSelectable() && State.selectionState == State.SelectionState.NoSelection )
                             {
                                 UnitComponent unit = hexComp.GetUnit();
                                 unit.SetSelected(true); //todo set false

@@ -49,6 +49,12 @@ namespace EntityEngine.Components.TileComponents
             }    
         }
 
+        bool selectable = false;
+        public bool GetSelectable()
+        {
+            return selectable;
+        }
+
         Orient orientation = Orient.s;
         public void changeOrientation(Orient myOar)
         {
@@ -104,7 +110,7 @@ namespace EntityEngine.Components.TileComponents
         {
             hex = myHex;
             this.name = "UnitComponent";
-            //this.unitData = unitData;
+            selectable = mySelectable;
         }
 
         public void MoveDirection(Orient myOar)

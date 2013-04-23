@@ -149,6 +149,7 @@ namespace EntityEngine.Components.TileComponents
 
         void createGrid()
         {
+            List<int> layerList = new List<int>();
             for (int x = 0; x < gridSize.X; x++)
             {
                 for (int y = 0; y < gridSize.Y; y++)
@@ -172,6 +173,11 @@ namespace EntityEngine.Components.TileComponents
                     else
                     {
                         layer = (y * 2)+1;
+                    }
+
+                    if (!layerList.Contains(layer))
+                    {
+                        layerList.Add(layer);
                     }
 
                     Entity hexEntity = new Entity(1+layer, State.ScreenState.SKIRMISH);
@@ -234,6 +240,7 @@ namespace EntityEngine.Components.TileComponents
 
                 hex.SetAdjacent(n, ne, se, s, sw, nw);
             }
+            layerList.Add(0);
         }
 
         public List<HexComponent> GetAdjacentList(HexComponent hex)
