@@ -20,7 +20,7 @@ namespace EntityEngine
 
         public enum SelectionState
         {
-            SelectingUnit, SelectingOptionsForSkirmishUnits, NoSelection
+            SelectingUnit, SelectingMenuOptions, NoSelection
         }
 
         //  use this for selecting battles and stuff

@@ -31,6 +31,10 @@ namespace SeniorProjectGame
         int screenHeight = 680;
         SpriteBatch spriteBatch;
 
+        //  the main game menu
+        Menu menu = new Menu(false);
+        Texture2D dot;
+
         Texture2D worldMapTexture, nodeTexture, pointerTexture;
         Texture2D hexBaseTexture, dirtTexture, grassTexture, gravelTexture, sandTexture, woodTexture,
             waterTexture, stoneTexture;
@@ -135,6 +139,10 @@ namespace SeniorProjectGame
             ProcessEnemyBestiaryBin();
 
             InitializeInput();
+
+            //  dot is a generic white pixel texture used for generating colored rectangles
+            dot = new Texture2D(graphics.GraphicsDevice, 1, 1);
+            dot.SetData(new Color[] { Color.White });
 
             State.Initialize();
 
@@ -998,10 +1006,30 @@ namespace SeniorProjectGame
                             pathQueue.Remove(pathQueue[0]);
                             if (pathQueue.Count == 0)
                             {
-                                State.selectionState = State.SelectionState.NoSelection;
+                                int skirmishMenuX = 300;
+                                int skirmishMenuY = 200;
+
                                 State.originalHexClicked.GetUnit().SetSelected(false);
                                 State.originalHexClicked = null;
                                 moving = false;
+
+                                // show menu when the movement is complete
+                                List<string> options = new List<string>(new string[] {"Items", "Wait"});
+                                int skirmishMenuOptionHeight = 40;
+                                int skirmishMenuOptionWidth = 200;
+                                Color skirmishMenuColor = Color.DarkGray;
+
+                                // todo: pseudocode:
+                                // if enemyUnitIsAdjacent, options.Add("Attack");
+                                // if alliedUnitIsAdjacent, options.Add(new string[] {"Heal", "Trade"});
+                                // if convoyIsAdjacent, options.Add("Convoy");
+                                // if neutralUnitIsAdjacent, options.Add("Negotiate");
+                                // if lordSelected && standingOnObjective, options.Add("Seize");
+
+                                menu = new Menu(options, skirmishMenuOptionWidth, skirmishMenuOptionHeight, skirmishMenuX, skirmishMenuY,
+                                    skirmishMenuColor, dot, font);
+
+                                State.selectionState = State.SelectionState.SelectingMenuOptions;
                             }
                         }
                     }
@@ -1021,7 +1049,7 @@ namespace SeniorProjectGame
                                 State.originalHexClicked = null;
                             }
                         }
-
+                        
                     }
 
                     else if (singleRightClick.Evaluate())
@@ -1032,6 +1060,18 @@ namespace SeniorProjectGame
                     {
                         boardComponent.UpdateVisibilityAllies();
                     }
+
+                    if (State.selectionState == State.SelectionState.SelectingMenuOptions) {
+                        for (int i = 0; i < menu.Options().Count; i++)
+                        {
+                            if (menu.Hitboxes()[i].isColliding(InputState.GetMouseScreenPosition()))
+                            {
+                                menu.SetSelectedOption(i);
+                                break;
+                            }
+                        }
+                    }
+
                     break;
                 #endregion
 
@@ -1145,6 +1185,8 @@ namespace SeniorProjectGame
             numberOfFrames++;
             string fps = string.Format("fps: {0}", framesPerSecond);
             spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);
+
+            menu.Draw(spriteBatch);
 
             spriteBatch.End();
 
