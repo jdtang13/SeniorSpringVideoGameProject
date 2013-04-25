@@ -172,7 +172,7 @@ namespace SeniorProjectGame
             Globals.font = font;
 
             //Only run the conversions for developement purposes
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Enemies.txt");
+            /*ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Enemies.txt");
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Player_Roles.txt");
 
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Party_Members.txt");
@@ -188,7 +188,7 @@ namespace SeniorProjectGame
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Ambushed.txt");
             
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Pavilion.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Throne_Room.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Throne_Room.txt");*/
 
             worldMapTexture = Content.Load<Texture2D>("Graphics\\Backgrounds\\island");
             pointerTexture = Content.Load<Texture2D>("Graphics\\Other\\pointer");
