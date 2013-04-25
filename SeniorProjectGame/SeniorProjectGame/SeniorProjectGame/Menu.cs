@@ -54,7 +54,7 @@ namespace SeniorProjectGame
             currentOptionIndex = index;
         }
 
-        public int CurrentlySelectedOption()
+        public int CurrentOptionIndex()
         {
             return currentOptionIndex;
         }

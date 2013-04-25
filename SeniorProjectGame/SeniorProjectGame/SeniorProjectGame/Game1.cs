@@ -977,6 +977,31 @@ namespace SeniorProjectGame
                                     }
                                 }
                             }
+                                // handles the actions when you left click while selecting an option
+                            else if (State.selectionState == State.SelectionState.SelectingMenuOptions)
+                            {
+                                if (menu.CurrentOptionIndex() != -1)
+                                {
+                                    string option = menu.Options()[menu.CurrentOptionIndex()];
+
+                                    switch (option)
+                                    {
+                                        case "Wait":
+                                            menu.Hide();
+                                            State.selectionState = State.SelectionState.NoSelection;
+                                            break;
+                                        case "Trade":
+                                            break;
+                                        case "Negotiate":
+                                            break;
+                                        case "Attack":
+                                            // todo: initiate battle
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                            }
 
                             //else if (State.selectionState == State.SelectionState.SelectingUnit)
                             //{
