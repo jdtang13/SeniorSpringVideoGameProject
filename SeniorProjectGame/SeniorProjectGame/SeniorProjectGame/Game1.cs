@@ -977,31 +977,6 @@ namespace SeniorProjectGame
                                     }
                                 }
                             }
-                                // handles the actions when you left click while selecting an option
-                            else if (State.selectionState == State.SelectionState.SelectingMenuOptions)
-                            {
-                                if (menu.CurrentOptionIndex() != -1)
-                                {
-                                    string option = menu.Options()[menu.CurrentOptionIndex()];
-
-                                    switch (option)
-                                    {
-                                        case "Wait":
-                                            menu.Hide();
-                                            State.selectionState = State.SelectionState.NoSelection;
-                                            break;
-                                        case "Trade":
-                                            break;
-                                        case "Negotiate":
-                                            break;
-                                        case "Attack":
-                                            // todo: initiate battle
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                }
-                            }
 
                             //else if (State.selectionState == State.SelectionState.SelectingUnit)
                             //{
@@ -1016,6 +991,34 @@ namespace SeniorProjectGame
                             //}
                         }
                     }
+
+                    // handles the actions when you left click while selecting an option
+                    if ((leftHold.Evaluate() || enterClick.Evaluate()) && State.selectionState == State.SelectionState.SelectingMenuOptions)
+                    {
+                        if (menu.CurrentOptionIndex() != -1)
+                        {
+                            string option = menu.Options()[menu.CurrentOptionIndex()];
+
+                            switch (option)
+                            {
+                                case "Wait":
+                                    menu.Hide();
+                                    State.selectionState = State.SelectionState.NoSelection;
+                                    menu.SetSelectedOption(0);
+                                    break;
+                                case "Trade":
+                                    break;
+                                case "Negotiate":
+                                    break;
+                                case "Attack":
+                                    // todo: initiate battle
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+
                     if (moving)
                     {
                         elapsedTimeForMove += gameTime.ElapsedGameTime;
@@ -1064,7 +1067,7 @@ namespace SeniorProjectGame
                         {
                             moving = true;
                         }
-                        else
+                        else if (State.selectionState != State.SelectionState.SelectingMenuOptions)
                         {
                             State.selectionState = State.SelectionState.NoSelection;
 
@@ -1087,12 +1090,24 @@ namespace SeniorProjectGame
                     }
 
                     if (State.selectionState == State.SelectionState.SelectingMenuOptions) {
-                        for (int i = 0; i < menu.Options().Count; i++)
+
+                        if (wClick.Evaluate())
                         {
-                            if (menu.Hitboxes()[i].isColliding(InputState.GetMouseScreenPosition()))
+                            menu.SetSelectedOption((menu.Options().Count + menu.CurrentOptionIndex() - 1) % menu.Options().Count);
+                        }
+                        else if (sClick.Evaluate())
+                        {
+                            menu.SetSelectedOption((menu.CurrentOptionIndex() + 1) % menu.Options().Count);
+                        }
+                        else
+                        {
+                            for (int i = 0; i < menu.Options().Count; i++)
                             {
-                                menu.SetSelectedOption(i);
-                                break;
+                                if (menu.Hitboxes()[i].isColliding(InputState.GetMouseScreenPosition()))
+                                {
+                                    menu.SetSelectedOption(i);
+                                    break;
+                                }
                             }
                         }
                     }
@@ -1206,6 +1221,7 @@ namespace SeniorProjectGame
             spriteBatch.Begin();
 
             spriteBatch.DrawString(font, InputState.GetMouseIngamePosition().ToString(), new Vector2(0, font.LineSpacing), Color.White);
+            spriteBatch.DrawString(font, InputState.GetMouseScreenPosition().ToString(), new Vector2(0, 2*font.LineSpacing), Color.White);
 
             numberOfFrames++;
             string fps = string.Format("fps: {0}", framesPerSecond);

@@ -73,7 +73,7 @@ namespace SeniorProjectGame
 
             this.font = font;
 
-            currentOptionIndex = -1;
+            currentOptionIndex = 0;
 
             isVisible = true;
 
@@ -94,14 +94,15 @@ namespace SeniorProjectGame
 
             for (int i = 0; i < options.Count; i++)
             {
-                hitboxes.Add(new ClickableComponent(new Vector2(position.X + menuOptionWidth/2, position.Y + menuOptionHeight/2 + menuOptionHeight*i),
+                // TODO: clickable component is buggy
+                hitboxes.Add(new ClickableComponent(new Vector2(position.X, position.Y + menuOptionHeight*i),
                     menuOptionWidth, menuOptionHeight));
             }
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (options != null)
+            if (options != null && isVisible)
             {
                 for (int i = 0; i < options.Count; i++)
                 {
