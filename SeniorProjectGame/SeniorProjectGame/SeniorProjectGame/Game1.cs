@@ -180,7 +180,7 @@ namespace SeniorProjectGame
             Globals.font = font;
 
             //Only run the conversions for developement purposes
-            /*ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Enemies.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Enemies.txt");
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Player_Roles.txt");
 
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Party_Members.txt");
@@ -197,7 +197,7 @@ namespace SeniorProjectGame
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Ambushed.txt");
 
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Pavilion.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Throne_Room.txt");*/
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Throne_Room.txt");
 
             worldMapTexture = Content.Load<Texture2D>("Graphics\\Backgrounds\\island");
             pointerTexture = Content.Load<Texture2D>("Graphics\\Other\\pointer");
@@ -754,7 +754,7 @@ namespace SeniorProjectGame
         //Returns a unproccessed, dialogue lines, for instance "0000 Liam Let's do it!" is an element
         List<string> ProcessHexMapDialogue(string myID,string myEventName)
         {
-            List<string> binLines = ReadBin(myID + "_Enemies");
+            List<string> binLines = ReadBin(myID + "_Dialogue");
 
             List<string> relevantLines = new List<string>();
             for (int line = 2; line < binLines.Count; line++)
@@ -764,17 +764,20 @@ namespace SeniorProjectGame
             }
 
             List<string> dialogueLines = new List<string>();
+            string typeOfChat = relevantLines[0];
 
-            for (int line = 0; line < relevantLines.Count; line++)
+
+            for (int lineIndex = 1; lineIndex < relevantLines.Count; lineIndex++)
             {
-                if (relevantLines[line].Contains("-") && relevantLines[line].Split(' ')[1] == myEventName)
+                if (relevantLines[lineIndex].Contains("-") && relevantLines[lineIndex].Split(' ')[1] == myEventName)
                 {
                     int lineBuffer = 1;
-                    string lineInQuestion = relevantLines[line + lineBuffer];
-                    while (!lineInQuestion.Contains("-"))
+                    string currentLine = relevantLines[lineIndex + lineBuffer];
+                    while (!currentLine.Contains("-") && lineIndex + lineBuffer<relevantLines.Count)
                     {
-                        dialogueLines.Add(relevantLines[line + lineBuffer]);
+                        dialogueLines.Add(relevantLines[lineIndex + lineBuffer]);
                         lineBuffer++;
+                        currentLine = relevantLines[lineIndex + lineBuffer];
                     }
                     
                 }
@@ -881,16 +884,16 @@ namespace SeniorProjectGame
                 case State.ScreenState.DIALOGUE:
                     //if (State.firstDialogueWord == "")
                     //{
-                    //    string line = string.Empty;
+                    //    string lineIndex = string.Empty;
                     //    using (StreamReader sr = new StreamReader("dialogue1.txt"))
                     //    {
-                    //        while ((line = sr.ReadLine()) != null)
+                    //        while ((lineIndex = sr.ReadLine()) != null)
                     //        {
-                    //            State.currentDialogueMessage.Add(line);
+                    //            State.currentDialogueMessage.Add(lineIndex);
 
                     //            if (State.firstDialogueWord == "")
                     //            {
-                    //                State.firstDialogueWord = line.Split(' ')[0];
+                    //                State.firstDialogueWord = lineIndex.Split(' ')[0];
                     //                State.dialogueWordPosition = 1;
                     //            }
                     //        }
@@ -898,6 +901,12 @@ namespace SeniorProjectGame
                     //}
 
                     List<string> messageLines = ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), "Beginning");
+                    for (int p = 0; p < messageLines.Count; p++)
+                    {
+                        State.currentDialogueMessage.Add(messageLines[p]);
+                    }
+
+                    State.dialogueWordPosition = 1;
 
                     if (gameTime.TotalGameTime.TotalMilliseconds - State.lastTimeDialogueChecked > Globals.dialogueDisplayRate)
                     {
@@ -1187,7 +1196,7 @@ namespace SeniorProjectGame
             //If there aren't enough spaces for them the highest in your queue will go
             //You should be able to reorder your party
 
-            State.screenState = State.ScreenState.SKIRMISH;
+            State.screenState = State.ScreenState.DIALOGUE;
         }
 
         void EndLevel()

@@ -1,20 +1,16 @@
 Content\Graphics\Fonts\font.xnb
 Content\Graphics\Fonts\Debug.xnb
-Content\Graphics\Backgrounds\island.xnb
-Content\Graphics\Other\node.xnb
-Content\Graphics\Other\pointer.xnb
-Content\Audio\Sounds\selects.xnb
-Content\Audio\Sounds\selectss.xnb
-Content\Audio\Sounds\select.xnb
-Content\Audio\Sounds\Powerup27.xnb
 Content\Graphics\TileTextures\Bases\hexDirt.xnb
 Content\Graphics\TileTextures\Bases\hexGrass.xnb
 Content\Graphics\TileTextures\Bases\hexBase.xnb
+Content\Graphics\Other\node.xnb
+Content\Graphics\Other\pointer.xnb
 Content\Graphics\TileTextures\Bases\hexSand.xnb
 Content\Graphics\TileTextures\Bases\hexGravel.xnb
 Content\Graphics\TileTextures\Bases\hexWood2.xnb
 Content\Graphics\Menu\selectionIcon.xnb
 Content\Graphics\Other\marker.xnb
+Content\Graphics\Other\questionTexture.xnb
 Content\Graphics\TileTextures\Bases\hexWater0.xnb
 Content\Graphics\TileTextures\Bases\hexWater1.xnb
 Content\Graphics\TileTextures\Bases\hexWood3.xnb
@@ -28,6 +24,7 @@ Content\Graphics\UnitTextures\Crossbow.xnb
 Content\Graphics\UnitTextures\Flail.xnb
 Content\Graphics\UnitTextures\Halberd.xnb
 Content\Graphics\UnitTextures\Knight.xnb
+Content\Graphics\UnitTextures\MageAssassin.xnb
 Content\Graphics\UnitTextures\Man-at-Arms.xnb
 Content\Graphics\UnitTextures\Pike.xnb
 Content\Graphics\UnitTextures\Rifle.xnb
@@ -36,8 +33,6 @@ Content\Graphics\UnitTextures\Spear.xnb
 Content\Graphics\UnitTextures\Sword.xnb
 Content\Graphics\UnitTextures\Wizard.xnb
 Content\Graphics\UnitTextures\le homunkey face.xnb
-Content\Graphics\Other\questionTexture.xnb
-Content\Graphics\UnitTextures\MageAssassin.xnb
 Content\Graphics\TileTextures\Bases\lava.xnb
 Content\Graphics\TileTextures\Bases\offical dirt.xnb
 Content\Graphics\TileTextures\Bases\offical sand hex.xnb
@@ -45,4 +40,9 @@ Content\Graphics\TileTextures\Bases\official gravel hex.xnb
 Content\Graphics\TileTextures\Bases\red carpet.xnb
 Content\Graphics\TileTextures\Bases\stone path.xnb
 Content\Graphics\TileTextures\Decorations\bush.xnb
+Content\Graphics\Backgrounds\island.xnb
 Content\Graphics\TileTextures\Decorations\wooden Walls.xnb
+Content\Audio\Sounds\selects.xnb
+Content\Audio\Sounds\selectss.xnb
+Content\Audio\Sounds\select.xnb
+Content\Audio\Sounds\Powerup27.xnb

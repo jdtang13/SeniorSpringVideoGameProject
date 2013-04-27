@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace EntityEngine.Components.Sprites
+namespace EntityEngine.Dialogue
 {
     class PortraitPackage
     {

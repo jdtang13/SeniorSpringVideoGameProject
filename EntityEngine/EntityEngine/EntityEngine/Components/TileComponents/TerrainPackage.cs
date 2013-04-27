@@ -26,10 +26,18 @@ namespace EntityEngine.Components.TileComponents
             return texture;
         }
 
-        public TerrainPackage(Texture2D myTex, bool myImpassable)
+        float visionBlocked;
+        public float GetVisionBlocked()
+        {
+            return visionBlocked;
+        }
+
+
+        public TerrainPackage(Texture2D myTex, bool myImpassable)//, float myVisionBlockingFraction);
         {
             impassable = myImpassable;
             texture = myTex;
+            //visionBlocked = myVisionBlockingFraction;
         }
     }
 }
