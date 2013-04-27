@@ -31,6 +31,10 @@ namespace SeniorProjectGame
         int screenHeight = 680;
         SpriteBatch spriteBatch;
 
+        //  the main game menu
+        Menu menu = new Menu(false);
+        Texture2D dot;
+
         Texture2D worldMapTexture, nodeTexture, pointerTexture;
         Texture2D hexBaseTexture, dirtTexture, grassTexture, gravelTexture, sandTexture, woodTexture,
             waterTexture, stoneTexture;
@@ -136,6 +140,10 @@ namespace SeniorProjectGame
 
             InitializeInput();
 
+            //  dot is a generic white pixel texture used for generating colored rectangles
+            dot = new Texture2D(graphics.GraphicsDevice, 1, 1);
+            dot.SetData(new Color[] { Color.White });
+
             State.Initialize();
 
             base.Initialize();
@@ -172,7 +180,7 @@ namespace SeniorProjectGame
             Globals.font = font;
 
             //Only run the conversions for developement purposes
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Enemies.txt");
+            /*ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Enemies.txt");
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Player_Roles.txt");
 
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Party_Members.txt");
@@ -189,7 +197,7 @@ namespace SeniorProjectGame
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Ambushed.txt");
 
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Pavilion.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Throne_Room.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Throne_Room.txt");*/
 
             worldMapTexture = Content.Load<Texture2D>("Graphics\\Backgrounds\\island");
             pointerTexture = Content.Load<Texture2D>("Graphics\\Other\\pointer");
@@ -1019,6 +1027,34 @@ namespace SeniorProjectGame
                             //}
                         }
                     }
+
+                    // handles the actions when you left click while selecting an option
+                    if ((leftHold.Evaluate() || enterClick.Evaluate()) && State.selectionState == State.SelectionState.SelectingMenuOptions)
+                    {
+                        if (menu.CurrentOptionIndex() != -1)
+                        {
+                            string option = menu.Options()[menu.CurrentOptionIndex()];
+
+                            switch (option)
+                            {
+                                case "Wait":
+                                    menu.Hide();
+                                    State.selectionState = State.SelectionState.NoSelection;
+                                    menu.SetSelectedOption(0);
+                                    break;
+                                case "Trade":
+                                    break;
+                                case "Negotiate":
+                                    break;
+                                case "Attack":
+                                    // todo: initiate battle
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+
                     if (moving)
                     {
                         elapsedTimeForMove += gameTime.ElapsedGameTime;
@@ -1034,10 +1070,30 @@ namespace SeniorProjectGame
                             pathQueue.Remove(pathQueue[0]);
                             if (pathQueue.Count == 0)
                             {
-                                State.selectionState = State.SelectionState.NoSelection;
+                                int skirmishMenuX = 300;
+                                int skirmishMenuY = 200;
+
                                 State.originalHexClicked.GetUnit().SetSelected(false);
                                 State.originalHexClicked = null;
                                 moving = false;
+
+                                // show menu when the movement is complete
+                                List<string> options = new List<string>(new string[] {"Items", "Wait"});
+                                int skirmishMenuOptionHeight = 40;
+                                int skirmishMenuOptionWidth = 200;
+                                Color skirmishMenuColor = Color.DarkGray;
+
+                                // todo: pseudocode:
+                                // if enemyUnitIsAdjacent, options.Add("Attack");
+                                // if alliedUnitIsAdjacent, options.Add(new string[] {"Heal", "Trade"});
+                                // if convoyIsAdjacent, options.Add("Convoy");
+                                // if neutralUnitIsAdjacent, options.Add("Negotiate");
+                                // if lordSelected && standingOnObjective, options.Add("Seize");
+
+                                menu = new Menu(options, skirmishMenuOptionWidth, skirmishMenuOptionHeight, skirmishMenuX, skirmishMenuY,
+                                    skirmishMenuColor, dot, font);
+
+                                State.selectionState = State.SelectionState.SelectingMenuOptions;
                             }
                         }
                     }
@@ -1047,7 +1103,7 @@ namespace SeniorProjectGame
                         {
                             moving = true;
                         }
-                        else
+                        else if (State.selectionState != State.SelectionState.SelectingMenuOptions)
                         {
                             State.selectionState = State.SelectionState.NoSelection;
 
@@ -1057,7 +1113,7 @@ namespace SeniorProjectGame
                                 State.originalHexClicked = null;
                             }
                         }
-
+                        
                     }
 
                     else if (singleRightClick.Evaluate())
@@ -1068,6 +1124,30 @@ namespace SeniorProjectGame
                     {
                         boardComponent.UpdateVisibilityAllies();
                     }
+
+                    if (State.selectionState == State.SelectionState.SelectingMenuOptions) {
+
+                        if (wClick.Evaluate())
+                        {
+                            menu.SetSelectedOption((menu.Options().Count + menu.CurrentOptionIndex() - 1) % menu.Options().Count);
+                        }
+                        else if (sClick.Evaluate())
+                        {
+                            menu.SetSelectedOption((menu.CurrentOptionIndex() + 1) % menu.Options().Count);
+                        }
+                        else
+                        {
+                            for (int i = 0; i < menu.Options().Count; i++)
+                            {
+                                if (menu.Hitboxes()[i].isColliding(InputState.GetMouseScreenPosition()))
+                                {
+                                    menu.SetSelectedOption(i);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
                     break;
                 #endregion
 
@@ -1177,10 +1257,13 @@ namespace SeniorProjectGame
             spriteBatch.Begin();
 
             spriteBatch.DrawString(font, InputState.GetMouseIngamePosition().ToString(), new Vector2(0, font.LineSpacing), Color.White);
+            spriteBatch.DrawString(font, InputState.GetMouseScreenPosition().ToString(), new Vector2(0, 2*font.LineSpacing), Color.White);
 
             numberOfFrames++;
             string fps = string.Format("fps: {0}", framesPerSecond);
             spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);
+
+            menu.Draw(spriteBatch);
 
             spriteBatch.End();
 
