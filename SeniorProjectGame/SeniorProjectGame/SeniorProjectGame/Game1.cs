@@ -227,7 +227,7 @@ namespace SeniorProjectGame
             terrainDictionary["G"] = new TerrainPackage(grassTexture, false,0);//Grass
             terrainDictionary["D"] = new TerrainPackage(dirtTexture, false,0);//Dirt
             terrainDictionary["L"] = new TerrainPackage(waterTexture, true,0);//Water
-            terrainDictionary["W"] = new TerrainPackage(woodTexture, false,0);//Wood
+            terrainDictionary["W"] = new TerrainPackage(woodTexture, false,0);//Wood        
             terrainDictionary["S"] = new TerrainPackage(stoneTexture, false,0);//Stone
             terrainDictionary["A"] = new TerrainPackage(sandTexture, false,0);//Sand
             terrainDictionary["g"] = new TerrainPackage(gravelTexture, false,0);//Gravel
