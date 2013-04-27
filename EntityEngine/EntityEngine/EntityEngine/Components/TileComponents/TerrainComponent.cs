@@ -93,6 +93,12 @@ namespace EntityEngine.Components.TileComponents
             return texture;
         }
 
+        float visibilityBlock;
+        public float GetVisibiltyBlock()
+        {
+            return visibilityBlock;
+        }
+
         public TerrainComponent(Texture2D myTex, bool myImpassable)
         {
             this.name = "TerrainComponent";
@@ -102,11 +108,13 @@ namespace EntityEngine.Components.TileComponents
         }
 
         //Only use this constuctor when you are making a terrain component from another
-        public TerrainComponent(HexComponent myHex, Texture2D myTex, bool myImpassable)
+        public TerrainComponent(HexComponent myHex, Texture2D myTex, bool myImpassable, float myVisBlock)
         {
+            this.name = "TerrainComponent";
             hex = myHex;
             impassable = myImpassable;
             texture = myTex;
+            visibilityBlock = myVisBlock;
         }
 
         public override void Initialize()

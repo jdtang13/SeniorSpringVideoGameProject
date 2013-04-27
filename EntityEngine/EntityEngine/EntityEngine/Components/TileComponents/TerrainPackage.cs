@@ -33,11 +33,11 @@ namespace EntityEngine.Components.TileComponents
         }
 
 
-        public TerrainPackage(Texture2D myTex, bool myImpassable)//, float myVisionBlockingFraction);
+        public TerrainPackage(Texture2D myTex, bool myImpassable, float myVisionBlockingFraction)
         {
             impassable = myImpassable;
             texture = myTex;
-            //visionBlocked = myVisionBlockingFraction;
+            visionBlocked = myVisionBlockingFraction;
         }
     }
 }

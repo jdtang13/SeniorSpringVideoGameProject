@@ -312,7 +312,7 @@ namespace EntityEngine.Components.TileComponents
             Entity terrainEntity = new Entity(2 + baseHexLayer + myTerrainLayer, State.ScreenState.SKIRMISH);
             terrainEntity.AddComponent(new SpriteComponent(true, hexSprite.getCenterPosition(), myTerrain.GetTexture()));
 
-            TerrainComponent terrComp = new TerrainComponent(hexComponent, myTerrain.GetTexture(), myTerrain.GetImpassable());
+            TerrainComponent terrComp = new TerrainComponent(hexComponent, myTerrain.GetTexture(), myTerrain.GetImpassable(),myTerrain.GetVisionBlocked());
             terrainEntity.AddComponent(terrComp);
             hexComponent.AddTerrain(terrComp);
 

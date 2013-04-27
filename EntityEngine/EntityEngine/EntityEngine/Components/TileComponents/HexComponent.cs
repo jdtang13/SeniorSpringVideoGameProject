@@ -105,6 +105,19 @@ namespace EntityEngine.Components.TileComponents
             }
         }
 
+        public float GetLargestTerrainVisibilityBlock()
+        {
+            float largestBlock = 0f;
+            for (int t  = 0 ; t < terrainList.Count ; t++)
+            {
+                if (largestBlock < terrainList[t].GetVisibiltyBlock())
+                {
+                    largestBlock = terrainList[t].GetVisibiltyBlock();
+                }
+            }
+            return largestBlock;
+        }
+
         bool inQueue;
         public bool GetInQueue()
         {

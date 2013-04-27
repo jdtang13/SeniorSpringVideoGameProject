@@ -81,7 +81,7 @@ namespace SeniorProjectGame
             }
             else
             {
-                return new TerrainPackage(questionTexture, false);
+                return new TerrainPackage(questionTexture, false, 0);
             }
         }
         HexComponent ghostHex = null;
@@ -224,22 +224,23 @@ namespace SeniorProjectGame
 
         void PopulateTerrainDictionary()
         {
-            terrainDictionary["G"] = new TerrainPackage(grassTexture, false);//Grass
-            terrainDictionary["D"] = new TerrainPackage(dirtTexture, false);//Dirt
-            terrainDictionary["L"] = new TerrainPackage(waterTexture, true);//Water
-            terrainDictionary["W"] = new TerrainPackage(woodTexture, false);//Wood
-            terrainDictionary["S"] = new TerrainPackage(stoneTexture, false);//Stone
-            terrainDictionary["A"] = new TerrainPackage(sandTexture, false);//Sand
-            terrainDictionary["g"] = new TerrainPackage(gravelTexture, false);//Gravel
+            terrainDictionary["G"] = new TerrainPackage(grassTexture, false,0);//Grass
+            terrainDictionary["D"] = new TerrainPackage(dirtTexture, false,0);//Dirt
+            terrainDictionary["L"] = new TerrainPackage(waterTexture, true,0);//Water
+            terrainDictionary["W"] = new TerrainPackage(woodTexture, false,0);//Wood
+            terrainDictionary["S"] = new TerrainPackage(stoneTexture, false,0);//Stone
+            terrainDictionary["A"] = new TerrainPackage(sandTexture, false,0);//Sand
+            terrainDictionary["g"] = new TerrainPackage(gravelTexture, false,0);//Gravel
+            terrainDictionary["C"] = new TerrainPackage(carpetTexture, false, 0);//Carpet
 
-            terrainDictionary["T"] = new TerrainPackage(treeTexture, true);//Tree
-            terrainDictionary["B"] = new TerrainPackage(bushTexture, false);//Bush
-            terrainDictionary["C"] = new TerrainPackage(carpetTexture, false);//Carpet
+            terrainDictionary["T"] = new TerrainPackage(treeTexture, true,50);//Tree
+            terrainDictionary["B"] = new TerrainPackage(bushTexture, false,25);//Bush
+            
             //terrainDictionary["t"] = new TerrainPackage(treeTexture, true);//Table
             //terrainDictionary["h"] = new TerrainPackage(treeTexture, true);//Throne
             //terrainDictionary["n"] = new TerrainPackage(treeTexture, true);//Tent
 
-            terrainDictionary["X"] = new TerrainPackage(wallTexture, true);
+            terrainDictionary["X"] = new TerrainPackage(wallTexture, true,100);
         }
         void PopulateUnitTextureDictionary()
         {
