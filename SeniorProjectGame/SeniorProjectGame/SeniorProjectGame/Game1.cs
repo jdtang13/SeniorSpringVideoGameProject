@@ -172,23 +172,24 @@ namespace SeniorProjectGame
             Globals.font = font;
 
             //Only run the conversions for developement purposes
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Enemies.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Player_Roles.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Enemies.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Player_Roles.txt");
 
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Party_Members.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Party_Members.txt");
 
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level_Enemies.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level_Enemies.txt");
 
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard_Enemies.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard_Enemies.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard_Dialogue.txt");
 
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Alchemist's_Laboratory.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Ambushed.txt");
-            
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Pavilion.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Throne_Room.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Alchemist's_Laboratory.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Ambushed.txt");
+
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Pavilion.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Throne_Room.txt");
 
             worldMapTexture = Content.Load<Texture2D>("Graphics\\Backgrounds\\island");
             pointerTexture = Content.Load<Texture2D>("Graphics\\Other\\pointer");
@@ -741,6 +742,38 @@ namespace SeniorProjectGame
             }
         }
 
+        //Read this every time you want an event, handle for null return values
+        //Returns a unproccessed, dialogue lines, for instance "0000 Liam Let's do it!" is an element
+        List<string> ProcessHexMapDialogue(string myID,string myEventName)
+        {
+            List<string> binLines = ReadBin(myID + "_Enemies");
+
+            List<string> relevantLines = new List<string>();
+            for (int line = 2; line < binLines.Count; line++)
+            {
+                if (binLines[line] != "" && !binLines[line].Contains("//"))
+                    relevantLines.Add(binLines[line]);
+            }
+
+            List<string> dialogueLines = new List<string>();
+
+            for (int line = 0; line < relevantLines.Count; line++)
+            {
+                if (relevantLines[line].Contains("-") && relevantLines[line].Split(' ')[1] == myEventName)
+                {
+                    int lineBuffer = 1;
+                    string lineInQuestion = relevantLines[line + lineBuffer];
+                    while (!lineInQuestion.Contains("-"))
+                    {
+                        dialogueLines.Add(relevantLines[line + lineBuffer]);
+                        lineBuffer++;
+                    }
+                    
+                }
+            }
+            return dialogueLines;
+        }
+
 
         #endregion
 
@@ -838,24 +871,27 @@ namespace SeniorProjectGame
 
                 #region Dialogue
                 case State.ScreenState.DIALOGUE:
-                    if (State.firstDialogueWord == "")
-                    {
-                        string line = string.Empty;
-                        using (StreamReader sr = new StreamReader("dialogue1.txt"))
-                        {
-                            while ((line = sr.ReadLine()) != null)
-                            {
-                                State.currentDialogueMessage.Add(line);
+                    //if (State.firstDialogueWord == "")
+                    //{
+                    //    string line = string.Empty;
+                    //    using (StreamReader sr = new StreamReader("dialogue1.txt"))
+                    //    {
+                    //        while ((line = sr.ReadLine()) != null)
+                    //        {
+                    //            State.currentDialogueMessage.Add(line);
 
-                                if (State.firstDialogueWord == "")
-                                {
-                                    State.firstDialogueWord = line.Split(' ')[0];
-                                    State.dialogueWordPosition = 1;
-                                }
-                            }
-                        }
-                    }
-                    else if (gameTime.TotalGameTime.TotalMilliseconds - State.lastTimeDialogueChecked > Globals.dialogueDisplayRate)
+                    //            if (State.firstDialogueWord == "")
+                    //            {
+                    //                State.firstDialogueWord = line.Split(' ')[0];
+                    //                State.dialogueWordPosition = 1;
+                    //            }
+                    //        }
+                    //    }
+                    //}
+
+                    List<string> messageLines = ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), "Beginning");
+
+                    if (gameTime.TotalGameTime.TotalMilliseconds - State.lastTimeDialogueChecked > Globals.dialogueDisplayRate)
                     {
                         string line = State.currentDialogueMessage[State.dialogueLinePosition];
                         string[] words = line.Split(' ');
