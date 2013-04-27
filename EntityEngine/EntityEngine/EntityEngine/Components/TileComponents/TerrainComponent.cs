@@ -33,13 +33,13 @@ namespace EntityEngine.Components.TileComponents
 
             if (visibility == Visibility.Visible)
             {
-                sprite.setColor(Color.White);
+                sprite.SetColor(Color.White);
                 sprite._visible = true;
             }
 
             if (visibility == Visibility.Explored)
             {
-                sprite.setColor(Color.SlateGray);
+                sprite.SetColor(Color.SlateGray);
                 sprite._visible = true;
             }
 
@@ -49,25 +49,22 @@ namespace EntityEngine.Components.TileComponents
             }
         }
 
-        bool inQueue = false;
-        public void SetInQueue(bool myTruth)
+        public void SetInQueue(bool inQueue)
         {
-            inQueue = myTruth;
-
             Entity hexEntity = _parent;
             SpriteComponent sprite = hexEntity.GetDrawable("SpriteComponent") as SpriteComponent;
 
-            if (myTruth)
+            if (inQueue)
             {
-                sprite.setColor(Color.Green);
+                sprite.SetColor(Color.Green);
             }
             else if (visibility == Visibility.Explored)
             {
-                sprite.setColor(Color.SlateGray);
+                sprite.SetColor(Color.SlateGray);
             }
             else if (visibility == Visibility.Visible)
             {
-                sprite.setColor(Color.White);
+                sprite.SetColor(Color.White);
             }
         }
 
@@ -122,13 +119,13 @@ namespace EntityEngine.Components.TileComponents
 
             if (visibility == Visibility.Visible)
             {
-                sprite.setColor(Color.White);
+                sprite.SetColor(Color.White);
                 sprite._visible = true;
             }
 
             else if (visibility == Visibility.Explored)
             {
-                sprite.setColor(Color.SlateGray);
+                sprite.SetColor(Color.SlateGray);
                 sprite._visible = true;
             }
 

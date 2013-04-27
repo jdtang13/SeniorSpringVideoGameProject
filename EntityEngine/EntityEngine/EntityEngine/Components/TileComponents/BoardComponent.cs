@@ -100,7 +100,7 @@ namespace EntityEngine.Components.TileComponents
         {
             SpriteComponent sprite = GetHex(new Vector2(x,y))._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-            return sprite.getCenterPosition();
+            return sprite.GetCenterPosition();
 
             /*Vector2 screenPosition;
 
@@ -221,7 +221,7 @@ namespace EntityEngine.Components.TileComponents
 
                 SpriteComponent hexSprite = GetHex(myCoordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                AnimatedSpriteComponent unitSprite = new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), myTexture, 400f, mySpriteFrameWidth, mySpriteFrameHeight);
+                AnimatedSpriteComponent unitSprite = new AnimatedSpriteComponent(true, hexSprite.GetCenterPosition(), myTexture, 400f, mySpriteFrameWidth, mySpriteFrameHeight);
                 unitEntity.AddComponent(unitSprite);
 
                 // TODO: unitData is null right now.
@@ -256,7 +256,7 @@ namespace EntityEngine.Components.TileComponents
             SpriteComponent hexSprite = hexComponent._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
             Entity terrainEntity = new Entity(4+myLayer, State.ScreenState.SKIRMISH);
-            terrainEntity.AddComponent(new SpriteComponent(true, hexSprite.getCenterPosition(), myTerrain.GetTexture()));
+            terrainEntity.AddComponent(new SpriteComponent(true, hexSprite.GetCenterPosition(), myTerrain.GetTexture()));
 
             TerrainComponent terrComp = new TerrainComponent(hexComponent, myTerrain.GetTexture(), myTerrain.GetImpassable());
             terrainEntity.AddComponent(terrComp);
@@ -282,9 +282,9 @@ namespace EntityEngine.Components.TileComponents
             {
                 SpriteComponent centerSprite = GetHex(mouseRoundedHexCoordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                distance = Vector2.Distance(mousePosition, centerSprite.getCenterPosition());
+                distance = Vector2.Distance(mousePosition, centerSprite.GetCenterPosition());
 
-                if (Vector2.Distance(mousePosition, centerSprite.getCenterPosition()) < gridTexture.Height / 2f)
+                if (Vector2.Distance(mousePosition, centerSprite.GetCenterPosition()) < gridTexture.Height / 2f)
                 {
                     mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).getCoordPosition();
                 }
@@ -294,7 +294,7 @@ namespace EntityEngine.Components.TileComponents
                     {
                         SpriteComponent sprite = GetHex(mouseRoundedHexCoordinate).n._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                        if (Vector2.Distance(mousePosition, sprite.getCenterPosition()) < gridTexture.Height / 2f)
+                        if (Vector2.Distance(mousePosition, sprite.GetCenterPosition()) < gridTexture.Height / 2f)
                         {
                             mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).n.getCoordPosition();
                         }
@@ -303,7 +303,7 @@ namespace EntityEngine.Components.TileComponents
                     {
                         SpriteComponent sprite = GetHex(mouseRoundedHexCoordinate).ne._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                        if (Vector2.Distance(mousePosition, sprite.getCenterPosition()) < gridTexture.Height / 2f)
+                        if (Vector2.Distance(mousePosition, sprite.GetCenterPosition()) < gridTexture.Height / 2f)
                         {
                             mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).ne.getCoordPosition();
                         }
@@ -312,7 +312,7 @@ namespace EntityEngine.Components.TileComponents
                     {
                         SpriteComponent sprite = GetHex(mouseRoundedHexCoordinate).se._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                        if (Vector2.Distance(mousePosition, sprite.getCenterPosition()) < gridTexture.Height / 2f)
+                        if (Vector2.Distance(mousePosition, sprite.GetCenterPosition()) < gridTexture.Height / 2f)
                         {
                             mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).se.getCoordPosition();
                         }
@@ -321,7 +321,7 @@ namespace EntityEngine.Components.TileComponents
                     {
                         SpriteComponent sprite = GetHex(mouseRoundedHexCoordinate).s._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                        if (Vector2.Distance(mousePosition, sprite.getCenterPosition()) < gridTexture.Height / 2f)
+                        if (Vector2.Distance(mousePosition, sprite.GetCenterPosition()) < gridTexture.Height / 2f)
                         {
                             mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).s.getCoordPosition();
                         }
@@ -330,7 +330,7 @@ namespace EntityEngine.Components.TileComponents
                     {
                         SpriteComponent sprite = GetHex(mouseRoundedHexCoordinate).sw._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                        if (Vector2.Distance(mousePosition, sprite.getCenterPosition()) < gridTexture.Height / 2f)
+                        if (Vector2.Distance(mousePosition, sprite.GetCenterPosition()) < gridTexture.Height / 2f)
                         {
                             mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).sw.getCoordPosition();
                         }
@@ -339,7 +339,7 @@ namespace EntityEngine.Components.TileComponents
                     {
                         SpriteComponent sprite = GetHex(mouseRoundedHexCoordinate).nw._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                        if (Vector2.Distance(mousePosition, sprite.getCenterPosition()) < gridTexture.Height / 2f)
+                        if (Vector2.Distance(mousePosition, sprite.GetCenterPosition()) < gridTexture.Height / 2f)
                         {
                             mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).nw.getCoordPosition();
                         }

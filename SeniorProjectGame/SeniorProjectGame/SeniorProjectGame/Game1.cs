@@ -90,7 +90,8 @@ namespace SeniorProjectGame
         float framesPerSecond = 60;
         float numberOfFrames;
         TimeSpan elapsedTimeForFps;
-        TimeSpan elapsedTimeForMove;
+        float elapsedTimeForMove;
+        TimeSpan elapsedTimeForStep;
 
         bool moving = false;
 
@@ -586,15 +587,24 @@ namespace SeniorProjectGame
                     }
                     if (moving)
                     {
-                        elapsedTimeForMove += gameTime.ElapsedGameTime;
-                      
-                        if (elapsedTimeForMove > TimeSpan.FromMilliseconds(100))
-                        {
-                            elapsedTimeForMove = TimeSpan.FromMilliseconds(0);
+                        float timePerMove = 200;
+                        elapsedTimeForMove += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                            MoveUnit(State.originalHexClicked, pathQueue[0]);
-                            State.originalHexClicked = pathQueue[0];
+                        UnitComponent unit = State.originalHexClicked.GetUnit();
+                        AnimatedSpriteComponent sprite = unit._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
+                        SpriteComponent originalHexSprite = State.originalHexClicked._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+                        SpriteComponent finalHexSprite = pathQueue[0]._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+
+                        float percentTraveled = elapsedTimeForMove / timePerMove;
+                        sprite.SetPosition(originalHexSprite.GetCenterPosition() + (-originalHexSprite.GetCenterPosition() + finalHexSprite.GetCenterPosition()) * percentTraveled);
+
+                        if (elapsedTimeForMove > timePerMove)
+                        {
+                            elapsedTimeForMove = elapsedTimeForMove - timePerMove;
+
                             pathQueue[0].SetInQueue(false);
+                            MoveUnit(State.originalHexClicked, pathQueue[0]);
+                            State.originalHexClicked = pathQueue[0];                            
 
                             pathQueue.Remove(pathQueue[0]);
                             if (pathQueue.Count == 0)
@@ -610,6 +620,10 @@ namespace SeniorProjectGame
                     {
                         if (pathQueue.Count != 0)
                         {
+                            //UnitComponent unit = State.originalHexClicked.GetUnit();
+                            //AnimatedSpriteComponent sprite = unit._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
+                            //sprite._visible = false;
+
                             moving = true;
                         }
                         else
@@ -680,17 +694,23 @@ namespace SeniorProjectGame
 
             //SpriteComponent unitSprite = unitEntity.GetDrawable("SpriteComponent") as SpriteComponent;
             //SpriteComponent hexSprite = Entity.GetDrawable("SpriteComponent") as SpriteComponent;
-            ////sprite.setPosition(final.
+            //sprite.setPosition(final.
 
             ((AnimatedSpriteComponent)unitEntity.GetDrawable("AnimatedSpriteComponent")).
-                SetPosition(final._parent.GetDrawable("SpriteComponent").GetPosition());
-
+            SetPosition(final._parent.GetDrawable("SpriteComponent").GetPosition());
+            
             unit.SetHex(final);
             final.SetUnit(unit);
 
             boardComponent.UpdateVisibilityAllies();
 
             original.RemoveUnit();
+        }
+
+        void MoveAnimation(HexComponent original, HexComponent final, GameTime gameTime)
+        {
+            UnitComponent unit = original.GetUnit();
+            AnimatedSpriteComponent tempSprite = unit._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
         }
 
         public bool AreAdjacent(HexComponent one, HexComponent two)
