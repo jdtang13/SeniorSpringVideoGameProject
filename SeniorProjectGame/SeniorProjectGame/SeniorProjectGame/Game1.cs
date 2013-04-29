@@ -825,21 +825,24 @@ namespace SeniorProjectGame
             {
                 this.Exit();
             }
-            if (wClick.Evaluate())
+            if (State.selectionState != State.SelectionState.SelectingMenuOptions)
             {
-                Camera.Move(new Vector2(0, -5));
-            }
-            if (dClick.Evaluate())
-            {
-                Camera.Move(new Vector2(5, 0));
-            }
-            if (sClick.Evaluate())
-            {
-                Camera.Move(new Vector2(0, 5));
-            }
-            if (aClick.Evaluate())
-            {
-                Camera.Move(new Vector2(-5, 0));
+                if (wClick.Evaluate())
+                {
+                    Camera.Move(new Vector2(0, -5));
+                }
+                if (dClick.Evaluate())
+                {
+                    Camera.Move(new Vector2(5, 0));
+                }
+                if (sClick.Evaluate())
+                {
+                    Camera.Move(new Vector2(0, 5));
+                }
+                if (aClick.Evaluate())
+                {
+                    Camera.Move(new Vector2(-5, 0));
+                }
             }
 
             EntityManager.Update(gameTime);
@@ -1185,7 +1188,6 @@ namespace SeniorProjectGame
                     }
 
                     if (State.selectionState == State.SelectionState.SelectingMenuOptions) {
-
 
                         if (singleWClick.Evaluate())
                         {
