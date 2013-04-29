@@ -1249,7 +1249,7 @@ namespace SeniorProjectGame
 
                     if (selectedFirstOption == "Attack")
                     {
-                        if (selectedSecondOption == "Strike")
+                        if (menuHasMoreThanOneLayer && selectedSecondOption == "Strike")
                         {
 
                         }
