@@ -1021,7 +1021,6 @@ namespace SeniorProjectGame
                                     // StartFight(UnitComponent a, UnitComponent b);
                                     // todo: end battle
                                     // EndCurrentFight();
-                                    // State.screenState = State.ScreenState.SKIRMISH;
                                     break;
                                 default:
                                     break;
