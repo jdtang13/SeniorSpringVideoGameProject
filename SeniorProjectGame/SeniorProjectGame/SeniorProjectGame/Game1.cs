@@ -1075,7 +1075,20 @@ namespace SeniorProjectGame
                                     break;
                                 case "Attack":
                                     // todo: initiate battle
-                                    // StartFight(UnitComponent a, UnitComponent b);
+                                    
+                                    // currently the fight mechanic only selects the first
+                                    // adjacent enemy. in the future, TODO: allow user to 
+                                    // select the enemy to fight.
+                                    
+                                    menu.Hide();
+                                    State.selectionState = State.SelectionState.NoSelection;
+                                    menu.SetSelectedOption(0);
+
+                                    int selectedEnemyIndex = 0;
+
+                                    StartFight(State.originalHexClicked.GetUnit(),
+                                        enemiesAdjacentTo(boardComponent, State.originalHexClicked.getCoordPosition())[selectedEnemyIndex]);
+
                                     // todo: end battle
                                     // EndCurrentFight();
                                     break;
@@ -1132,7 +1145,7 @@ namespace SeniorProjectGame
                                     options.Insert(0, "Heal"); //  have "attack" as an option if enemy nearby
                                 }
 
-                                State.originalHexClicked = null;
+                                // State.originalHexClicked = null;
 
                                 // todo: pseudocode:
                                 //if enemyUnitIsAdjacent, options.Add("Attack");
