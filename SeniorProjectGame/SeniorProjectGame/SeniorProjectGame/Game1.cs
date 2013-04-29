@@ -1234,6 +1234,9 @@ namespace SeniorProjectGame
                 case State.ScreenState.BATTLING:
 
                     // todo: make some sort of data structure for a menu with nested options
+                    //  the first layer is exactly the same as a normal menu, but the second layers
+                    //  are actually menus associated with strings/index numbers for other options. in other
+                    //  words it's like menus in menus.
                     /*
                     if (singleWClick.Evaluate())
                     {
