@@ -1226,12 +1226,42 @@ namespace SeniorProjectGame
                     break;
                 #endregion
 
-                #region ThirdLayer
+                #region Battle
 
                 //As of now, we will not be using the states below
                 case State.ScreenState.BATTLE_FORECAST:
                     break;
                 case State.ScreenState.BATTLING:
+
+                    // todo: make some sort of data structure for a menu with nested options
+                    /*
+                    if (singleWClick.Evaluate())
+                    {
+                        battleMenu.SetSelectedOption((battleMenu.Options().Count + battleMenu.CurrentOptionIndex() - 1) % battleMenu.Options().Count);
+                    }
+                    else if (singleSClick.Evaluate())
+                    {
+                        battleMenu.SetSelectedOption((battleMenu.CurrentOptionIndex() + 1) % battleMenu.Options().Count);
+                    }
+
+                    if (selectedFirstOption == "Attack")
+                    {
+                        if (selectedSecondOption == "Strike")
+                        {
+
+                        }
+                    }
+                    else if (selectedFirstOption == "Item")
+                    {
+                    }
+                    else if (selectedFirstOption == "Spell")
+                    {
+                    }
+                    else if (selectedFirstOption == "Guard")
+                    {
+                    }
+                    */
+
                     break;
                 case State.ScreenState.BATTLE_RESOLUTION:
                     break;
