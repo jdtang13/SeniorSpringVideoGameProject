@@ -47,6 +47,9 @@ namespace EntityEngine
             State.currentDialogueMessage = new List<string>();
 
             State.originalHexClicked = null;
+
+            State.currentAttacker = null;
+            State.currentDefender = null;
         }
 
         public static int menuPosition = 0;
@@ -55,6 +58,9 @@ namespace EntityEngine
         public static SelectionState selectionState;
 
         public static HexComponent originalHexClicked; //  used for selecting units
+
+        public static UnitComponent currentAttacker;
+        public static UnitComponent currentDefender;
 
         //public Node currentNode;
         public static int dialoguePosition = 0;

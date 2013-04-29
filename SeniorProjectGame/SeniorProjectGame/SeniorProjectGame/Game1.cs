@@ -1018,9 +1018,9 @@ namespace SeniorProjectGame
                                     break;
                                 case "Attack":
                                     // todo: initiate battle
-                                    State.screenState = State.ScreenState.BATTLING;
-                                    // Fight(UnitComponent a, UnitComponent b);
+                                    // StartFight(UnitComponent a, UnitComponent b);
                                     // todo: end battle
+                                    // EndCurrentFight();
                                     // State.screenState = State.ScreenState.SKIRMISH;
                                     break;
                                 default:
@@ -1155,6 +1155,23 @@ namespace SeniorProjectGame
                 #endregion
             }
             base.Update(gameTime);
+        }
+
+        //  have two units fight and enter a battle menu
+        public void StartFight(UnitComponent attacker, UnitComponent defender)
+        {
+            State.screenState = State.ScreenState.BATTLING;
+
+            State.currentAttacker = attacker;
+            State.currentDefender = defender;
+        }
+
+        public void EndCurrentFight()
+        {
+            State.screenState = State.ScreenState.SKIRMISH;
+
+            State.currentAttacker = null;
+            State.currentDefender = null;
         }
 
         //  given a position on the map, return all enemies adjacent to it
