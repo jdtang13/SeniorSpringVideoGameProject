@@ -46,9 +46,11 @@
     <Compile Include="Components\Component Parents\UpdateableComponent.cs" />
     <Compile Include="Components\Sprites\AnimatedSpriteComponent.cs" />
     <Compile Include="Components\Sprites\Camera.cs" />
+    <Compile Include="Dialogue\PortraitPackage.cs" />
     <Compile Include="Components\Sprites\SpriteComponent.cs" />
     <Compile Include="Components\Sprites\SpriteSheetComponent.cs" />
     <Compile Include="Components\Sprites\TextSpriteComponent.cs" />
+    <Compile Include="Components\Sprites\Texture2DFramed.cs" />
     <Compile Include="Components\TileComponents\BoardComponent.cs" />
     <Compile Include="Components\TileComponents\Orient.cs" />
     <Compile Include="Components\TileComponents\HexComponent.cs" />
@@ -62,11 +64,14 @@
     <Compile Include="Components\World Map\NodeState.cs" />
     <Compile Include="Components\World Map\WorldMapComponent.cs" />
     <Compile Include="Components\World Map\NodeComponent.cs" />
+    <Compile Include="Dialogue\Chatbox.cs" />
+    <Compile Include="Dialogue\ChatSlots.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EntityManager.cs" />
     <Compile Include="Input\InputAction.cs" />
     <Compile Include="Input\InputState.cs" />
     <Compile Include="Input\MouseButton.cs" />
+    <Compile Include="Stat Attribute Classes\Alignment.cs" />
     <Compile Include="Stat Attribute Classes\Armor.cs" />
     <Compile Include="Stat Attribute Classes\Consumable.cs" />
     <Compile Include="Stat Attribute Classes\Item.cs" />
@@ -74,7 +79,7 @@
     <Compile Include="Stat Attribute Classes\Role.cs" />
     <Compile Include="Stat Attribute Classes\Scroll.cs" />
     <Compile Include="Stat Attribute Classes\Weapon.cs" />
-    <Compile Include="Stat Attribute Classes\UnitData.cs" />
+    <Compile Include="Stat Attribute Classes\UnitDataComponent.cs" />
     <Compile Include="State.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,17 +1,40 @@
-TODO:
+Entity Engine Documentation
 
-fix harry's and nosa's code. sometimes attributes are missing from the attribute set 
-(e.g., an item that is supposed to have all stats is missing agi or dex.)
+Components - These components have variables with getters and setters but do not have update and draw functions 
+	that are already called:
 
-add a "has attribute" base class for all of those items to inherit from
+	- Hex -
 
-HOW TO ADD ENTITYENGINE TO PROJECT:
+	- Board -
 
-File > Add existing project > select entityengine's project file
+	- WorldMap -
 
-Then, right click the "References" folder under SeniorProjectGame and click "add reference". 
-Then select EntityEngine and click OK.
+	- Node -
 
-March 29: everyone gets github
+	- Pointer -
 
-test
+
+
+Updateable Components - These components have variables with getters and setters but also have a update function that
+	is automatically called:
+
+	Welp.
+
+Drawable Components - These components have variables with getters and setters but also have update and draw functions that
+	are automatically called:
+
+	- Sprite - 
+
+	- TextSprite - 
+
+	- SpriteSheet - 
+
+	- AnimatedSprite - 
+
+Utility Classes
+
+	Texture2DFramed -
+
+	TerrainPackage -
+
+	Camera - 

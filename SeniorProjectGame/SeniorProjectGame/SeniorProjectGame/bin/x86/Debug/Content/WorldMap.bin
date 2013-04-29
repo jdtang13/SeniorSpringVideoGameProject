@@ -1,1 +1,1 @@
-}title:Farewell to Menes ; id:Tutorial_Level ; isSidequest:false ; coordinates:10,0 ; connectedTo:Laboratory ; status:unlockedtitle:Coding is my Life ; id:Laboratory ; isSidequest:false ; coordinates:-100,0 ; connectedTo:Tutorial_Level ; status:unlocked
+‰title:Farewell to Menes ; id:Tutorial_Level ; isSidequest:false ; coordinates:0,0 ; connectedTo:Alchemists's_Laboratory ; status:unlocked†title:Farewell to Menes ; id:Lab_Yard ; isSidequest:false ; coordinates:100,50 ; connectedTo:Alchemists's_Laboratory ; status:unlocked

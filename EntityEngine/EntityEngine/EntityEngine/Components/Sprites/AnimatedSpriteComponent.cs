@@ -44,36 +44,18 @@ namespace EntityEngine.Components.Sprites
             animating = myTruth;
         }
 
-        //You have to pass in the size of the frame of the spite within the spritesheet
-
-        public AnimatedSpriteComponent(bool myMain, Vector2 myPosition, Texture2D myTex,
-                float myInterval, int mySpriteWidth, int mySpriteHeight)
+        public AnimatedSpriteComponent(bool myMain, Vector2 myPosition, Texture2DFramed myTex)
             : base(myMain)
         {
             this.name = "AnimatedSpriteComponent";
             this.position = myPosition;
 
-            this.texture = myTex;
-            frameWidth = mySpriteWidth;
-            frameHeight = mySpriteHeight;
+            this.texture = myTex.texture;
+            frameWidth = myTex.frameWidth;
+            frameHeight = myTex.frameHeight;
 
             numberFrames = this.texture.Width / frameWidth -1;
-            interval = myInterval;
-            animating = true;
-        }
-        public AnimatedSpriteComponent(bool myMain, Vector2 myPosition, Texture2D myTex,
-                float myInterval, int myFrameWidth, int myFrameHeight, int myXOffset, int myYOffset)
-            : base( myMain)
-        {
-            this.name = "AnimatedSpriteComponent";
-            this.position = myPosition;
-
-            this.texture = myTex;
-            frameWidth = myFrameWidth;
-            frameHeight = myFrameHeight;
-
-            numberFrames = this.texture.Width / frameWidth -1;
-            interval = myInterval;
+            interval = myTex.animationSpeed;
             animating = true;
         }
 

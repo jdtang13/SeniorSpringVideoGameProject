@@ -20,18 +20,24 @@ namespace EntityEngine
         //      EntityManager.AddEntity(SpaceShip);
 
         public static List<Entity> masterList = new List<Entity>();
-
+        static int highestLayer = 0;
+        public static int GetHighestLayer()
+        {
+            return highestLayer;
+        }
 
         public static void AddEntity(Entity myEntity)
         {
             masterList.Add(myEntity);
+            if (myEntity.GetLayer() > highestLayer)
+            {
+                highestLayer = myEntity.GetLayer()+1;
+            }
         }
         public static void ClearEntities()
         {
             masterList.Clear();
         }
-
-        static int LAYER_LIMIT = 20;
 
         public static void Update(GameTime myTime)
         {
@@ -46,21 +52,28 @@ namespace EntityEngine
             }
         }
 
-        public static void Draw(SpriteBatch myBatch,GraphicsDeviceManager myGraph)
+        public static void Draw(SpriteBatch myBatch, GraphicsDeviceManager myGraph)
         {
-            //Cycle through the layers of all the entities, 0 being the most background
-            for (int layer = 0; layer < LAYER_LIMIT; layer++)
+            List<Entity> stateList = new List<Entity>();
+            for (int p = 0; p < masterList.Count; p++)
             {
-                myBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, null, null, null, null, Camera.GetTransformation(myGraph.GraphicsDevice));
-                
-                for (int p = 0; p < masterList.Count; p++)
+                if (masterList[p].GetAssociatedState() == State.screenState)
                 {
-                    if (masterList[p].layer == layer)
+                    stateList.Add(masterList[p]);
+                }
+            }
+
+            //Cycle through the layers of all the entities, 0 being the most background, creating a new spritebatch each time
+            for (int layer = 0; layer < highestLayer; layer++)
+            {
+                myBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend,
+                    null, null, null, null, Camera.GetTransformation(myGraph.GraphicsDevice));
+
+                for (int p = 0; p < stateList.Count; p++)
+                {
+                    if (stateList[p].layer == layer)
                     {
-                        if (masterList[p].GetAssociatedState() == State.screenState)
-                        {
-                            masterList[p].Draw(myBatch);
-                        }
+                        stateList[p].Draw(myBatch);
                     }
                 }
                 myBatch.End();

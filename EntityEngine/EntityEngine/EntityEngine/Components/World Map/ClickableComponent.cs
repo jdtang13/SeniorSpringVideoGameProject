@@ -17,6 +17,7 @@ namespace EntityEngine.Components.World_Map
             return (collisionRectangle.Contains((int)myVector.X,(int)myVector.Y));
         }
 
+        // myCenterPosition = the position that you WANT the center to be at
         public ClickableComponent(Vector2 myCenterPosition, int mySpriteWidth, int mySpriteHeight)
         {
             this.name = "ClickableComponent";
