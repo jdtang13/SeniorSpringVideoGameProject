@@ -1038,7 +1038,7 @@ namespace SeniorProjectGame
                                 int skirmishMenuY = 200;
 
                                 State.originalHexClicked.GetUnit().SetSelected(false);
-                                State.originalHexClicked = null;
+                                
                                 moving = false;
 
                                 // show menu when the movement is complete
@@ -1047,9 +1047,21 @@ namespace SeniorProjectGame
                                 int skirmishMenuOptionWidth = 200;
                                 Color skirmishMenuColor = Color.DarkGray;
 
+                                if (enemiesAdjacentTo(boardComponent, State.originalHexClicked.getCoordPosition()).Count > 0)
+                                {
+                                    options.Insert(0, "Attack"); //  have "attack" as an option if enemy nearby
+                                }
+
+                                if (alliesAdjacentTo(boardComponent, State.originalHexClicked.getCoordPosition()).Count > 0)
+                                {
+                                    options.Insert(0, "Heal"); //  have "attack" as an option if enemy nearby
+                                }
+
+                                State.originalHexClicked = null;
+
                                 // todo: pseudocode:
-                                // if enemyUnitIsAdjacent, options.Add("Attack");
-                                // if alliedUnitIsAdjacent, options.Add(new string[] {"Heal", "Trade"});
+                                //if enemyUnitIsAdjacent, options.Add("Attack");
+                                // if alliedUnitIsAdjacent && healStaffEquipped, options.Add(new string[] {"Heal", "Trade"});
                                 // if convoyIsAdjacent, options.Add("Convoy");
                                 // if neutralUnitIsAdjacent, options.Add("Negotiate");
                                 // if lordSelected && standingOnObjective, options.Add("Seize");
@@ -1133,6 +1145,59 @@ namespace SeniorProjectGame
                 #endregion
             }
             base.Update(gameTime);
+        }
+
+        //  given a position on the map, return all enemies adjacent to it
+        public List<UnitComponent> enemiesAdjacentTo(BoardComponent board, Vector2 position)
+        {
+            List<UnitComponent> units = unitsAdjacentTo(board, position);
+            List<UnitComponent> enemies = new List<UnitComponent>();
+
+            foreach (UnitComponent u in units)
+            {
+                UnitDataComponent data = u._parent.GetComponent("UnitDataComponent") as UnitDataComponent;
+                if (data.GetAlignment() == Alignment.ENEMY)
+                {
+                    enemies.Add(u);
+                }
+            }
+
+            return enemies;
+        }
+
+        //  returns the allies adjacent to positions
+        public List<UnitComponent> alliesAdjacentTo(BoardComponent board, Vector2 position)
+        {
+            List<UnitComponent> units = unitsAdjacentTo(board, position);
+            List<UnitComponent> allies = new List<UnitComponent>();
+
+            foreach (UnitComponent u in units)
+            {
+                UnitDataComponent data = u._parent.GetComponent("UnitDataComponent") as UnitDataComponent;
+                if (data.GetAlignment() == Alignment.PLAYER)
+                {
+                    allies.Add(u);
+                }
+            }
+
+            return allies;
+        }
+
+        //  given a position on the map, return all units adjacent to it
+        public List<UnitComponent> unitsAdjacentTo(BoardComponent board, Vector2 position)
+        {
+            List<HexComponent> hexes = board.GetRing(position, 1);
+            List<UnitComponent> units = new List<UnitComponent>();
+
+            foreach (HexComponent h in hexes)
+            {
+                if (h.GetUnit() != null)
+                {
+                    units.Add(h.GetUnit());
+                }
+            }
+
+            return units;
         }
 
         public void StartNode()
