@@ -1008,10 +1008,20 @@ namespace SeniorProjectGame
                                     break;
                                 case "Trade":
                                     break;
+                                case "Heal":
+                                    break;
+                                case "Convoy":
+                                    break;
+                                case "Seize":
+                                    break;
                                 case "Negotiate":
                                     break;
                                 case "Attack":
                                     // todo: initiate battle
+                                    State.screenState = State.ScreenState.BATTLING;
+                                    // Fight(UnitComponent a, UnitComponent b);
+                                    // todo: end battle
+                                    // State.screenState = State.ScreenState.SKIRMISH;
                                     break;
                                 default:
                                     break;
