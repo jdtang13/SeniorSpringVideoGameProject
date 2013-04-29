@@ -81,7 +81,7 @@ namespace SeniorProjectGame
             }
             else
             {
-                return new TerrainPackage(questionTexture, false);
+                return new TerrainPackage(questionTexture, false, 0);
             }
         }
         HexComponent ghostHex = null;
@@ -100,6 +100,7 @@ namespace SeniorProjectGame
         InputAction leftHold;
 
         InputAction wClick, aClick, sClick, dClick, enterClick, escapeClick;
+        InputAction singleWClick, singleAClick, singleSClick, singleDClick;
 
         //Menu Vars
         List<Entity> orderButtonEntityList = new List<Entity>();
@@ -110,7 +111,8 @@ namespace SeniorProjectGame
         float framesPerSecond = 60;
         float numberOfFrames;
         TimeSpan elapsedTimeForFps;
-        TimeSpan elapsedTimeForMove;
+        float elapsedTimeForMove;
+        TimeSpan elapsedTimeForStep;
 
         #endregion
 
@@ -159,6 +161,11 @@ namespace SeniorProjectGame
             sClick = new InputAction(new Keys[] { Keys.S, Keys.Down }, false);
             aClick = new InputAction(new Keys[] { Keys.A, Keys.Left }, false);
 
+            singleWClick = new InputAction(new Keys[] { Keys.W, Keys.Up }, true);
+            singleDClick = new InputAction(new Keys[] { Keys.D, Keys.Right }, true);
+            singleSClick = new InputAction(new Keys[] { Keys.S, Keys.Down }, true);
+            singleAClick = new InputAction(new Keys[] { Keys.A, Keys.Left }, true);
+
             singleLeftClick = new InputAction(MouseButton.left, true);
 
             leftHold = new InputAction(MouseButton.left, false);
@@ -180,23 +187,25 @@ namespace SeniorProjectGame
             Globals.font = font;
 
             //Only run the conversions for developement purposes
-            /*ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Enemies.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Player_Roles.txt");
 
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Party_Members.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Enemies.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Player_Roles.txt");
 
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level_Enemies.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Party_Members.txt");
 
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard_Enemies.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level_Enemies.txt");
 
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Alchemist's_Laboratory.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Ambushed.txt");
-            
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Pavilion.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Throne_Room.txt");*/
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard_Enemies.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard_Dialogue.txt");
+
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Alchemist's_Laboratory.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Ambushed.txt");
+
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Pavilion.txt");
+            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Throne_Room.txt");
 
             worldMapTexture = Content.Load<Texture2D>("Graphics\\Backgrounds\\island");
             pointerTexture = Content.Load<Texture2D>("Graphics\\Other\\pointer");
@@ -223,22 +232,23 @@ namespace SeniorProjectGame
 
         void PopulateTerrainDictionary()
         {
-            terrainDictionary["G"] = new TerrainPackage(grassTexture, false);//Grass
-            terrainDictionary["D"] = new TerrainPackage(dirtTexture, false);//Dirt
-            terrainDictionary["L"] = new TerrainPackage(waterTexture, true);//Water
-            terrainDictionary["W"] = new TerrainPackage(woodTexture, false);//Wood
-            terrainDictionary["S"] = new TerrainPackage(stoneTexture, false);//Stone
-            terrainDictionary["A"] = new TerrainPackage(sandTexture, false);//Sand
-            terrainDictionary["g"] = new TerrainPackage(gravelTexture, false);//Gravel
+            terrainDictionary["G"] = new TerrainPackage(grassTexture, false,0);//Grass
+            terrainDictionary["D"] = new TerrainPackage(dirtTexture, false,0);//Dirt
+            terrainDictionary["L"] = new TerrainPackage(waterTexture, true,0);//Water
+            terrainDictionary["W"] = new TerrainPackage(woodTexture, false,0);//Wood        
+            terrainDictionary["S"] = new TerrainPackage(stoneTexture, false,0);//Stone
+            terrainDictionary["A"] = new TerrainPackage(sandTexture, false,0);//Sand
+            terrainDictionary["g"] = new TerrainPackage(gravelTexture, false,0);//Gravel
+            terrainDictionary["C"] = new TerrainPackage(carpetTexture, false, 0);//Carpet
 
-            terrainDictionary["T"] = new TerrainPackage(treeTexture, true);//Tree
-            terrainDictionary["B"] = new TerrainPackage(bushTexture, false);//Bush
-            terrainDictionary["C"] = new TerrainPackage(carpetTexture, false);//Carpet
+            terrainDictionary["T"] = new TerrainPackage(treeTexture, true,50);//Tree
+            terrainDictionary["B"] = new TerrainPackage(bushTexture, false,0);//Bush
+            
             //terrainDictionary["t"] = new TerrainPackage(treeTexture, true);//Table
             //terrainDictionary["h"] = new TerrainPackage(treeTexture, true);//Throne
             //terrainDictionary["n"] = new TerrainPackage(treeTexture, true);//Tent
 
-            terrainDictionary["X"] = new TerrainPackage(wallTexture, true);
+            terrainDictionary["X"] = new TerrainPackage(wallTexture, true,0);
         }
         void PopulateUnitTextureDictionary()
         {
@@ -581,7 +591,7 @@ namespace SeniorProjectGame
                     Vector2 coordinate = boardComponent.GetOneAlliedSpawnPoint(rand);
                     SpriteComponent hexSprite = boardComponent.GetHex(coordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                    partyMemberEntity.AddComponent(new AnimatedSpriteComponent(true, hexSprite.getCenterPosition(), unitTextureDictionary[graphicName]));
+                    partyMemberEntity.AddComponent(new AnimatedSpriteComponent(true, hexSprite.GetCenterPosition(), unitTextureDictionary[graphicName]));
 
                     partyMemberEntity.AddComponent(new UnitComponent(boardComponent.GetHex(coordinate), true));
 
@@ -749,6 +759,41 @@ namespace SeniorProjectGame
             }
         }
 
+        //Read this every time you want an event, handle for null return values
+        //Returns a unproccessed, dialogue lines, for instance "0000 Liam Let's do it!" is an element
+        List<string> ProcessHexMapDialogue(string myID,string myEventName)
+        {
+            List<string> binLines = ReadBin(myID + "_Dialogue");
+
+            List<string> relevantLines = new List<string>();
+            for (int line = 2; line < binLines.Count; line++)
+            {
+                if (binLines[line] != "" && !binLines[line].Contains("//"))
+                    relevantLines.Add(binLines[line]);
+            }
+
+            List<string> dialogueLines = new List<string>();
+            string typeOfChat = relevantLines[0];
+
+
+            for (int lineIndex = 1; lineIndex < relevantLines.Count; lineIndex++)
+            {
+                if (relevantLines[lineIndex].Contains("-") && relevantLines[lineIndex].Split(' ')[1] == myEventName)
+                {
+                    int lineBuffer = 1;
+                    string currentLine = relevantLines[lineIndex + lineBuffer];
+                    while (!currentLine.Contains("-") && lineIndex + lineBuffer<relevantLines.Count)
+                    {
+                        dialogueLines.Add(relevantLines[lineIndex + lineBuffer]);
+                        lineBuffer++;
+                        currentLine = relevantLines[lineIndex + lineBuffer];
+                    }
+                    
+                }
+            }
+            return dialogueLines;
+        }
+
 
         #endregion
 
@@ -846,24 +891,33 @@ namespace SeniorProjectGame
 
                 #region Dialogue
                 case State.ScreenState.DIALOGUE:
-                    if (State.firstDialogueWord == "")
-                    {
-                        string line = string.Empty;
-                        using (StreamReader sr = new StreamReader("dialogue1.txt"))
-                        {
-                            while ((line = sr.ReadLine()) != null)
-                            {
-                                State.currentDialogueMessage.Add(line);
+                    //if (State.firstDialogueWord == "")
+                    //{
+                    //    string lineIndex = string.Empty;
+                    //    using (StreamReader sr = new StreamReader("dialogue1.txt"))
+                    //    {
+                    //        while ((lineIndex = sr.ReadLine()) != null)
+                    //        {
+                    //            State.currentDialogueMessage.Add(lineIndex);
 
-                                if (State.firstDialogueWord == "")
-                                {
-                                    State.firstDialogueWord = line.Split(' ')[0];
-                                    State.dialogueWordPosition = 1;
-                                }
-                            }
-                        }
+                    //            if (State.firstDialogueWord == "")
+                    //            {
+                    //                State.firstDialogueWord = lineIndex.Split(' ')[0];
+                    //                State.dialogueWordPosition = 1;
+                    //            }
+                    //        }
+                    //    }
+                    //}
+
+                    List<string> messageLines = ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), "Beginning");
+                    for (int p = 0; p < messageLines.Count; p++)
+                    {
+                        State.currentDialogueMessage.Add(messageLines[p]);
                     }
-                    else if (gameTime.TotalGameTime.TotalMilliseconds - State.lastTimeDialogueChecked > Globals.dialogueDisplayRate)
+
+                    State.dialogueWordPosition = 1;
+
+                    if (gameTime.TotalGameTime.TotalMilliseconds - State.lastTimeDialogueChecked > Globals.dialogueDisplayRate)
                     {
                         string line = State.currentDialogueMessage[State.dialogueLinePosition];
                         string[] words = line.Split(' ');
@@ -1030,15 +1084,24 @@ namespace SeniorProjectGame
 
                     if (moving)
                     {
-                        elapsedTimeForMove += gameTime.ElapsedGameTime;
+                        float timePerMove = 200;
+                        elapsedTimeForMove += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                        if (elapsedTimeForMove > TimeSpan.FromMilliseconds(100))
+                        UnitComponent unit = State.originalHexClicked.GetUnit();
+                        AnimatedSpriteComponent sprite = unit._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
+                        SpriteComponent originalHexSprite = State.originalHexClicked._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+                        SpriteComponent finalHexSprite = pathQueue[0]._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+
+                        float percentTraveled = elapsedTimeForMove / timePerMove;
+                        sprite.SetPosition(originalHexSprite.GetCenterPosition() + (-originalHexSprite.GetCenterPosition() + finalHexSprite.GetCenterPosition()) * percentTraveled);
+
+                        if (elapsedTimeForMove > timePerMove)
                         {
-                            elapsedTimeForMove = TimeSpan.FromMilliseconds(0);
+                            elapsedTimeForMove = elapsedTimeForMove - timePerMove;
 
-                            MoveUnit(State.originalHexClicked, pathQueue[0]);
-                            State.originalHexClicked = pathQueue[0];
                             pathQueue[0].SetInQueue(false);
+                            MoveUnit(State.originalHexClicked, pathQueue[0]);
+                            State.originalHexClicked = pathQueue[0];                            
 
                             pathQueue.Remove(pathQueue[0]);
                             if (pathQueue.Count == 0)
@@ -1086,6 +1149,10 @@ namespace SeniorProjectGame
                     {
                         if (pathQueue.Count != 0)
                         {
+                            //UnitComponent unit = State.originalHexClicked.GetUnit();
+                            //AnimatedSpriteComponent sprite = unit._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
+                            //sprite._visible = false;
+
                             moving = true;
                         }
                         else if (State.selectionState != State.SelectionState.SelectingMenuOptions)
@@ -1103,8 +1170,15 @@ namespace SeniorProjectGame
 
                     else if (singleRightClick.Evaluate())
                     {
-                        boardComponent.ToggleFogofWar(false);
+                        //boardComponent.ToggleFogofWar(false);
+
+                        if (State.originalHexClicked != null)
+                        {
+                            UnitDataComponent unitData = State.originalHexClicked.GetUnit()._parent.GetComponent("UnitDataComponent") as UnitDataComponent;
+                            unitData.SetSightRadius(10);
+                        }
                     }
+
                     if (singleMiddleClick.Evaluate())
                     {
                         boardComponent.UpdateVisibilityAllies();
@@ -1112,11 +1186,12 @@ namespace SeniorProjectGame
 
                     if (State.selectionState == State.SelectionState.SelectingMenuOptions) {
 
-                        if (wClick.Evaluate())
+
+                        if (singleWClick.Evaluate())
                         {
                             menu.SetSelectedOption((menu.Options().Count + menu.CurrentOptionIndex() - 1) % menu.Options().Count);
                         }
-                        else if (sClick.Evaluate())
+                        else if (singleSClick.Evaluate())
                         {
                             menu.SetSelectedOption((menu.CurrentOptionIndex() + 1) % menu.Options().Count);
                         }
@@ -1230,7 +1305,6 @@ namespace SeniorProjectGame
         {
             //Load the state of the party before every level and save the party at end of every
 
-
             boardEntity = ProcessHexMapBin(worldMapComponent.GetCurrentNodeID());
             boardComponent = boardEntity.GetComponent("BoardComponent") as BoardComponent;
 
@@ -1274,17 +1348,23 @@ namespace SeniorProjectGame
 
             //SpriteComponent unitSprite = unitEntity.GetDrawable("SpriteComponent") as SpriteComponent;
             //SpriteComponent hexSprite = Entity.GetDrawable("SpriteComponent") as SpriteComponent;
-            ////sprite.setPosition(final.
+            //sprite.setPosition(final.
 
             ((AnimatedSpriteComponent)unitEntity.GetDrawable("AnimatedSpriteComponent")).
-                SetPosition(final._parent.GetDrawable("SpriteComponent").GetPosition());
-
+            SetPosition(final._parent.GetDrawable("SpriteComponent").GetPosition());
+            
             unit.SetHex(final);
             final.SetUnit(unit);
 
             boardComponent.UpdateVisibilityAllies();
 
             original.RemoveUnit();
+        }
+
+        void MoveAnimation(HexComponent original, HexComponent final, GameTime gameTime)
+        {
+            UnitComponent unit = original.GetUnit();
+            AnimatedSpriteComponent tempSprite = unit._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
         }
 
         public bool AreAdjacent(HexComponent one, HexComponent two)

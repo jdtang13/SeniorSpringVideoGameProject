@@ -40,11 +40,11 @@ namespace EntityEngine.Components.TileComponents
 
                 if (myTruth)
                 {
-                    sprite.setColor(Color.Red);
+                    sprite.SetColor(Color.Red);
                 }
                 if (!myTruth)
                 {
-                    sprite.setColor(Color.White);
+                    sprite.SetColor(Color.White);
                 } 
             }    
         }
@@ -73,18 +73,18 @@ namespace EntityEngine.Components.TileComponents
             if (unitDataComp.GetAlignment() == Alignment.PLAYER)
             {
                 sprite.SetColor(Color.White);
-                sprite._visible = true;
+
             }
             else if (visibility == Visibility.Visible)
             {
                 sprite.SetColor(Color.White);
-                sprite._visible = true;
+
             }
 
             else if (visibility == Visibility.Explored)
             {
                 sprite.SetColor(Color.SlateGray);
-                sprite._visible = true;
+
             }
 
             else if (visibility == Visibility.Unexplored)

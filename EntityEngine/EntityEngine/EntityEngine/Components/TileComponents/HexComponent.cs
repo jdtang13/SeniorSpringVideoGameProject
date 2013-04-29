@@ -87,22 +87,35 @@ namespace EntityEngine.Components.TileComponents
 
                 if (myVis == Visibility.Visible)
                 {
-                    sprite.setColor(Color.White);
+                    sprite.SetColor(Color.White);
                     sprite._visible = true;
                 }
 
                 else if (myVis == Visibility.Explored)
                 {
-                    sprite.setColor(Color.SlateGray);
+                    sprite.SetColor(Color.SlateGray);
                     sprite._visible = true;
                 }
 
                 else if (myVis == Visibility.Unexplored)
                 {
-                    sprite.setColor(Color.White);
+                    sprite.SetColor(Color.White);
                     sprite._visible = false;
                 }
             }
+        }
+
+        public float GetLargestTerrainVisibilityBlock()
+        {
+            float largestBlock = 0f;
+            for (int t  = 0 ; t < terrainList.Count ; t++)
+            {
+                if (largestBlock < terrainList[t].GetVisibiltyBlock())
+                {
+                    largestBlock = terrainList[t].GetVisibiltyBlock();
+                }
+            }
+            return largestBlock;
         }
 
         bool inQueue;
@@ -121,7 +134,6 @@ namespace EntityEngine.Components.TileComponents
             {
                 terrain.SetInQueue(myTruth);
             }
-
         }
 
         List<TerrainComponent> terrainList = new List<TerrainComponent>();

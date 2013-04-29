@@ -103,6 +103,10 @@ namespace EntityEngine
         {
             return sightRadius;
         }
+        public void SetSightRadius(int myRadius)
+        {
+            sightRadius = myRadius;
+        }
 
         int attackRadius;
         public int GetAttackRadius()

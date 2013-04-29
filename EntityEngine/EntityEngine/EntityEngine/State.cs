@@ -33,7 +33,8 @@ namespace EntityEngine
         {
             State.screenState = State.ScreenState.WORLD_MAP;
             State.selectionState = State.SelectionState.NoSelection;
-            State.dialoguePosition = 0;
+
+            State.dialoguePosition = 0;//Which textbox you're in
             State.dialogueChoicePosition = 0;
             State.displayedDialogueMessage = "";
 
