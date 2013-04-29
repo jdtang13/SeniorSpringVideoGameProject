@@ -240,7 +240,7 @@ namespace SeniorProjectGame
             terrainDictionary["g"] = new TerrainPackage(gravelTexture, false,0);//Gravel
             terrainDictionary["C"] = new TerrainPackage(carpetTexture, false, 0);//Carpet
 
-            terrainDictionary["T"] = new TerrainPackage(treeTexture, true,45);//Tree
+            terrainDictionary["T"] = new TerrainPackage(treeTexture, true,50);//Tree
             terrainDictionary["B"] = new TerrainPackage(bushTexture, false,0);//Bush
             
             //terrainDictionary["t"] = new TerrainPackage(treeTexture, true);//Table
@@ -1148,8 +1148,15 @@ namespace SeniorProjectGame
 
                     else if (singleRightClick.Evaluate())
                     {
-                        boardComponent.ToggleFogofWar(false);
+                        //boardComponent.ToggleFogofWar(false);
+
+                        if (State.originalHexClicked != null)
+                        {
+                            UnitDataComponent unitData = State.originalHexClicked.GetUnit()._parent.GetComponent("UnitDataComponent") as UnitDataComponent;
+                            unitData.SetSightRadius(10);
+                        }
                     }
+
                     if (singleMiddleClick.Evaluate())
                     {
                         boardComponent.UpdateVisibilityAllies();
