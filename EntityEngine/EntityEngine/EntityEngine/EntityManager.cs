@@ -38,6 +38,10 @@ namespace EntityEngine
         {
             masterList.Clear();
         }
+        public static void RemoveEntity(Entity myEntity)
+        {
+            masterList.Remove(myEntity);
+        }
 
         public static void Update(GameTime myTime)
         {

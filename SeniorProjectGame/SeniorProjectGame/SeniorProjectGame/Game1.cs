@@ -16,6 +16,7 @@ using EntityEngine.Components.Component_Parents;
 using EntityEngine.Input;
 using EntityEngine.Components.World_Map;
 using EntityEngine.Stat_Attribute_Classes;
+using EntityEngine.Dialogue;
 
 namespace SeniorProjectGame
 {
@@ -35,6 +36,7 @@ namespace SeniorProjectGame
         Menu menu = new Menu(false);
         Texture2D dot;
 
+        //Textures and other content
         Texture2D worldMapTexture, nodeTexture, pointerTexture;
         Texture2D hexBaseTexture, dirtTexture, grassTexture, gravelTexture, sandTexture, woodTexture,
             waterTexture, stoneTexture;
@@ -46,6 +48,8 @@ namespace SeniorProjectGame
         Texture2DFramed unitFramedTexture, axemanFramedTexture, battlemageFramedTexture, bowmanFramedTexture, crossbowmanFramedTexture,
             flailmanFramedTexture, halberdierFramedTexture, knightFramedTexture, mageAssassinFramedTexture, manAtArmsFramedTexture,
             pikemanFramedTexture, riflemanFramedTexture, spearmanFramedTexture, swordsmanFramedTexture, wizardFramedTexture, slimeFramedTexture;
+
+        Dictionary<string, PortraitPackage> portraitDictionary = new Dictionary<string, PortraitPackage>();
 
         SoundEffect selectSound;
 
@@ -132,6 +136,8 @@ namespace SeniorProjectGame
 
             LoadContent();
             PopulateUnitTextureDictionary();
+            PopulatePortraitDictionary();
+            Chatbox.Initialize(portraitDictionary, font, hexBaseTexture);
 
             ProcessWorldMapBin();
             ProcessPlayerRolesBin();
@@ -180,24 +186,24 @@ namespace SeniorProjectGame
             Globals.font = font;
 
             //Only run the conversions for developement purposes
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Enemies.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Player_Roles.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Enemies.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Player_Roles.txt");
+                                                       
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Party_Members.txt");
+                                                    
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\WorldMap.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level_Enemies.txt");
 
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Party_Members.txt");
-
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level_Enemies.txt");
-
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard_Enemies.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard_Dialogue.txt");
-
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Alchemist's_Laboratory.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Ambushed.txt");
-
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Pavilion.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Throne_Room.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Lab_Yard.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Lab_Yard_Enemies.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Lab_Yard_Dialogue.txt");
+                       
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Alchemist's_Laboratory.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Ambushed.txt");
+                      
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Pavilion.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Throne_Room.txt");
 
             worldMapTexture = Content.Load<Texture2D>("Graphics\\Backgrounds\\island");
             pointerTexture = Content.Load<Texture2D>("Graphics\\Other\\pointer");
@@ -288,6 +294,14 @@ namespace SeniorProjectGame
 
             slimeFramedTexture = new Texture2DFramed(Content.Load<Texture2D>("Graphics\\UnitTextures\\Slime"), 400f, 50, 100);
             unitTextureDictionary.Add("Slime", slimeFramedTexture);
+        }
+        void PopulatePortraitDictionary()
+        {
+            portraitDictionary.Add("Harry", new PortraitPackage(null, null, null, null, null, null, null, null, null, null));
+            portraitDictionary.Add("Liam", new PortraitPackage(null, null, null, null, null, null, null, null, null, null));
+            portraitDictionary.Add("Jon", new PortraitPackage(null, null, null, null, null, null, null, null, null, null));
+            portraitDictionary.Add("Nosa", new PortraitPackage(null, null, null, null, null, null, null, null, null, null));
+
         }
 
         void ConvertTxtToBin(string myFilePath)
@@ -758,17 +772,16 @@ namespace SeniorProjectGame
             List<string> binLines = ReadBin(myID + "_Dialogue");
 
             List<string> relevantLines = new List<string>();
-            for (int line = 2; line < binLines.Count; line++)
+            for (int line = 0; line < binLines.Count; line++)
             {
                 if (binLines[line] != "" && !binLines[line].Contains("//"))
                     relevantLines.Add(binLines[line]);
             }
 
             List<string> dialogueLines = new List<string>();
-            string typeOfChat = relevantLines[0];
+            //string typeOfChat = relevantLines[0];
 
-
-            for (int lineIndex = 1; lineIndex < relevantLines.Count; lineIndex++)
+            for (int lineIndex = 0; lineIndex < relevantLines.Count; lineIndex++)
             {
                 if (relevantLines[lineIndex].Contains("-") && relevantLines[lineIndex].Split(' ')[1] == myEventName)
                 {
@@ -883,76 +896,31 @@ namespace SeniorProjectGame
 
                 #region Dialogue
                 case State.ScreenState.DIALOGUE:
-                    //if (State.firstDialogueWord == "")
-                    //{
-                    //    string lineIndex = string.Empty;
-                    //    using (StreamReader sr = new StreamReader("dialogue1.txt"))
-                    //    {
-                    //        while ((lineIndex = sr.ReadLine()) != null)
-                    //        {
-                    //            State.currentDialogueMessage.Add(lineIndex);
 
-                    //            if (State.firstDialogueWord == "")
-                    //            {
-                    //                State.firstDialogueWord = lineIndex.Split(' ')[0];
-                    //                State.dialogueWordPosition = 1;
-                    //            }
-                    //        }
-                    //    }
-                    //}
-
-                    List<string> messageLines = ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), "Beginning");
-                    for (int p = 0; p < messageLines.Count; p++)
+                    Chatbox.Update(gameTime);
+                    
+                    if (Chatbox.GetStatus() == ChatboxStatus.Idle)
                     {
-                        State.currentDialogueMessage.Add(messageLines[p]);
+                        string events  = Chatbox.GetEvent().ToString();
+                        List<string> messageLines = ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), events);
+                        Chatbox.SetNewInfo(messageLines);
+                        //Produces every line
                     }
-
-                    State.dialogueWordPosition = 1;
-
-                    if (gameTime.TotalGameTime.TotalMilliseconds - State.lastTimeDialogueChecked > Globals.dialogueDisplayRate)
+                    else if(Chatbox.GetStatus() == ChatboxStatus.Writing)
                     {
-                        string line = State.currentDialogueMessage[State.dialogueLinePosition];
-                        string[] words = line.Split(' ');
-
-                        string curWord = words[State.dialogueWordPosition];
-                        char curChar = curWord[State.dialogueCharacterPosition];
-
-                        State.dialogueCharacterPosition++;
-
-                        if (State.messageBegin)
+                        if(singleLeftClick.Evaluate())
                         {
-                            if (curWord == "]")
-                            {
-                                State.messageBegin = false;
-                                State.displayedDialogueMessage += "\n"; // newlines for new messages
-
-                                State.dialogueLinePosition++;
-                                State.dialogueWordPosition = 0;
-                            }
-                            else
-                            {
-                                State.displayedDialogueMessage += curChar;
-                                //  add chars blipping onto the screen
-                            }
-
+                            Chatbox.RushTyping();
                         }
-                        else
-                        {
-                            State.messageBegin = (curWord == "[");
-                        }
-
-                        if (State.dialogueCharacterPosition == curWord.Count())
-                        {
-                            if (State.dialogueWordPosition != 0)
-                            {
-                                State.displayedDialogueMessage += " ";
-                            }
-                            State.dialogueCharacterPosition = 0;
-                            State.dialogueWordPosition++;
-                        }
-
-                        State.lastTimeDialogueChecked = (int)gameTime.TotalGameTime.TotalMilliseconds;
                     }
+                    else//Waiting input
+                    {
+                        if (singleLeftClick.Evaluate())
+                        {
+                            Chatbox.Advance();
+                        }
+                    }
+                    
 
                     break;
                 #endregion
@@ -1038,7 +1006,7 @@ namespace SeniorProjectGame
                         }
                     }
 
-                    // handles the actions when you left click while selecting an option
+                    // handles the actions when you Left click while selecting an option
                     if ((leftHold.Evaluate() || enterClick.Evaluate()) && State.selectionState == State.SelectionState.SelectingMenuOptions)
                     {
                         if (menu.CurrentOptionIndex() != -1)
@@ -1262,9 +1230,13 @@ namespace SeniorProjectGame
         {
             GraphicsDevice.Clear(Color.Black);
 
+            
+
             EntityManager.Draw(spriteBatch, graphics);
 
             spriteBatch.Begin();
+
+            Chatbox.Draw(spriteBatch);
 
             spriteBatch.DrawString(font, InputState.GetMouseIngamePosition().ToString(), new Vector2(0, font.LineSpacing), Color.White);
             spriteBatch.DrawString(font, InputState.GetMouseScreenPosition().ToString(), new Vector2(0, 2*font.LineSpacing), Color.White);

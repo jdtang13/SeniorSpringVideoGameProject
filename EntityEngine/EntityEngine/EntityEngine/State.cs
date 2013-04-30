@@ -57,7 +57,7 @@ namespace EntityEngine
 
         public static HexComponent originalHexClicked; //  used for selecting units
 
-        //public Node currentNode;
+        
         public static int dialoguePosition = 0;
         public static int dialogueChoicePosition = 0;
         public static string displayedDialogueMessage = "";
