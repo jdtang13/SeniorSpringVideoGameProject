@@ -503,34 +503,33 @@ namespace EntityEngine.Components.TileComponents
 
                     treeHexList.Clear();
 
-                    for (int r = 0; r < unitDataComp.GetSightRadius(); r++)
+                    for (int r = 0; r <= unitDataComp.GetSightRadius(); r++)
                     {
                         List<HexComponent> currentRing = GetRing(unitComp.GetHex().getCoordPosition(), r);
-                        for (int i = 0; i < currentRing.Count; i++)
+                        for (int i = 0; i < currentRing.Count; i++) //i is hex index within currentRing
                         {
+                            HexComponent currentHex = currentRing[i];
                             bool obstructed = false;
 
-                            if (treeHexList.Count == 0)
+                            if (treeHexList.Count > 0)
                             {
-                                newVisible.Add(currentRing[i]);
-                            }
-
-                            else foreach (HexComponent tree in treeHexList)
+                                foreach (HexComponent tree in treeHexList)
                                 {
-                                    if (Math.Abs(GetTargetAngle(unitComp.GetHex(), tree, currentRing[i])) < Math.Abs(GetObstructionAngle(unitComp.GetHex(), tree)))
+                                    if (Math.Abs(GetTargetAngle(unitComp.GetHex(), tree, currentHex)) < Math.Abs(GetObstructionAngle(unitComp.GetHex(), tree)))
                                     {
                                         obstructed = true;
                                         break;
                                     }
                                 }
+                            }
                             if (obstructed == false)
                             {
-                                newVisible.Add(currentRing[i]);
+                                newVisible.Add(currentHex);
                             }
 
-                            if (currentRing[i].GetLargestTerrainVisibilityBlock() != 0)
+                            if (currentHex.GetLargestTerrainVisibilityBlock() != 0)
                             {
-                                treeHexList.Add(currentRing[i]);
+                                treeHexList.Add(currentHex);
                             }
                         }
                     }
@@ -551,22 +550,22 @@ namespace EntityEngine.Components.TileComponents
             return sprite.GetCenterPosition();
         }
 
-        public float GetTargetAngle(HexComponent unit, HexComponent obstruction, HexComponent target)
+        public double GetTargetAngle(HexComponent unit, HexComponent obstruction, HexComponent target)
         {
-            float a = (float)Vector2.Distance(GetHexPosition(unit), GetHexPosition(obstruction));
-            float b = (float)Vector2.Distance(GetHexPosition(unit), GetHexPosition(target));
-            float c = (float)Vector2.Distance(GetHexPosition(obstruction), GetHexPosition(target));
+            double a = (double)Vector2.Distance(GetHexPosition(unit), GetHexPosition(obstruction));
+            double b = (double)Vector2.Distance(GetHexPosition(unit), GetHexPosition(target));
+            double c = (double)Vector2.Distance(GetHexPosition(obstruction), GetHexPosition(target));
 
-            return (float)Math.Acos((-Math.Pow(c, 2) + Math.Pow(a, 2) + Math.Pow(b, 2)) / (2 * a * b));
+            return (double)Math.Acos(Math.Round((-Math.Pow(c, 2) + Math.Pow(a, 2) + Math.Pow(b, 2)) / (2 * a * b), 5));
         }
 
-        public float GetObstructionAngle(HexComponent unit, HexComponent obstruction)
+        public double GetObstructionAngle(HexComponent unit, HexComponent obstruction)
         {
             SpriteComponent sprite = obstruction._parent.GetDrawable("SpriteComponent") as SpriteComponent;
-            float size = (float)sprite.spriteHeight * (float)obstruction.GetLargestTerrainVisibilityBlock() / 100;
-            float distance = (float)Vector2.Distance(GetHexPosition(unit), GetHexPosition(obstruction));
+            double size = (double)sprite.spriteHeight * (double)obstruction.GetLargestTerrainVisibilityBlock() / 100f;
+            double distance = (double)Vector2.Distance(GetHexPosition(unit), GetHexPosition(obstruction));
 
-            return (float)Math.Asin(size / distance);
+            return (double)Math.Asin(Math.Round(size / distance, 5));
         }
 
         #endregion

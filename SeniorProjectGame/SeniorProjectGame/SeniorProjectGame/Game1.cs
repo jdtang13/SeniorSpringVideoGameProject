@@ -232,23 +232,23 @@ namespace SeniorProjectGame
 
         void PopulateTerrainDictionary()
         {
-            terrainDictionary["G"] = new TerrainPackage(grassTexture, false,0);//Grass
-            terrainDictionary["D"] = new TerrainPackage(dirtTexture, false,0);//Dirt
-            terrainDictionary["L"] = new TerrainPackage(waterTexture, true,0);//Water
-            terrainDictionary["W"] = new TerrainPackage(woodTexture, false,0);//Wood        
-            terrainDictionary["S"] = new TerrainPackage(stoneTexture, false,0);//Stone
-            terrainDictionary["A"] = new TerrainPackage(sandTexture, false,0);//Sand
-            terrainDictionary["g"] = new TerrainPackage(gravelTexture, false,0);//Gravel
+            terrainDictionary["G"] = new TerrainPackage(grassTexture, false, 0);//Grass
+            terrainDictionary["D"] = new TerrainPackage(dirtTexture, false, 0);//Dirt
+            terrainDictionary["L"] = new TerrainPackage(waterTexture, true, 0);//Water
+            terrainDictionary["W"] = new TerrainPackage(woodTexture, false, 0);//Wood        
+            terrainDictionary["S"] = new TerrainPackage(stoneTexture, false, 0);//Stone
+            terrainDictionary["A"] = new TerrainPackage(sandTexture, false, 0);//Sand
+            terrainDictionary["g"] = new TerrainPackage(gravelTexture, false, 0);//Gravel
             terrainDictionary["C"] = new TerrainPackage(carpetTexture, false, 0);//Carpet
 
-            terrainDictionary["T"] = new TerrainPackage(treeTexture, true,50);//Tree
-            terrainDictionary["B"] = new TerrainPackage(bushTexture, false,0);//Bush
-            
+            terrainDictionary["T"] = new TerrainPackage(treeTexture, true, 25);//Tree
+            terrainDictionary["B"] = new TerrainPackage(bushTexture, false, 0);//Bush
+
             //terrainDictionary["t"] = new TerrainPackage(treeTexture, true);//Table
             //terrainDictionary["h"] = new TerrainPackage(treeTexture, true);//Throne
             //terrainDictionary["n"] = new TerrainPackage(treeTexture, true);//Tent
 
-            terrainDictionary["X"] = new TerrainPackage(wallTexture, true,0);
+            terrainDictionary["X"] = new TerrainPackage(wallTexture, true, 0);
         }
         void PopulateUnitTextureDictionary()
         {
@@ -578,7 +578,7 @@ namespace SeniorProjectGame
                     int sightRange = Convert.ToInt32(movementLine[1]);
                     int attackRange = Convert.ToInt32(movementLine[2]);
 
-                    Entity partyMemberEntity = new Entity(EntityManager.GetHighestLayer()+1, State.ScreenState.SKIRMISH);
+                    Entity partyMemberEntity = new Entity(EntityManager.GetHighestLayer() + 1, State.ScreenState.SKIRMISH);
 
                     UnitDataComponent unitDataComp = new UnitDataComponent(
                                         name, role, Alignment.PLAYER, level,
@@ -761,7 +761,7 @@ namespace SeniorProjectGame
 
         //Read this every time you want an event, handle for null return values
         //Returns a unproccessed, dialogue lines, for instance "0000 Liam Let's do it!" is an element
-        List<string> ProcessHexMapDialogue(string myID,string myEventName)
+        List<string> ProcessHexMapDialogue(string myID, string myEventName)
         {
             List<string> binLines = ReadBin(myID + "_Dialogue");
 
@@ -782,13 +782,13 @@ namespace SeniorProjectGame
                 {
                     int lineBuffer = 1;
                     string currentLine = relevantLines[lineIndex + lineBuffer];
-                    while (!currentLine.Contains("-") && lineIndex + lineBuffer<relevantLines.Count)
+                    while (!currentLine.Contains("-") && lineIndex + lineBuffer < relevantLines.Count)
                     {
                         dialogueLines.Add(relevantLines[lineIndex + lineBuffer]);
                         lineBuffer++;
                         currentLine = relevantLines[lineIndex + lineBuffer];
                     }
-                    
+
                 }
             }
             return dialogueLines;
@@ -978,7 +978,7 @@ namespace SeniorProjectGame
 
                             Entity hexEntity = hexComp._parent;
 
-                            if (hexComp.HasUnit() && hexComp.GetUnit().GetSelectable() && State.selectionState == State.SelectionState.NoSelection )
+                            if (hexComp.HasUnit() && hexComp.GetUnit().GetSelectable() && State.selectionState == State.SelectionState.NoSelection)
                             {
                                 UnitComponent unit = hexComp.GetUnit();
                                 unit.SetSelected(true); //todo set false
@@ -1087,7 +1087,7 @@ namespace SeniorProjectGame
 
                     if (moving)
                     {
-                        float timePerMove = 200;
+                        float timePerMove = 400;
                         elapsedTimeForMove += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
                         UnitComponent unit = State.originalHexClicked.GetUnit();
@@ -1104,7 +1104,7 @@ namespace SeniorProjectGame
 
                             pathQueue[0].SetInQueue(false);
                             MoveUnit(State.originalHexClicked, pathQueue[0]);
-                            State.originalHexClicked = pathQueue[0];                            
+                            State.originalHexClicked = pathQueue[0];
 
                             pathQueue.Remove(pathQueue[0]);
                             if (pathQueue.Count == 0)
@@ -1113,11 +1113,11 @@ namespace SeniorProjectGame
                                 int skirmishMenuY = 200;
 
                                 State.originalHexClicked.GetUnit().SetSelected(false);
-                                
+
                                 moving = false;
 
                                 // show menu when the movement is complete
-                                List<string> options = new List<string>(new string[] {"Items", "Wait"});
+                                List<string> options = new List<string>(new string[] { "Items", "Wait" });
                                 int skirmishMenuOptionHeight = 40;
                                 int skirmishMenuOptionWidth = 200;
                                 Color skirmishMenuColor = Color.DarkGray;
@@ -1168,7 +1168,7 @@ namespace SeniorProjectGame
                                 State.originalHexClicked = null;
                             }
                         }
-                        
+
                     }
 
                     else if (singleRightClick.Evaluate())
@@ -1187,7 +1187,8 @@ namespace SeniorProjectGame
                         boardComponent.UpdateVisibilityAllies();
                     }
 
-                    if (State.selectionState == State.SelectionState.SelectingMenuOptions) {
+                    if (State.selectionState == State.SelectionState.SelectingMenuOptions)
+                    {
 
                         if (singleWClick.Evaluate())
                         {
@@ -1354,7 +1355,7 @@ namespace SeniorProjectGame
 
             ((AnimatedSpriteComponent)unitEntity.GetDrawable("AnimatedSpriteComponent")).
             SetPosition(final._parent.GetDrawable("SpriteComponent").GetPosition());
-            
+
             unit.SetHex(final);
             final.SetUnit(unit);
 
@@ -1390,12 +1391,29 @@ namespace SeniorProjectGame
             GraphicsDevice.Clear(Color.Black);
 
             EntityManager.Draw(spriteBatch, graphics);
+                      
 
             spriteBatch.Begin();
 
             spriteBatch.DrawString(font, InputState.GetMouseIngamePosition().ToString(), new Vector2(0, font.LineSpacing), Color.White);
-            spriteBatch.DrawString(font, InputState.GetMouseScreenPosition().ToString(), new Vector2(0, 2*font.LineSpacing), Color.White);
+            spriteBatch.DrawString(font, InputState.GetMouseScreenPosition().ToString(), new Vector2(0, 2 * font.LineSpacing), Color.White);
+            if (boardComponent != null)
+            {
+                double a = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)));
+                double b = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5)));
+                double c = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5)));
+                double input = Math.Round((-Math.Pow(c, 2) + Math.Pow(a, 2) + Math.Pow(b, 2)) / (2 * a * b), 5);
 
+
+                spriteBatch.DrawString(font, boardComponent.GetMouseHex().getCoordPosition().ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
+                spriteBatch.DrawString(font, boardComponent.GetTargetAngle(boardComponent.GetHex(5, 5), boardComponent.GetHex(6, 5), boardComponent.GetHex(9, 5)).ToString(), new Vector2(0, 4 * font.LineSpacing), Color.White);
+                spriteBatch.DrawString(font, boardComponent.GetObstructionAngle(boardComponent.GetHex(5, 5), boardComponent.GetHex(6, 5)).ToString(), new Vector2(0, 5 * font.LineSpacing), Color.White);
+                spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(6, 5))).ToString(), new Vector2(0, 6 * font.LineSpacing), Color.White);
+                spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 7 * font.LineSpacing), Color.White);
+                spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 8 * font.LineSpacing), Color.White);
+                spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 9 * font.LineSpacing), Color.White);
+                spriteBatch.DrawString(font, input.ToString(), new Vector2(0, 10 * font.LineSpacing), Color.White);
+            }
             numberOfFrames++;
             string fps = string.Format("fps: {0}", framesPerSecond);
             spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);
