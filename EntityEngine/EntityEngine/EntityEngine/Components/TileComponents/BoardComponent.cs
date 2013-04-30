@@ -499,9 +499,9 @@ namespace EntityEngine.Components.TileComponents
                     UnitComponent unitComp = alliedUnitList[p].GetComponent("UnitComponent") as UnitComponent;
                     UnitDataComponent unitDataComp = alliedUnitList[p].GetComponent("UnitDataComponent") as UnitDataComponent;
 
-                    List<HexComponent> treeHexList = new List<HexComponent>();
+                    List<HexComponent> obstructionHexList = new List<HexComponent>();
 
-                    treeHexList.Clear();
+                    obstructionHexList.Clear();
 
                     for (int r = 0; r <= unitDataComp.GetSightRadius(); r++)
                     {
@@ -511,11 +511,11 @@ namespace EntityEngine.Components.TileComponents
                             HexComponent currentHex = currentRing[i];
                             bool obstructed = false;
 
-                            if (treeHexList.Count > 0)
+                            if (obstructionHexList.Count > 0)
                             {
-                                foreach (HexComponent tree in treeHexList)
+                                foreach (HexComponent obstruction in obstructionHexList)
                                 {
-                                    if (Math.Abs(GetTargetAngle(unitComp.GetHex(), tree, currentHex)) < Math.Abs(GetObstructionAngle(unitComp.GetHex(), tree)))
+                                    if (Math.Abs(GetTargetAngle(unitComp.GetHex(), obstruction, currentHex)) < Math.Abs(GetObstructionAngle(unitComp.GetHex(), obstruction)))
                                     {
                                         obstructed = true;
                                         break;
@@ -529,7 +529,7 @@ namespace EntityEngine.Components.TileComponents
 
                             if (currentHex.GetLargestTerrainVisibilityBlock() != 0)
                             {
-                                treeHexList.Add(currentHex);
+                                obstructionHexList.Add(currentHex);
                             }
                         }
                     }

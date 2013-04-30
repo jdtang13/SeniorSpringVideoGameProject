@@ -89,6 +89,7 @@ namespace SeniorProjectGame
 
         bool moving = false;
         bool yourTurn = true;
+        float timePerMove;
 
         //Player Vars
         Dictionary<String, Role> classes = new Dictionary<String, Role>();
@@ -97,7 +98,7 @@ namespace SeniorProjectGame
 
         //Input Vars
         InputAction singleLeftClick, singleRightClick, singleMiddleClick;
-        InputAction leftHold;
+        InputAction leftHold, spaceHold;
 
         InputAction wClick, aClick, sClick, dClick, enterClick, escapeClick;
         InputAction singleWClick, singleAClick, singleSClick, singleDClick;
@@ -155,6 +156,7 @@ namespace SeniorProjectGame
         {
             escapeClick = new InputAction(new Keys[] { Keys.Escape }, true);
             enterClick = new InputAction(new Keys[] { Keys.Enter }, true);
+            spaceHold = new InputAction(new Keys[] { Keys.Space }, false);
 
             wClick = new InputAction(new Keys[] { Keys.W, Keys.Up }, false);
             dClick = new InputAction(new Keys[] { Keys.D, Keys.Right }, false);
@@ -248,7 +250,7 @@ namespace SeniorProjectGame
             //terrainDictionary["h"] = new TerrainPackage(treeTexture, true);//Throne
             //terrainDictionary["n"] = new TerrainPackage(treeTexture, true);//Tent
 
-            terrainDictionary["X"] = new TerrainPackage(wallTexture, true, 0);
+            terrainDictionary["X"] = new TerrainPackage(wallTexture, true, 50);
         }
         void PopulateUnitTextureDictionary()
         {
@@ -1087,7 +1089,15 @@ namespace SeniorProjectGame
 
                     if (moving)
                     {
-                        float timePerMove = 400;
+                        if (spaceHold.Evaluate())
+                        {
+                            timePerMove = 200;
+                        }
+                        else
+                        {
+                            timePerMove = 500;
+                        }
+                        
                         elapsedTimeForMove += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
                         UnitComponent unit = State.originalHexClicked.GetUnit();
@@ -1168,7 +1178,6 @@ namespace SeniorProjectGame
                                 State.originalHexClicked = null;
                             }
                         }
-
                     }
 
                     else if (singleRightClick.Evaluate())
@@ -1397,23 +1406,23 @@ namespace SeniorProjectGame
 
             spriteBatch.DrawString(font, InputState.GetMouseIngamePosition().ToString(), new Vector2(0, font.LineSpacing), Color.White);
             spriteBatch.DrawString(font, InputState.GetMouseScreenPosition().ToString(), new Vector2(0, 2 * font.LineSpacing), Color.White);
-            if (boardComponent != null)
-            {
-                double a = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)));
-                double b = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5)));
-                double c = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5)));
-                double input = Math.Round((-Math.Pow(c, 2) + Math.Pow(a, 2) + Math.Pow(b, 2)) / (2 * a * b), 5);
+            //if (boardComponent != null)
+            //{
+            //    double a = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)));
+            //    double b = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5)));
+            //    double c = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5)));
+            //    double input = Math.Round((-Math.Pow(c, 2) + Math.Pow(a, 2) + Math.Pow(b, 2)) / (2 * a * b), 5);
 
 
-                spriteBatch.DrawString(font, boardComponent.GetMouseHex().getCoordPosition().ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
-                spriteBatch.DrawString(font, boardComponent.GetTargetAngle(boardComponent.GetHex(5, 5), boardComponent.GetHex(6, 5), boardComponent.GetHex(9, 5)).ToString(), new Vector2(0, 4 * font.LineSpacing), Color.White);
-                spriteBatch.DrawString(font, boardComponent.GetObstructionAngle(boardComponent.GetHex(5, 5), boardComponent.GetHex(6, 5)).ToString(), new Vector2(0, 5 * font.LineSpacing), Color.White);
-                spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(6, 5))).ToString(), new Vector2(0, 6 * font.LineSpacing), Color.White);
-                spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 7 * font.LineSpacing), Color.White);
-                spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 8 * font.LineSpacing), Color.White);
-                spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 9 * font.LineSpacing), Color.White);
-                spriteBatch.DrawString(font, input.ToString(), new Vector2(0, 10 * font.LineSpacing), Color.White);
-            }
+            //    spriteBatch.DrawString(font, boardComponent.GetMouseHex().getCoordPosition().ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
+            //    spriteBatch.DrawString(font, boardComponent.GetTargetAngle(boardComponent.GetHex(5, 5), boardComponent.GetHex(6, 5), boardComponent.GetHex(9, 5)).ToString(), new Vector2(0, 4 * font.LineSpacing), Color.White);
+            //    spriteBatch.DrawString(font, boardComponent.GetObstructionAngle(boardComponent.GetHex(5, 5), boardComponent.GetHex(6, 5)).ToString(), new Vector2(0, 5 * font.LineSpacing), Color.White);
+            //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(6, 5))).ToString(), new Vector2(0, 6 * font.LineSpacing), Color.White);
+            //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 7 * font.LineSpacing), Color.White);
+            //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 8 * font.LineSpacing), Color.White);
+            //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 9 * font.LineSpacing), Color.White);
+            //    spriteBatch.DrawString(font, input.ToString(), new Vector2(0, 10 * font.LineSpacing), Color.White);
+            //}
             numberOfFrames++;
             string fps = string.Format("fps: {0}", framesPerSecond);
             spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);
