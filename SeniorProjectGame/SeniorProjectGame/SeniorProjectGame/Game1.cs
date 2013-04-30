@@ -92,7 +92,7 @@ namespace SeniorProjectGame
 
         //Player Vars
         Dictionary<String, Role> classes = new Dictionary<String, Role>();
-        List<UnitDataComponent> partyUnitData = new List<UnitDataComponent>();
+        List<UnitData> partyUnitData = new List<UnitData>();
 
 
         //Input Vars
@@ -580,13 +580,12 @@ namespace SeniorProjectGame
 
                     Entity partyMemberEntity = new Entity(EntityManager.GetHighestLayer()+1, State.ScreenState.SKIRMISH);
 
-                    UnitDataComponent unitDataComp = new UnitDataComponent(
+                    UnitData unitData = new UnitData(
                                         name, role, Alignment.PLAYER, level,
                                         str, mag, dex, agi, def, res, spd,
                                         strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
                                         strCap, magCap, dexCap, agiCap, defCap, resCap, spdCap,
                                         movement, sightRange, attackRange);
-                    partyMemberEntity.AddComponent(unitDataComp);
 
                     Vector2 coordinate = boardComponent.GetOneAlliedSpawnPoint(rand);
                     SpriteComponent hexSprite = boardComponent.GetHex(coordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
@@ -594,6 +593,7 @@ namespace SeniorProjectGame
                     partyMemberEntity.AddComponent(new AnimatedSpriteComponent(true, hexSprite.GetCenterPosition(), unitTextureDictionary[graphicName]));
 
                     partyMemberEntity.AddComponent(new UnitComponent(boardComponent.GetHex(coordinate), true));
+                    (partyMemberEntity.GetComponent("UnitComponent") as UnitComponent).SetUnitData(unitData);
 
                     EntityManager.AddEntity(partyMemberEntity);
                     boardComponent.GetHex(coordinate).SetUnit(partyMemberEntity.GetComponent("UnitComponent") as UnitComponent);
@@ -747,7 +747,7 @@ namespace SeniorProjectGame
 
                     hex.SetUnit(blob.GetComponent("UnitComponent") as UnitComponent);
 
-                    blob.AddComponent(new UnitDataComponent(
+                    hex.GetUnit().SetUnitData(new UnitData(
                                         name, role, Alignment.ENEMY, level,
                                         str, mag, dex, agi, def, res, spd,
                                         strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
@@ -1190,7 +1190,7 @@ namespace SeniorProjectGame
 
                         if (State.originalHexClicked != null)
                         {
-                            UnitDataComponent unitData = State.originalHexClicked.GetUnit()._parent.GetComponent("UnitDataComponent") as UnitDataComponent;
+                            UnitData unitData = State.originalHexClicked.GetUnit().GetUnitData();
                             unitData.SetSightRadius(10);
                         }
                     }
@@ -1304,7 +1304,7 @@ namespace SeniorProjectGame
 
             foreach (UnitComponent u in units)
             {
-                UnitDataComponent data = u._parent.GetComponent("UnitDataComponent") as UnitDataComponent;
+                UnitData data = u.GetUnitData();
                 if (data.GetAlignment() == Alignment.ENEMY)
                 {
                     enemies.Add(u);
@@ -1322,7 +1322,7 @@ namespace SeniorProjectGame
 
             foreach (UnitComponent u in units)
             {
-                UnitDataComponent data = u._parent.GetComponent("UnitDataComponent") as UnitDataComponent;
+                UnitData data = u.GetUnitData();
                 if (data.GetAlignment() == Alignment.PLAYER)
                 {
                     allies.Add(u);

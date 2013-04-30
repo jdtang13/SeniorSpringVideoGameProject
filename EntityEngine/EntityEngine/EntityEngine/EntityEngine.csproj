@@ -71,15 +71,17 @@
     <Compile Include="Input\InputAction.cs" />
     <Compile Include="Input\InputState.cs" />
     <Compile Include="Input\MouseButton.cs" />
-    <Compile Include="Stat Attribute Classes\Alignment.cs" />
+    <Compile Include="Alignment.cs" />
     <Compile Include="Stat Attribute Classes\Armor.cs" />
     <Compile Include="Stat Attribute Classes\Consumable.cs" />
     <Compile Include="Stat Attribute Classes\Item.cs" />
     <Compile Include="Stat Attribute Classes\Mount.cs" />
     <Compile Include="Stat Attribute Classes\Role.cs" />
     <Compile Include="Stat Attribute Classes\Scroll.cs" />
+    <Compile Include="Stat Attribute Classes\StatisticalBuff.cs" />
+    <Compile Include="Stat Attribute Classes\StatisticalEntity.cs" />
     <Compile Include="Stat Attribute Classes\Weapon.cs" />
-    <Compile Include="Stat Attribute Classes\UnitDataComponent.cs" />
+    <Compile Include="Stat Attribute Classes\UnitData.cs" />
     <Compile Include="State.cs" />
   </ItemGroup>
   <ItemGroup>

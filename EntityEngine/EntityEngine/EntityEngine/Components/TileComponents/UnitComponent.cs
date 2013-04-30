@@ -68,9 +68,7 @@ namespace EntityEngine.Components.TileComponents
             visibility = myVis;
             AnimatedSpriteComponent sprite = _parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
 
-            UnitDataComponent unitDataComp = _parent.GetComponent("UnitDataComponent") as UnitDataComponent;
-
-            if (unitDataComp.GetAlignment() == Alignment.PLAYER)
+            if (unitData.GetAlignment() == Alignment.PLAYER)
             {
                 sprite.SetColor(Color.White);
 
@@ -105,6 +103,16 @@ namespace EntityEngine.Components.TileComponents
         //    return unitData;
         //}
         //public void SetUnitData(UnitData u) { unitData = u; }
+
+        UnitData unitData;
+        public void SetUnitData(UnitData unitData)
+        {
+            this.unitData = unitData;
+        }
+        public UnitData GetUnitData()
+        {
+            return unitData;
+        }
 
         public UnitComponent(HexComponent myHex, bool mySelectable)//, UnitData unitData)
         {
