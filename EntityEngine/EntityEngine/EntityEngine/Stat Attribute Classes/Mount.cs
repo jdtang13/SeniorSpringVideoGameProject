@@ -3,23 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace EntityEngine
-{
-    class Mount
-    {
-        public Dictionary<string, int> attributes;
 
-        public Mount (int hlthmod, int drb, int movemod, int resmod, int agimod, int defmod, int spdmod)
+namespace EntityEngine.Stat_Attribute_Classes
+{
+    class Mount : StatisticalEntity {
+
+        int movement;
+
+        public Mount(int str, int mag, int dex, int agi, int def, int res, int movement)
         {
             attributes = new Dictionary<string, int>();
 
-            attributes["health modifier"] = hlthmod;
-            attributes["durability"] = drb;
-            attributes["move modifier"] = movemod;
-            attributes["agility modifier"] = agimod;
-            attributes["defense modifier"] = defmod;
-            attributes["resistance modifier"] = resmod;
-            attributes["speed modifier"] = spdmod;
+            attributes["strength"] = str;
+            attributes["magic"] = mag;
+            attributes["dexterity"] = dex;
+            attributes["agility"] = agi;
+            attributes["defense"] = def;
+            attributes["resistance"] = res;
+
+            this.movement = movement;
         }
     }
 }
