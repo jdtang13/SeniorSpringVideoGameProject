@@ -30,8 +30,13 @@ namespace EntityEngine.Stat_Attribute_Classes
             return role;
         }
 
-        List<string> knownSpells = new List<string>();
-        List<string> knownAttacks = new List<string>();
+        List<string> spells = new List<string>();
+        List<string> attacks = new List<string>();
+        List<Item> items = new List<Item>();
+
+        public List<string> Spells() { return spells; }
+        public List<string> Attacks() { return attacks; }
+        public List<Item> Items() { return items; }
 
         int level;
         public int GetCurrentLevel()

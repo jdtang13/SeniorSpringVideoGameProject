@@ -1290,6 +1290,9 @@ namespace SeniorProjectGame
         }
 
         //  have two units fight and enter a battle menu
+        //  TODO: add turn based fighting system. one unit strikes, then the other strikes back.
+        //  TODO: in the update code, keep track of who's the active unit (e.g., who's turn it is)
+        //  TODO: and when both units have taken their turn, end the battle and return to the skirmish menu.
         public void StartFight(UnitComponent attacker, UnitComponent defender)
         {
             State.screenState = State.ScreenState.BATTLING;
@@ -1298,6 +1301,7 @@ namespace SeniorProjectGame
             State.currentDefender = defender;
         }
 
+        //  exit the fight scene and clean up the changed variables
         public void EndCurrentFight()
         {
             State.screenState = State.ScreenState.SKIRMISH;
