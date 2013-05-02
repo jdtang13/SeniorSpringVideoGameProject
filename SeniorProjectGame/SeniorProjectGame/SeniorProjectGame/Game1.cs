@@ -188,26 +188,36 @@ namespace SeniorProjectGame
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
             Globals.font = font;
 
-            //Only run the conversions for developement purposes
+            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\WorldMap.txt");
 
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Enemies.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Player_Roles.txt");
+            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Testing_Grounds.txt");
+            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Testing_Grounds_Enemies.txt");
 
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Party_Members.txt");
+            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Tutorial_Level.txt");
+            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Tutorial_Level_Enemies.txt");
 
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\WorldMap.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Tutorial_Level_Enemies.txt");
+            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Ambushed.txt");
+            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Ambushed_Enemies.txt");
 
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard_Enemies.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Lab_Yard_Dialogue.txt");
+            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Pavilion.txt");
+            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Pavilion_Enemies.txt");
 
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Alchemist's_Laboratory.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Ambushed.txt");
+            ////Only run the conversions for developement purposes
 
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Pavilion.txt");
-            //ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Throne_Room.txt");
+            ////ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Enemies.txt");
+            ////ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Player_Roles.txt");
+
+            ////ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Party_Members.txt");
+
+            ////ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\WorldMap.txt");
+
+            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard.txt");
+            ////ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard_Enemies.txt");
+            ////ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard_Dialogue.txt");
+
+            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Alchemist's_Laboratory.txt");
+
+            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Throne_Room.txt");
 
             worldMapTexture = Content.Load<Texture2D>("Graphics\\Backgrounds\\island");
             pointerTexture = Content.Load<Texture2D>("Graphics\\Other\\pointer");
@@ -221,6 +231,7 @@ namespace SeniorProjectGame
             waterTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexWater1");
             stoneTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\stone path");
             carpetTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\red carpet");
+            dirtTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Bases\\hexDirt");
 
             treeTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\tree");
             bushTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\bush");
@@ -243,7 +254,7 @@ namespace SeniorProjectGame
             terrainDictionary["g"] = new TerrainPackage(gravelTexture, false, 0);//Gravel
             terrainDictionary["C"] = new TerrainPackage(carpetTexture, false, 0);//Carpet
 
-            terrainDictionary["T"] = new TerrainPackage(treeTexture, true, 25);//Tree
+            terrainDictionary["T"] = new TerrainPackage(treeTexture, true, 40);//Tree
             terrainDictionary["B"] = new TerrainPackage(bushTexture, false, 0);//Bush
 
             //terrainDictionary["t"] = new TerrainPackage(treeTexture, true);//Table
@@ -1013,6 +1024,7 @@ namespace SeniorProjectGame
                                 {
                                     if (!pathQueue.Contains(hexComp) && AreAdjacent(hexComp, ghostHex))
                                     {
+                                        //add hex you click on to pathQueue
                                         pathQueue.Add(hexComp);
                                         hexComp.SetInQueue(true);
                                         ghostHex = hexComp;
@@ -1024,6 +1036,7 @@ namespace SeniorProjectGame
                                         {
                                             if (pathQueue[pathQueue.Count - 1] != hexComp)
                                             {
+                                                //remove hexes from pathQueue until you reach the one you click on
                                                 pathQueue[pathQueue.Count - 1].SetInQueue(false);
                                                 pathQueue.Remove(pathQueue[pathQueue.Count - 1]);
                                             }
@@ -1046,7 +1059,6 @@ namespace SeniorProjectGame
                             //    MoveUnit(State.originalHexClicked, boardComponent.GetMouseHex());
                             //    State.selectionState = State.SelectionState.NoSelection;
                             //    State.originalHexClicked = null;
-
                             //}
                         }
                     }
@@ -1091,15 +1103,17 @@ namespace SeniorProjectGame
                     {
                         if (spaceHold.Evaluate())
                         {
-                            timePerMove = 200;
+                            //hold space to accelerate
+                            timePerMove = 120;
                         }
                         else
                         {
-                            timePerMove = 500;
+                            timePerMove = 360;
                         }
                         
                         elapsedTimeForMove += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
+                        //animated movement
                         UnitComponent unit = State.originalHexClicked.GetUnit();
                         AnimatedSpriteComponent sprite = unit._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
                         SpriteComponent originalHexSprite = State.originalHexClicked._parent.GetDrawable("SpriteComponent") as SpriteComponent;
@@ -1406,8 +1420,9 @@ namespace SeniorProjectGame
 
             spriteBatch.DrawString(font, InputState.GetMouseIngamePosition().ToString(), new Vector2(0, font.LineSpacing), Color.White);
             spriteBatch.DrawString(font, InputState.GetMouseScreenPosition().ToString(), new Vector2(0, 2 * font.LineSpacing), Color.White);
-            //if (boardComponent != null)
-            //{
+            if (boardComponent != null)
+            {
+
             //    double a = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)));
             //    double b = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5)));
             //    double c = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5)));
@@ -1422,7 +1437,7 @@ namespace SeniorProjectGame
             //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 8 * font.LineSpacing), Color.White);
             //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 9 * font.LineSpacing), Color.White);
             //    spriteBatch.DrawString(font, input.ToString(), new Vector2(0, 10 * font.LineSpacing), Color.White);
-            //}
+            }
             numberOfFrames++;
             string fps = string.Format("fps: {0}", framesPerSecond);
             spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);

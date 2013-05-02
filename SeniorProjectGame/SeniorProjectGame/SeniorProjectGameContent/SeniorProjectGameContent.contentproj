@@ -266,13 +266,13 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Graphics\TileTextures\Bases\offical dirt.png">
-      <Name>offical dirt</Name>
+    <Compile Include="Graphics\TileTextures\Bases\official dirt.png">
+      <Name>official dirt</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Graphics\TileTextures\Bases\offical sand hex.png">
-      <Name>offical sand hex</Name>
+    <Compile Include="Graphics\TileTextures\Bases\official sand hex.png">
+      <Name>official sand hex</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -311,6 +311,13 @@
   <ItemGroup>
     <Compile Include="Graphics\TileTextures\Decorations\wooden Walls .png">
       <Name>wooden Walls</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Graphics\TileTextures\Bases\bush.png">
+      <Name>bush</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

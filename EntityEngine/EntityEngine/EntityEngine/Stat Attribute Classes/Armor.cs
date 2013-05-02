@@ -23,9 +23,7 @@ namespace EntityEngine
             armorAttributes["agility modifier"] = agimod;
             armorAttributes["defense modifier"] = defmod;
             armorAttributes["resistance modifier"] = resmod;
-            armorAttributes["speed modifier"] = spdmod;
-
-            
+            armorAttributes["speed modifier"] = spdmod;            
         }
     }
 }

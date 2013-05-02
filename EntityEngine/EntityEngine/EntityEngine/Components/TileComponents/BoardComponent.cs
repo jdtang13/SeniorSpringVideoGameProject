@@ -207,7 +207,6 @@ namespace EntityEngine.Components.TileComponents
 
                     GetHex(coordPosition).SetVisibility(Visibility.Unexplored);
                 }
-
             }
 
             //Giving all the hex's their adjacents
