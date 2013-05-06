@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EntityEngine
 {
-    class Item
+    public class Item
     {
         public int sellcost;
         public string description;
