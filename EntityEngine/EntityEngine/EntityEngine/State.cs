@@ -23,6 +23,11 @@ namespace EntityEngine
             SelectingUnit, SelectingMenuOptions, NoSelection
         }
 
+        public enum BattleState
+        {
+            Attack, CounterAttack
+        }
+
         //  use this for selecting battles and stuff
         public enum MenuState
         {
@@ -33,6 +38,7 @@ namespace EntityEngine
         {
             State.screenState = State.ScreenState.WORLD_MAP;
             State.selectionState = State.SelectionState.NoSelection;
+            State.battleState = State.BattleState.Attack;
 
             State.dialoguePosition = 0;//Which textbox you're in
             State.dialogueChoicePosition = 0;
@@ -55,6 +61,7 @@ namespace EntityEngine
 
         public static int menuPosition = 0;
 
+        public static BattleState battleState;
         public static ScreenState screenState;
         public static SelectionState selectionState;
 

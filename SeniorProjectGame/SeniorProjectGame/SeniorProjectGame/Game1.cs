@@ -35,6 +35,9 @@ namespace SeniorProjectGame
         Menu menu = new Menu(false);
         Texture2D dot;
 
+        //  the main menu for the battle screen (3rd layer)
+        NestedMenu battleMenu = new NestedMenu(false);
+
         Texture2D worldMapTexture, nodeTexture, pointerTexture;
         Texture2D hexBaseTexture, dirtTexture, grassTexture, gravelTexture, sandTexture, woodTexture,
             waterTexture, stoneTexture;
@@ -1247,34 +1250,48 @@ namespace SeniorProjectGame
                     //  the first layer is exactly the same as a normal menu, but the second layers
                     //  are actually menus associated with strings/index numbers for other options. in other
                     //  words it's like menus in menus.
-                    /*
-                    if (singleWClick.Evaluate())
-                    {
-                        battleMenu.SetSelectedOption((battleMenu.Options().Count + battleMenu.CurrentOptionIndex() - 1) % battleMenu.Options().Count);
-                    }
-                    else if (singleSClick.Evaluate())
-                    {
-                        battleMenu.SetSelectedOption((battleMenu.CurrentOptionIndex() + 1) % battleMenu.Options().Count);
-                    }
 
-                    if (selectedFirstOption == "Attack")
+                    //  player battle turn
+                    if (State.currentAttacker.GetUnitData().GetAlignment() == Alignment.PLAYER)
                     {
-                        if (menuHasMoreThanOneLayer && selectedSecondOption == "Strike")
+                        if (singleWClick.Evaluate())
                         {
+                            battleMenu.ScrollUp();
+                        }
+                        else if (singleSClick.Evaluate())
+                        {
+                            battleMenu.ScrollDown();    
+                        }
+                        else if (enterClick.Evaluate() && battleMenu.Layer() == 0)
+                        {
+                            battleMenu.Enter();
+                        }
 
+                        if (battleMenu.RegisteredOption() == "Attack")
+                        {
+                            if (battleMenu.CurrentOption() == "Strike")
+                            {
+                                if (enterClick.Evaluate())
+                                {
+                                    // Todo: physical strike
+                                    EndBattleTurn();
+                                }
+                            }
+                        }
+                        else if (battleMenu.RegisteredOption() == "Use Item")
+                        {
+                        }
+                        else if (battleMenu.RegisteredOption() == "Spell")
+                        {
+                        }
+                        else if (battleMenu.RegisteredOption() == "Guard")
+                        {
                         }
                     }
-                    else if (selectedFirstOption == "Item")
+                    else
                     {
+                        //  todo: enemy battle turn
                     }
-                    else if (selectedFirstOption == "Spell")
-                    {
-                    }
-                    else if (selectedFirstOption == "Guard")
-                    {
-                    }
-                    */
-
                     break;
                 case State.ScreenState.BATTLE_RESOLUTION:
                     break;
@@ -1299,15 +1316,38 @@ namespace SeniorProjectGame
 
             State.currentAttacker = attacker;
             State.currentDefender = defender;
+
+            battleMenu.LoadOptions(new List<string>(new string[] { "Attack", "Cast", "Use Item", "Guard", "Run" }));
+            battleMenu.AddNestedOptions("Attack", State.currentAttacker.GetUnitData().Attacks());
+            battleMenu.AddNestedOptions("Cast", State.currentAttacker.GetUnitData().Spells());
+            //battleMenu.AddNestedOptions("Use Item", State.currentAttacker.GetUnitData().Items());
+
+            battleMenu.Show();
         }
 
         //  exit the fight scene and clean up the changed variables
         public void EndCurrentFight()
         {
             State.screenState = State.ScreenState.SKIRMISH;
+            State.battleState = State.BattleState.Attack;
 
             State.currentAttacker = null;
             State.currentDefender = null;
+
+            battleMenu.Hide();
+        }
+
+        // todo: end the turn for the current user and allow the enemy to attack
+        public void EndBattleTurn()
+        {
+            if (State.battleState == State.BattleState.Attack)
+            {
+                State.battleState = State.BattleState.CounterAttack;
+            }
+            else
+            {
+                EndCurrentFight();
+            }
         }
 
         //  given a position on the map, return all enemies adjacent to it
@@ -1478,6 +1518,13 @@ namespace SeniorProjectGame
             spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);
 
             menu.Draw(spriteBatch);
+
+            if (State.screenState == State.ScreenState.BATTLING)
+            {
+                //  draw battle scene
+
+                battleMenu.Draw(spriteBatch);
+            }
 
             spriteBatch.End();
 
