@@ -23,6 +23,11 @@ namespace EntityEngine
             SelectingUnit, SelectingMenuOptions, NoSelection
         }
 
+        public enum TurnState
+        {
+            AlliesTurn, EnemiesTurn
+        }
+
         //  use this for selecting battles and stuff
         public enum MenuState
         {

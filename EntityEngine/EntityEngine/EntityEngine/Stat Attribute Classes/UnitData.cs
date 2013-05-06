@@ -3,19 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using EntityEngine.Stat_Attribute_Classes;
-using EntityEngine.Components.Component_Parents;
 
-namespace EntityEngine
+namespace EntityEngine.Stat_Attribute_Classes
 {
-    //public class Fraction
-    //{
-    //    public Fraction(int numerator, int denominator)
-    //    {
-    //        //Use this storage calss for currentHealth/total currentHealth values?
-    //    }
-    //}
-
-    public class UnitDataComponent : Component
+    public class UnitData : StatisticalEntity
     {
         string unitName;
         public string GetName()
@@ -39,13 +30,13 @@ namespace EntityEngine
             return role;
         }
 
-        //setting up consturctor for dictionary to hold character growths, attributs, and stats 
-        public Dictionary<string, int> attributes; // stats for units
-        public Dictionary<string, float> growths; // growth of attributes with each level
-        public Dictionary<string, int> caps;  // attribute cap for units
+        List<string> spells = new List<string>();
+        List<string> attacks = new List<string>();
+        List<Item> items = new List<Item>();
 
-        List<string> knownSpells = new List<string>();
-        List<string> knownAttacks = new List<string>();
+        public List<string> Spells() { return spells; }
+        public List<string> Attacks() { return attacks; }
+        public List<Item> Items() { return items; }
 
         int level;
         public int GetCurrentLevel()
@@ -114,13 +105,12 @@ namespace EntityEngine
             return attackRadius;
         }
 
-        public UnitDataComponent(string name,     Role role,       Alignment ali,   int level, 
+        public UnitData(string name,     Role role,       Alignment ali,   int level, 
                         int str,         int mag,         int dex,         int agi,         int def,         int res,         int spd,
                         float strGrowth, float magGrowth, float dexGrowth, float agiGrowth, float defGrowth, float resGrowth, float spdGrowth,
                         int strCap,      int magCap,      int dexCap,      int agiCap,      int defCap,      int resCap,      int spdCap,
                         int movement,    int sightRange,  int attackRange)
         {
-            this.name = "UnitDataComponent";
             this.unitName = name;
             this.role = role;
             this.alignment = ali;
@@ -135,31 +125,29 @@ namespace EntityEngine
             this.sightRadius = sightRange;
             this.attackRadius = attackRange;
 
-            attributes["strength"] = str + role.attributes["strength"];
-            attributes["magic"] = mag + role.attributes["magic"];
-            attributes["dexterity"] = dex + role.attributes["dexterity"];
-            attributes["agility"] = agi + role.attributes["agility"];
-            attributes["defense"] = def + role.attributes["defense"];
-            attributes["resistance"] = res + role.attributes["resistance"];
-            attributes["speed"] = spd + role.attributes["speed"];
+            attributes["strength"] = str + role.Attributes()["strength"];
+            attributes["magic"] = mag + role.Attributes()["magic"];
+            attributes["dexterity"] = dex + role.Attributes()["dexterity"];
+            attributes["agility"] = agi + role.Attributes()["agility"];
+            attributes["defense"] = def + role.Attributes()["defense"];
+            attributes["resistance"] = res + role.Attributes()["resistance"];
+            attributes["speed"] = spd + role.Attributes()["speed"];
 
-            caps["strength"] = strCap + role.caps["strength"];
-            caps["magic"] = magCap + role.caps["magic"];
-            caps["dexterity"] = dexCap + role.caps["dexterity"];
-            caps["agility"] = agiCap + role.caps["agility"];
-            caps["defense"] = defCap + role.caps["defense"];
-            caps["resistance"] = resCap + role.caps["resistance"];
-            caps["speed"] = spdCap + role.caps["speed"];
+            caps["strength"] = strCap + role.Caps()["strength"];
+            caps["magic"] = magCap + role.Caps()["magic"];
+            caps["dexterity"] = dexCap + role.Caps()["dexterity"];
+            caps["agility"] = agiCap + role.Caps()["agility"];
+            caps["defense"] = defCap + role.Caps()["defense"];
+            caps["resistance"] = resCap + role.Caps()["resistance"];
+            caps["speed"] = spdCap + role.Caps()["speed"];
 
-            growths["strength"] = strGrowth + role.growths["strength"];
-            growths["magic"] = magGrowth + role.growths["magic"];
-            growths["dexterity"] = dexGrowth + role.growths["dexterity"];
-            growths["agility"] = agiGrowth + role.growths["agility"];
-            growths["defense"] = defGrowth + role.growths["defense"];
-            growths["resistance"] = resGrowth + role.growths["resistance"];
-            growths["speed"] = spdGrowth + role.growths["speed"];
-
-           
+            growths["strength"] = strGrowth + role.Growths()["strength"];
+            growths["magic"] = magGrowth + role.Growths()["magic"];
+            growths["dexterity"] = dexGrowth + role.Growths()["dexterity"];
+            growths["agility"] = agiGrowth + role.Growths()["agility"];
+            growths["defense"] = defGrowth + role.Growths()["defense"];
+            growths["resistance"] = resGrowth + role.Growths()["resistance"];
+            growths["speed"] = spdGrowth + role.Growths()["speed"];
 
             CalculateValues();
         }

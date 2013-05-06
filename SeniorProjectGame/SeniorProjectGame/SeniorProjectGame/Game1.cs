@@ -93,7 +93,7 @@ namespace SeniorProjectGame
 
         //Player Vars
         Dictionary<String, Role> classes = new Dictionary<String, Role>();
-        List<UnitDataComponent> partyUnitData = new List<UnitDataComponent>();
+        List<UnitData> partyUnitData = new List<UnitData>();
 
 
         //Input Vars
@@ -593,13 +593,12 @@ namespace SeniorProjectGame
 
                     Entity partyMemberEntity = new Entity(EntityManager.GetHighestLayer() + 1, State.ScreenState.SKIRMISH);
 
-                    UnitDataComponent unitDataComp = new UnitDataComponent(
+                    UnitData unitData = new UnitData(
                                         name, role, Alignment.PLAYER, level,
                                         str, mag, dex, agi, def, res, spd,
                                         strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
                                         strCap, magCap, dexCap, agiCap, defCap, resCap, spdCap,
                                         movement, sightRange, attackRange);
-                    partyMemberEntity.AddComponent(unitDataComp);
 
                     Vector2 coordinate = boardComponent.GetOneAlliedSpawnPoint(rand);
                     SpriteComponent hexSprite = boardComponent.GetHex(coordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
@@ -607,11 +606,11 @@ namespace SeniorProjectGame
                     partyMemberEntity.AddComponent(new AnimatedSpriteComponent(true, hexSprite.GetCenterPosition(), unitTextureDictionary[graphicName]));
 
                     partyMemberEntity.AddComponent(new UnitComponent(boardComponent.GetHex(coordinate), true));
+                    (partyMemberEntity.GetComponent("UnitComponent") as UnitComponent).SetUnitData(unitData);
 
                     EntityManager.AddEntity(partyMemberEntity);
                     boardComponent.GetHex(coordinate).SetUnit(partyMemberEntity.GetComponent("UnitComponent") as UnitComponent);
                     boardComponent.alliedUnitList.Add(partyMemberEntity);
-
                 }
             }
             boardComponent.UpdateVisibilityAllies();
@@ -760,7 +759,7 @@ namespace SeniorProjectGame
 
                     hex.SetUnit(blob.GetComponent("UnitComponent") as UnitComponent);
 
-                    blob.AddComponent(new UnitDataComponent(
+                    hex.GetUnit().SetUnitData(new UnitData(
                                         name, role, Alignment.ENEMY, level,
                                         str, mag, dex, agi, def, res, spd,
                                         strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
@@ -1089,7 +1088,20 @@ namespace SeniorProjectGame
                                     break;
                                 case "Attack":
                                     // todo: initiate battle
-                                    // StartFight(UnitComponent a, UnitComponent b);
+                                    
+                                    // currently the fight mechanic only selects the first
+                                    // adjacent enemy. in the future, TODO: allow user to 
+                                    // select the enemy to fight.
+                                    
+                                    menu.Hide();
+                                    State.selectionState = State.SelectionState.NoSelection;
+                                    menu.SetSelectedOption(0);
+
+                                    int selectedEnemyIndex = 0;
+
+                                    StartFight(State.originalHexClicked.GetUnit(),
+                                        enemiesAdjacentTo(boardComponent, State.originalHexClicked.getCoordPosition())[selectedEnemyIndex]);
+
                                     // todo: end battle
                                     // EndCurrentFight();
                                     break;
@@ -1156,7 +1168,7 @@ namespace SeniorProjectGame
                                     options.Insert(0, "Heal"); //  have "attack" as an option if enemy nearby
                                 }
 
-                                State.originalHexClicked = null;
+                                // State.originalHexClicked = null;
 
                                 // todo: pseudocode:
                                 //if enemyUnitIsAdjacent, options.Add("Attack");
@@ -1200,7 +1212,7 @@ namespace SeniorProjectGame
 
                         if (State.originalHexClicked != null)
                         {
-                            UnitDataComponent unitData = State.originalHexClicked.GetUnit()._parent.GetComponent("UnitDataComponent") as UnitDataComponent;
+                            UnitData unitData = State.originalHexClicked.GetUnit().GetUnitData();
                             unitData.SetSightRadius(10);
                         }
                     }
@@ -1237,12 +1249,45 @@ namespace SeniorProjectGame
                     break;
                 #endregion
 
-                #region ThirdLayer
+                #region Battle
 
                 //As of now, we will not be using the states below
                 case State.ScreenState.BATTLE_FORECAST:
                     break;
                 case State.ScreenState.BATTLING:
+
+                    // todo: make some sort of data structure for a menu with nested options
+                    //  the first layer is exactly the same as a normal menu, but the second layers
+                    //  are actually menus associated with strings/index numbers for other options. in other
+                    //  words it's like menus in menus.
+                    /*
+                    if (singleWClick.Evaluate())
+                    {
+                        battleMenu.SetSelectedOption((battleMenu.Options().Count + battleMenu.CurrentOptionIndex() - 1) % battleMenu.Options().Count);
+                    }
+                    else if (singleSClick.Evaluate())
+                    {
+                        battleMenu.SetSelectedOption((battleMenu.CurrentOptionIndex() + 1) % battleMenu.Options().Count);
+                    }
+
+                    if (selectedFirstOption == "Attack")
+                    {
+                        if (menuHasMoreThanOneLayer && selectedSecondOption == "Strike")
+                        {
+
+                        }
+                    }
+                    else if (selectedFirstOption == "Item")
+                    {
+                    }
+                    else if (selectedFirstOption == "Spell")
+                    {
+                    }
+                    else if (selectedFirstOption == "Guard")
+                    {
+                    }
+                    */
+
                     break;
                 case State.ScreenState.BATTLE_RESOLUTION:
                     break;
@@ -1258,6 +1303,9 @@ namespace SeniorProjectGame
         }
 
         //  have two units fight and enter a battle menu
+        //  TODO: add turn based fighting system. one unit strikes, then the other strikes back.
+        //  TODO: in the update code, keep track of who's the active unit (e.g., who's turn it is)
+        //  TODO: and when both units have taken their turn, end the battle and return to the skirmish menu.
         public void StartFight(UnitComponent attacker, UnitComponent defender)
         {
             State.screenState = State.ScreenState.BATTLING;
@@ -1266,6 +1314,7 @@ namespace SeniorProjectGame
             State.currentDefender = defender;
         }
 
+        //  exit the fight scene and clean up the changed variables
         public void EndCurrentFight()
         {
             State.screenState = State.ScreenState.SKIRMISH;
@@ -1282,7 +1331,7 @@ namespace SeniorProjectGame
 
             foreach (UnitComponent u in units)
             {
-                UnitDataComponent data = u._parent.GetComponent("UnitDataComponent") as UnitDataComponent;
+                UnitData data = u.GetUnitData();
                 if (data.GetAlignment() == Alignment.ENEMY)
                 {
                     enemies.Add(u);
@@ -1300,7 +1349,7 @@ namespace SeniorProjectGame
 
             foreach (UnitComponent u in units)
             {
-                UnitDataComponent data = u._parent.GetComponent("UnitDataComponent") as UnitDataComponent;
+                UnitData data = u.GetUnitData();
                 if (data.GetAlignment() == Alignment.PLAYER)
                 {
                     allies.Add(u);

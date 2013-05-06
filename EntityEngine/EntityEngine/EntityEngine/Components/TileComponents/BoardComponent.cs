@@ -256,7 +256,7 @@ namespace EntityEngine.Components.TileComponents
             return adjacentList;
         }
 
-        public void CreateUnit(Vector2 myCoordinate, Texture2DFramed myFramedTexture, UnitDataComponent myData)
+        public void CreateUnit(Vector2 myCoordinate, Texture2DFramed myFramedTexture, UnitData myUnitData)
         {
 
             HexComponent hexComp = GetHex(myCoordinate);
@@ -267,13 +267,12 @@ namespace EntityEngine.Components.TileComponents
 
                 Entity unitEntity = new Entity(15, State.ScreenState.SKIRMISH);
 
-                unitEntity.AddComponent(myData);
-
                 AnimatedSpriteComponent unitSprite = new AnimatedSpriteComponent(true, hexSprite.GetCenterPosition(), myFramedTexture);
 
                 unitEntity.AddComponent(unitSprite);
 
                 UnitComponent unitComp = new UnitComponent(GetHex(myCoordinate), true);
+                unitComp.SetUnitData(myUnitData);
                 unitEntity.AddComponent(unitComp);
 
                 EntityManager.AddEntity(unitEntity);
@@ -496,13 +495,13 @@ namespace EntityEngine.Components.TileComponents
                 for (int p = 0; p < alliedUnitList.Count; p++)
                 {
                     UnitComponent unitComp = alliedUnitList[p].GetComponent("UnitComponent") as UnitComponent;
-                    UnitDataComponent unitDataComp = alliedUnitList[p].GetComponent("UnitDataComponent") as UnitDataComponent;
+                    UnitData unitData = (alliedUnitList[p].GetComponent("UnitComponent") as UnitComponent).GetUnitData();
 
                     List<HexComponent> obstructionHexList = new List<HexComponent>();
 
                     obstructionHexList.Clear();
 
-                    for (int r = 0; r <= unitDataComp.GetSightRadius(); r++)
+                    for (int r = 0; r <= unitData.GetSightRadius(); r++)
                     {
                         List<HexComponent> currentRing = GetRing(unitComp.GetHex().getCoordPosition(), r);
                         for (int i = 0; i < currentRing.Count; i++) //i is hex index within currentRing

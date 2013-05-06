@@ -3,27 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace EntityEngine
+namespace EntityEngine.Stat_Attribute_Classes
 {
     class Armor
     {
-        public Dictionary<string, int> armorAttributes;
+        StatisticalBuff buff;
 
-        public Armor (int hlthmod, int manamod, int drb, int wprof, int wprofr,
-            int movemod, int strmod, int dexmod, int agimod, int defmod, int resmod, int spdmod)
+        int durability;
+        int armorRank;
+
+        public Armor (int health, int mana, int avoid, int crit, int movementBuff, int durability, int armorRank,
+            int str, int mag, int dex, int agi, int def, int res)
         {
-            armorAttributes = new Dictionary<string, int>();
-            armorAttributes["health modifier"] = hlthmod;
-            armorAttributes["mana modifier"] = manamod;
-            armorAttributes["durability"] = drb;
-            armorAttributes["armor proficiency requirement"] = wprofr;
-            armorAttributes["move modifier"] = movemod;
-            armorAttributes["strength modifier"] = strmod;
-            armorAttributes["dexterity modifier"] = dexmod;
-            armorAttributes["agility modifier"] = agimod;
-            armorAttributes["defense modifier"] = defmod;
-            armorAttributes["resistance modifier"] = resmod;
-            armorAttributes["speed modifier"] = spdmod;            
+            buff = new StatisticalBuff(health, mana, avoid, crit, movementBuff);
+
+            Dictionary<string, int> attributes = buff.Attributes();
+
+            attributes["strength"] = str;
+            attributes["magic"] = mag;
+            attributes["dexterity"] = dex;
+            attributes["agility"] = agi;
+            attributes["defense"] = def;
+            attributes["resistance"] = res;
         }
     }
 }
