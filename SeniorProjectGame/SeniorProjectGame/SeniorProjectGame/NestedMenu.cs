@@ -18,7 +18,7 @@ namespace SeniorProjectGame
         int currentLayer = 0; //  which layer of options you're on. 0 is the default layer.
         Dictionary<string, List<string>> optionMenuMapper = new Dictionary<string, List<string>>();
 
-        List<int> currentOptionIndices = new List<int>(new int[] { -1, -1 });
+        List<int> currentOptionIndices = new List<int>(new int[] { 0, 0 });
         int registeredOptionIndex = 0;
 
         public NestedMenu(bool isVisible)
@@ -41,6 +41,7 @@ namespace SeniorProjectGame
             this.font = font;
 
             currentOptionIndex = 0;
+            currentLayer = 0;
 
             isVisible = true;
         }
@@ -63,9 +64,9 @@ namespace SeniorProjectGame
 
         public override void SetSelectedOption(int index)
         {
-            while (currentLayer > currentOptionIndices.Count)
+            while (currentLayer >= currentOptionIndices.Count)
             {
-                currentOptionIndices.Add(-1);
+                currentOptionIndices.Add(0);
             }
             currentOptionIndices[currentLayer] = index;
         }
@@ -132,7 +133,7 @@ namespace SeniorProjectGame
                 for (int i = 0; i < options.Count; i++)
                 {
                     Color tmp = menuOptionColor;
-                    if (i == currentOptionIndex)
+                    if (i == currentOptionIndices[currentLayer])
                     {
                         tmp = Color.Black;
                     }
