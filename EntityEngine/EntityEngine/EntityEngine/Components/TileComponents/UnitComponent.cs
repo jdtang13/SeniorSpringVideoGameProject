@@ -40,6 +40,10 @@ namespace EntityEngine.Components.TileComponents
         {
             return movesLeft;
         }
+        public void SetMovesLeft(int myMoves)
+        {
+            movesLeft = myMoves;
+        }
         public void ChangeMovesLeft(int changeToMoves)
         {
             movesLeft += changeToMoves;
@@ -128,6 +132,12 @@ namespace EntityEngine.Components.TileComponents
         public void SetUnitData(UnitData unitData)
         {
             this.unitData = unitData;
+            InitializeUnitData();            
+        }
+
+        public void InitializeUnitData()
+        {
+            SetMovesLeft(GetUnitData().GetMovement());
         }
         public UnitData GetUnitData()
         {

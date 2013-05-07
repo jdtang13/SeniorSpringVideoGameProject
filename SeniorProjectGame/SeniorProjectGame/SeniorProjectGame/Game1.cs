@@ -188,6 +188,8 @@ namespace SeniorProjectGame
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
             Globals.font = font;
 
+            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Player_Roles.txt");
+            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Party_Members.txt");
             ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\WorldMap.txt");
 
             ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Testing_Grounds.txt");
@@ -202,18 +204,15 @@ namespace SeniorProjectGame
             ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Pavilion.txt");
             ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Pavilion_Enemies.txt");
 
-            ////Only run the conversions for developement purposes
+            //Only run the conversions for developement purposes
 
-            ////ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Enemies.txt");
-            ////ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Player_Roles.txt");
+            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Enemies.txt");
 
-            ////ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Party_Members.txt");
-
-            ////ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\WorldMap.txt");
+            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\WorldMap.txt");
 
             //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard.txt");
-            ////ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard_Enemies.txt");
-            ////ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard_Dialogue.txt");
+            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard_Enemies.txt");
+            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard_Dialogue.txt");
 
             //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Alchemist's_Laboratory.txt");
 
@@ -982,269 +981,284 @@ namespace SeniorProjectGame
 
                 #region Skirmish
                 case State.ScreenState.SKIRMISH:
-                    if (!moving)
+                    State.turnState = State.TurnState.AlliesTurn;
+                    
+                    #region AlliesTurn
+                    if (State.turnState == State.TurnState.AlliesTurn)
                     {
-                        if (leftHold.Evaluate())
+                        if (!moving)
                         {
-                            HexComponent hexComp = boardComponent.GetMouseHex();
-
-                            Entity hexEntity = hexComp._parent;
-
-                            if (hexComp.HasUnit() && hexComp.GetUnit().GetSelectable() && State.selectionState == State.SelectionState.NoSelection)
+                            if (leftHold.Evaluate())
                             {
-                                UnitComponent unit = hexComp.GetUnit();
-                                unit.SetSelected(true); //todo set false
-                                State.selectionState = State.SelectionState.SelectingUnit;
+                                HexComponent hexComp = boardComponent.GetMouseHex();
 
-                                State.originalHexClicked = hexComp;
-                                ghostHex = hexComp;
-                            }
-                            if (hexComp == State.originalHexClicked)
-                            {
-                                if (pathQueue.Count > 0)
+                                Entity hexEntity = hexComp._parent;
+
+                                if (hexComp.HasUnit() && hexComp.GetUnit().GetSelectable() && State.selectionState == State.SelectionState.NoSelection)
                                 {
-                                    for (int i = 0; i < pathQueue.Count; i++)
-                                    {
-                                        pathQueue[i].SetInQueue(false);
-                                    }
-                                    pathQueue.Clear();
+                                    UnitComponent unit = hexComp.GetUnit();
+                                    unit.SetSelected(true);
+                                    State.selectionState = State.SelectionState.SelectingUnit;
+
+                                    State.originalHexClicked = hexComp;
                                     ghostHex = hexComp;
                                 }
-                                //else
-                                //{
-                                //    State.selectionState = State.SelectionState.NoSelection;
-                                //    State.originalHexClicked.GetUnit().SetSelected(false);
-                                //    State.originalHexClicked = null;
-                                //}                                
-                            }
-                            else if (!hexComp.HasUnit() && State.selectionState == State.SelectionState.SelectingUnit && hexComp.GetVisibility() != Visibility.Unexplored)
-                            {
-                                if (!hexComp.ContainsImpassable())
+                                if (hexComp == State.originalHexClicked)
                                 {
-                                    if (!pathQueue.Contains(hexComp) && AreAdjacent(hexComp, ghostHex))
+                                    int originalPathQueueCount = pathQueue.Count();
+                                    if (pathQueue.Count > 0)
                                     {
-                                        //add hex you click on to pathQueue
-                                        pathQueue.Add(hexComp);
-                                        hexComp.SetInQueue(true);
+                                        for (int i = 0; i < pathQueue.Count; i++)
+                                        {
+                                            pathQueue[i].SetInQueue(false);
+                                        }
+                                        State.originalHexClicked.GetUnit().ChangeMovesLeft(originalPathQueueCount);
+                                        pathQueue.Clear();
                                         ghostHex = hexComp;
                                     }
-                                    else if (pathQueue.Contains(hexComp))
+                                    //else
+                                    //{
+                                    //    State.selectionState = State.SelectionState.NoSelection;
+                                    //    State.originalHexClicked.GetUnit().SetSelected(false);
+                                    //    State.originalHexClicked = null;
+                                    //}                                
+                                }
+                                else if (!hexComp.HasUnit() && State.selectionState == State.SelectionState.SelectingUnit && hexComp.GetVisibility() != Visibility.Unexplored)
+                                {
+                                    UnitComponent currentUnit = State.originalHexClicked.GetUnit();
+                                    if (!hexComp.ContainsImpassable())
                                     {
-                                        int originalpathQueueCount = pathQueue.Count;
-                                        while (true)
+                                        if (!pathQueue.Contains(hexComp) && AreAdjacent(hexComp, ghostHex))
                                         {
-                                            if (pathQueue[pathQueue.Count - 1] != hexComp)
+                                            if (currentUnit.GetMovesLeft() > 0)
                                             {
-                                                //remove hexes from pathQueue until you reach the one you click on
-                                                pathQueue[pathQueue.Count - 1].SetInQueue(false);
-                                                pathQueue.Remove(pathQueue[pathQueue.Count - 1]);
-                                            }
-                                            else
-                                            {
+                                                //add hex you click on to pathQueue
+                                                pathQueue.Add(hexComp);
+                                                hexComp.SetInQueue(true);
+                                                currentUnit.ChangeMovesLeft(-1);
                                                 ghostHex = hexComp;
-                                                break;
+                                            }
+                                        }
+                                        else if (pathQueue.Contains(hexComp))
+                                        {
+                                            int originalpathQueueCount = pathQueue.Count;
+                                            while (true)
+                                            {
+                                                if (pathQueue[pathQueue.Count - 1] != hexComp)
+                                                {
+                                                    //remove hexes from pathQueue until you reach the one you click on
+                                                    pathQueue[pathQueue.Count - 1].SetInQueue(false);
+                                                    pathQueue.Remove(pathQueue[pathQueue.Count - 1]);
+                                                    currentUnit.ChangeMovesLeft(1);
+                                                }
+                                                else
+                                                {
+                                                    ghostHex = hexComp;
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
                                 }
+
+                                //else if (State.selectionState == State.SelectionState.SelectingUnit)
+                                //{
+                                //    State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
+                                //}
+                                //else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits)
+                                //{
+                                //    MoveUnit(State.originalHexClicked, boardComponent.GetMouseHex());
+                                //    State.selectionState = State.SelectionState.NoSelection;
+                                //    State.originalHexClicked = null;
+                                //}
                             }
-
-                            //else if (State.selectionState == State.SelectionState.SelectingUnit)
-                            //{
-                            //    State.selectionState = State.SelectionState.SelectingOptionsForSkirmishUnits;
-                            //}
-                            //else if (State.selectionState == State.SelectionState.SelectingOptionsForSkirmishUnits)
-                            //{
-                            //    MoveUnit(State.originalHexClicked, boardComponent.GetMouseHex());
-                            //    State.selectionState = State.SelectionState.NoSelection;
-                            //    State.originalHexClicked = null;
-                            //}
                         }
-                    }
 
-                    // handles the actions when you left click while selecting an option
-                    if ((leftHold.Evaluate() || enterClick.Evaluate()) && State.selectionState == State.SelectionState.SelectingMenuOptions)
-                    {
-                        if (menu.CurrentOptionIndex() != -1)
+                        // handles the actions when you left click while selecting an option
+                        if ((leftHold.Evaluate() || enterClick.Evaluate()) && State.selectionState == State.SelectionState.SelectingMenuOptions)
                         {
-                            string option = menu.Options()[menu.CurrentOptionIndex()];
-
-                            switch (option)
+                            if (menu.CurrentOptionIndex() != -1)
                             {
-                                case "Wait":
-                                    menu.Hide();
-                                    State.selectionState = State.SelectionState.NoSelection;
-                                    menu.SetSelectedOption(0);
-                                    break;
-                                case "Trade":
-                                    break;
-                                case "Heal":
-                                    break;
-                                case "Convoy":
-                                    break;
-                                case "Seize":
-                                    break;
-                                case "Negotiate":
-                                    break;
-                                case "Attack":
-                                    // todo: initiate battle
-                                    
-                                    // currently the fight mechanic only selects the first
-                                    // adjacent enemy. in the future, TODO: allow user to 
-                                    // select the enemy to fight.
-                                    
-                                    menu.Hide();
-                                    State.selectionState = State.SelectionState.NoSelection;
-                                    menu.SetSelectedOption(0);
+                                string option = menu.Options()[menu.CurrentOptionIndex()];
 
-                                    int selectedEnemyIndex = 0;
+                                switch (option)
+                                {
+                                    case "Wait":
+                                        menu.Hide();
+                                        State.selectionState = State.SelectionState.NoSelection;
+                                        menu.SetSelectedOption(0);
+                                        break;
+                                    case "Trade":
+                                        break;
+                                    case "Heal":
+                                        break;
+                                    case "Convoy":
+                                        break;
+                                    case "Seize":
+                                        break;
+                                    case "Negotiate":
+                                        break;
+                                    case "Attack":
+                                        // todo: initiate battle
 
-                                    StartFight(State.originalHexClicked.GetUnit(),
-                                        enemiesAdjacentTo(boardComponent, State.originalHexClicked.getCoordPosition())[selectedEnemyIndex]);
+                                        // currently the fight mechanic only selects the first
+                                        // adjacent enemy. in the future, TODO: allow user to 
+                                        // select the enemy to fight.
 
-                                    // todo: end battle
-                                    // EndCurrentFight();
-                                    break;
-                                default:
-                                    break;
+                                        menu.Hide();
+                                        State.selectionState = State.SelectionState.NoSelection;
+                                        menu.SetSelectedOption(0);
+
+                                        int selectedEnemyIndex = 0;
+
+                                        StartFight(State.originalHexClicked.GetUnit(),
+                                            enemiesAdjacentTo(boardComponent, State.originalHexClicked.getCoordPosition())[selectedEnemyIndex]);
+
+                                        // todo: end battle
+                                        // EndCurrentFight();
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
                         }
-                    }
 
-                    if (moving)
-                    {
-                        if (spaceHold.Evaluate())
+                        if (moving)
                         {
-                            //hold space to accelerate
-                            timePerMove = 120;
-                        }
-                        else
-                        {
-                            timePerMove = 360;
-                        }
-                        
-                        elapsedTimeForMove += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                        //animated movement
-                        UnitComponent unit = State.originalHexClicked.GetUnit();
-                        AnimatedSpriteComponent sprite = unit._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
-                        SpriteComponent originalHexSprite = State.originalHexClicked._parent.GetDrawable("SpriteComponent") as SpriteComponent;
-                        SpriteComponent finalHexSprite = pathQueue[0]._parent.GetDrawable("SpriteComponent") as SpriteComponent;
-
-                        float percentTraveled = elapsedTimeForMove / timePerMove;
-                        sprite.SetPosition(originalHexSprite.GetCenterPosition() + (-originalHexSprite.GetCenterPosition() + finalHexSprite.GetCenterPosition()) * percentTraveled);
-
-                        if (elapsedTimeForMove > timePerMove)
-                        {
-                            elapsedTimeForMove = elapsedTimeForMove - timePerMove;
-
-                            pathQueue[0].SetInQueue(false);
-                            MoveUnit(State.originalHexClicked, pathQueue[0]);
-                            State.originalHexClicked = pathQueue[0];
-
-                            pathQueue.Remove(pathQueue[0]);
-                            if (pathQueue.Count == 0)
+                            if (spaceHold.Evaluate())
                             {
-                                int skirmishMenuX = 300;
-                                int skirmishMenuY = 200;
+                                //hold space to accelerate
+                                timePerMove = 120;
+                            }
+                            else
+                            {
+                                timePerMove = 360;
+                            }
 
-                                State.originalHexClicked.GetUnit().SetSelected(false);
+                            elapsedTimeForMove += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                                moving = false;
+                            //animated movement
+                            UnitComponent unit = State.originalHexClicked.GetUnit();
+                            AnimatedSpriteComponent sprite = unit._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
+                            SpriteComponent originalHexSprite = State.originalHexClicked._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+                            SpriteComponent finalHexSprite = pathQueue[0]._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                                // show menu when the movement is complete
-                                List<string> options = new List<string>(new string[] { "Items", "Wait" });
-                                int skirmishMenuOptionHeight = 40;
-                                int skirmishMenuOptionWidth = 200;
-                                Color skirmishMenuColor = Color.DarkGray;
+                            float percentTraveled = elapsedTimeForMove / timePerMove;
+                            sprite.SetPosition(originalHexSprite.GetCenterPosition() + (-originalHexSprite.GetCenterPosition() + finalHexSprite.GetCenterPosition()) * percentTraveled);
 
-                                if (enemiesAdjacentTo(boardComponent, State.originalHexClicked.getCoordPosition()).Count > 0)
+                            if (elapsedTimeForMove > timePerMove)
+                            {
+                                elapsedTimeForMove = elapsedTimeForMove - timePerMove;
+
+                                pathQueue[0].SetInQueue(false);
+                                MoveUnit(State.originalHexClicked, pathQueue[0]);
+                                State.originalHexClicked = pathQueue[0];
+
+                                pathQueue.Remove(pathQueue[0]);
+                                if (pathQueue.Count == 0)
                                 {
-                                    options.Insert(0, "Attack"); //  have "attack" as an option if enemy nearby
+                                    int skirmishMenuX = 300;
+                                    int skirmishMenuY = 200;
+
+                                    State.originalHexClicked.GetUnit().SetSelected(false);
+
+                                    moving = false;
+
+                                    // show menu when the movement is complete
+                                    List<string> options = new List<string>(new string[] { "Items", "Wait" });
+                                    int skirmishMenuOptionHeight = 40;
+                                    int skirmishMenuOptionWidth = 200;
+                                    Color skirmishMenuColor = Color.DarkGray;
+
+                                    if (enemiesAdjacentTo(boardComponent, State.originalHexClicked.getCoordPosition()).Count > 0)
+                                    {
+                                        options.Insert(0, "Attack"); //  have "attack" as an option if enemy nearby
+                                    }
+
+                                    if (alliesAdjacentTo(boardComponent, State.originalHexClicked.getCoordPosition()).Count > 0)
+                                    {
+                                        options.Insert(0, "Heal"); //  have "attack" as an option if enemy nearby
+                                    }
+
+                                    // State.originalHexClicked = null;
+
+                                    // todo: pseudocode:
+                                    //if enemyUnitIsAdjacent, options.Add("Attack");
+                                    // if alliedUnitIsAdjacent && healStaffEquipped, options.Add(new string[] {"Heal", "Trade"});
+                                    // if convoyIsAdjacent, options.Add("Convoy");
+                                    // if neutralUnitIsAdjacent, options.Add("Negotiate");
+                                    // if lordSelected && standingOnObjective, options.Add("Seize");
+
+                                    menu = new Menu(options, skirmishMenuOptionWidth, skirmishMenuOptionHeight, skirmishMenuX, skirmishMenuY,
+                                        skirmishMenuColor, dot, font);
+
+                                    State.selectionState = State.SelectionState.SelectingMenuOptions;
                                 }
-
-                                if (alliesAdjacentTo(boardComponent, State.originalHexClicked.getCoordPosition()).Count > 0)
-                                {
-                                    options.Insert(0, "Heal"); //  have "attack" as an option if enemy nearby
-                                }
-
-                                // State.originalHexClicked = null;
-
-                                // todo: pseudocode:
-                                //if enemyUnitIsAdjacent, options.Add("Attack");
-                                // if alliedUnitIsAdjacent && healStaffEquipped, options.Add(new string[] {"Heal", "Trade"});
-                                // if convoyIsAdjacent, options.Add("Convoy");
-                                // if neutralUnitIsAdjacent, options.Add("Negotiate");
-                                // if lordSelected && standingOnObjective, options.Add("Seize");
-
-                                menu = new Menu(options, skirmishMenuOptionWidth, skirmishMenuOptionHeight, skirmishMenuX, skirmishMenuY,
-                                    skirmishMenuColor, dot, font);
-
-                                State.selectionState = State.SelectionState.SelectingMenuOptions;
                             }
                         }
-                    }
-                    if (enterClick.Evaluate())
-                    {
-                        if (pathQueue.Count != 0)
+                        if (enterClick.Evaluate())
                         {
-                            //UnitComponent unit = State.originalHexClicked.GetUnit();
-                            //AnimatedSpriteComponent sprite = unit._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
-                            //sprite._visible = false;
+                            if (pathQueue.Count != 0)
+                            {
+                                //UnitComponent unit = State.originalHexClicked.GetUnit();
+                                //AnimatedSpriteComponent sprite = unit._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
+                                //sprite._visible = false;
 
-                            moving = true;
+                                moving = true;
+                            }
+                            else if (State.selectionState != State.SelectionState.SelectingMenuOptions)
+                            {
+                                State.selectionState = State.SelectionState.NoSelection;
+
+                                if (State.originalHexClicked != null)
+                                {
+                                    State.originalHexClicked.GetUnit().SetSelected(false);
+                                    State.originalHexClicked = null;
+                                }
+                            }
                         }
-                        else if (State.selectionState != State.SelectionState.SelectingMenuOptions)
+
+                        else if (singleRightClick.Evaluate())
                         {
-                            State.selectionState = State.SelectionState.NoSelection;
+                            //boardComponent.ToggleFogofWar(false);
 
                             if (State.originalHexClicked != null)
                             {
-                                State.originalHexClicked.GetUnit().SetSelected(false);
-                                State.originalHexClicked = null;
+                                UnitData unitData = State.originalHexClicked.GetUnit().GetUnitData();
+                                unitData.SetSightRadius(10);
                             }
                         }
-                    }
 
-                    else if (singleRightClick.Evaluate())
-                    {
-                        //boardComponent.ToggleFogofWar(false);
-
-                        if (State.originalHexClicked != null)
+                        if (singleMiddleClick.Evaluate())
                         {
-                            UnitData unitData = State.originalHexClicked.GetUnit().GetUnitData();
-                            unitData.SetSightRadius(10);
+                            boardComponent.UpdateVisibilityAllies();
                         }
-                    }
 
-                    if (singleMiddleClick.Evaluate())
-                    {
-                        boardComponent.UpdateVisibilityAllies();
-                    }
+                        if (State.selectionState == State.SelectionState.SelectingMenuOptions)
+                        {
 
-                    if (State.selectionState == State.SelectionState.SelectingMenuOptions)
-                    {
-
-                        if (singleWClick.Evaluate())
-                        {
-                            menu.SetSelectedOption((menu.Options().Count + menu.CurrentOptionIndex() - 1) % menu.Options().Count);
-                        }
-                        else if (singleSClick.Evaluate())
-                        {
-                            menu.SetSelectedOption((menu.CurrentOptionIndex() + 1) % menu.Options().Count);
-                        }
-                        else
-                        {
-                            for (int i = 0; i < menu.Options().Count; i++)
+                            if (singleWClick.Evaluate())
                             {
-                                if (menu.Hitboxes()[i].isColliding(InputState.GetMouseScreenPosition()))
+                                menu.SetSelectedOption((menu.Options().Count + menu.CurrentOptionIndex() - 1) % menu.Options().Count);
+                            }
+                            else if (singleSClick.Evaluate())
+                            {
+                                menu.SetSelectedOption((menu.CurrentOptionIndex() + 1) % menu.Options().Count);
+                            }
+                            else
+                            {
+                                for (int i = 0; i < menu.Options().Count; i++)
                                 {
-                                    menu.SetSelectedOption(i);
-                                    break;
+                                    if (menu.Hitboxes()[i].isColliding(InputState.GetMouseScreenPosition()))
+                                    {
+                                        menu.SetSelectedOption(i);
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
+                    #endregion
 
                     break;
                 #endregion
@@ -1454,6 +1468,36 @@ namespace SeniorProjectGame
             }
         }
 
+        public void UpdateTurnState()
+        {
+            if (State.turnState == State.TurnState.EnemiesTurn)
+            {
+                foreach (Entity ally in boardComponent.alliedUnitList)
+                {
+                    UnitComponent unit = ally.GetComponent("UnitComponent") as UnitComponent;
+                    if (unit.GetMovesLeft() > 0)
+                    {
+                        State.turnState = State.TurnState.AlliesTurn;
+                        break;
+                    }
+                }
+            }
+
+            else if (State.turnState == State.TurnState.AlliesTurn)
+            {
+                int sumOfMoves = 0;
+                foreach (Entity ally in boardComponent.alliedUnitList)
+                {
+                    UnitComponent unit = ally.GetComponent("UnitComponent") as UnitComponent;
+                    sumOfMoves += unit.GetMovesLeft();
+                }
+                if (sumOfMoves <= 0)
+                {
+                    State.turnState = State.TurnState.EnemiesTurn;
+                }
+            }
+        }
+
         #endregion
 
         #region Draw
@@ -1462,8 +1506,7 @@ namespace SeniorProjectGame
         {
             GraphicsDevice.Clear(Color.Black);
 
-            EntityManager.Draw(spriteBatch, graphics);
-                      
+            EntityManager.Draw(spriteBatch, graphics);                      
 
             spriteBatch.Begin();
 
@@ -1471,12 +1514,10 @@ namespace SeniorProjectGame
             spriteBatch.DrawString(font, InputState.GetMouseScreenPosition().ToString(), new Vector2(0, 2 * font.LineSpacing), Color.White);
             if (boardComponent != null)
             {
-
             //    double a = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)));
             //    double b = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5)));
             //    double c = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5)));
             //    double input = Math.Round((-Math.Pow(c, 2) + Math.Pow(a, 2) + Math.Pow(b, 2)) / (2 * a * b), 5);
-
 
             //    spriteBatch.DrawString(font, boardComponent.GetMouseHex().getCoordPosition().ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
             //    spriteBatch.DrawString(font, boardComponent.GetTargetAngle(boardComponent.GetHex(5, 5), boardComponent.GetHex(6, 5), boardComponent.GetHex(9, 5)).ToString(), new Vector2(0, 4 * font.LineSpacing), Color.White);
@@ -1486,6 +1527,11 @@ namespace SeniorProjectGame
             //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 8 * font.LineSpacing), Color.White);
             //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 9 * font.LineSpacing), Color.White);
             //    spriteBatch.DrawString(font, input.ToString(), new Vector2(0, 10 * font.LineSpacing), Color.White);
+                if (State.originalHexClicked != null)
+                {
+                    int movesLeft = State.originalHexClicked.GetUnit().GetMovesLeft();
+                    spriteBatch.DrawString(font, movesLeft.ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
+                }
             }
             numberOfFrames++;
             string fps = string.Format("fps: {0}", framesPerSecond);

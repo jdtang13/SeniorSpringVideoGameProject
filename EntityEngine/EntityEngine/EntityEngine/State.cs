@@ -62,6 +62,7 @@ namespace EntityEngine
 
         public static ScreenState screenState;
         public static SelectionState selectionState;
+        public static TurnState turnState;
 
         public static HexComponent originalHexClicked; //  used for selecting units
 
