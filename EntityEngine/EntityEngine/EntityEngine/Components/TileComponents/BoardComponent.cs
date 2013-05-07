@@ -495,7 +495,7 @@ namespace EntityEngine.Components.TileComponents
                 for (int p = 0; p < alliedUnitList.Count; p++)
                 {
                     UnitComponent unitComp = alliedUnitList[p].GetComponent("UnitComponent") as UnitComponent;
-                    UnitData unitData = (alliedUnitList[p].GetComponent("UnitComponent") as UnitComponent).GetUnitData();
+                    UnitData unitData = unitComp.GetUnitData();
 
                     List<HexComponent> obstructionHexList = new List<HexComponent>();
 

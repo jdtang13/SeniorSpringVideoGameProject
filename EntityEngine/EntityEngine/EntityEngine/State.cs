@@ -83,6 +83,8 @@ namespace EntityEngine
 
         public static int lastTimeDialogueChecked; // TODO
 
+        public static int sumOfMoves = 0; //debugging
+
         //public static List<Unit> units;
     }
 

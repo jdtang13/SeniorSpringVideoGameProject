@@ -47,7 +47,7 @@ namespace SeniorProjectGame
             flailmanFramedTexture, halberdierFramedTexture, knightFramedTexture, mageAssassinFramedTexture, manAtArmsFramedTexture,
             pikemanFramedTexture, riflemanFramedTexture, spearmanFramedTexture, swordsmanFramedTexture, wizardFramedTexture, slimeFramedTexture;
 
-        SoundEffect selectSound;
+        SoundEffect selectSound, downSound;
 
         SpriteFont font;
 
@@ -91,10 +91,12 @@ namespace SeniorProjectGame
         bool yourTurn = true;
         float timePerMove;
 
+        List<HexComponent> oldVisible;
+        List<HexComponent> newVisible;
+
         //Player Vars
         Dictionary<String, Role> classes = new Dictionary<String, Role>();
         List<UnitData> partyUnitData = new List<UnitData>();
-
 
         //Input Vars
         InputAction singleLeftClick, singleRightClick, singleMiddleClick;
@@ -188,6 +190,7 @@ namespace SeniorProjectGame
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
             Globals.font = font;
 
+            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Enemies.txt");
             ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Player_Roles.txt");
             ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Party_Members.txt");
             ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\WorldMap.txt");
@@ -205,9 +208,6 @@ namespace SeniorProjectGame
             ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Pavilion_Enemies.txt");
 
             //Only run the conversions for developement purposes
-
-            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Enemies.txt");
-
             //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\WorldMap.txt");
 
             //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard.txt");
@@ -240,6 +240,7 @@ namespace SeniorProjectGame
             PopulateTerrainDictionary();
 
             selectSound = Content.Load<SoundEffect>("Audio\\Sounds\\Powerup27");
+            downSound = Content.Load<SoundEffect>("Audio\\Sounds\\down");
         }
 
         void PopulateTerrainDictionary()
@@ -982,7 +983,7 @@ namespace SeniorProjectGame
                 #region Skirmish
                 case State.ScreenState.SKIRMISH:
                     State.turnState = State.TurnState.AlliesTurn;
-                    
+
                     #region AlliesTurn
                     if (State.turnState == State.TurnState.AlliesTurn)
                     {
@@ -1208,6 +1209,12 @@ namespace SeniorProjectGame
                             }
                             else if (State.selectionState != State.SelectionState.SelectingMenuOptions)
                             {
+                                if (State.originalHexClicked.GetUnit().GetMovesLeft() <= 0)
+                                {
+                                    AnimatedSpriteComponent unitSprite = State.originalHexClicked.GetUnit()._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
+                                    unitSprite.SetColor(Color.SlateGray);
+                                }
+
                                 State.selectionState = State.SelectionState.NoSelection;
 
                                 if (State.originalHexClicked != null)
@@ -1215,6 +1222,10 @@ namespace SeniorProjectGame
                                     State.originalHexClicked.GetUnit().SetSelected(false);
                                     State.originalHexClicked = null;
                                 }
+                            }
+                            if (!moving)
+                            {
+                                UpdateTurnState();
                             }
                         }
 
@@ -1257,6 +1268,27 @@ namespace SeniorProjectGame
                                 }
                             }
                         }
+                    }
+                    #endregion
+
+                    #region EnemiesTurn
+                    if (State.turnState == State.TurnState.EnemiesTurn)
+                    {
+                        foreach (Entity enemy in boardComponent.nonAlliedUnitList)
+                        {
+                            List<HexComponent> visibleHexes = GetVisibleHexes(enemy);
+                            foreach (Entity ally in boardComponent.alliedUnitList)
+                            {
+                                UnitComponent unitComp = ally.GetComponent("UnitComponent") as UnitComponent;
+                                if (visibleHexes.Contains(unitComp.GetHex()))
+                                {
+                                    downSound.Play();
+                                    break;
+                                }                                
+                            }
+                        }
+                        ResetTurnsLeft();
+                        UpdateTurnState();
                     }
                     #endregion
 
@@ -1485,17 +1517,69 @@ namespace SeniorProjectGame
 
             else if (State.turnState == State.TurnState.AlliesTurn)
             {
-                int sumOfMoves = 0;
+                State.sumOfMoves = 0;
                 foreach (Entity ally in boardComponent.alliedUnitList)
                 {
                     UnitComponent unit = ally.GetComponent("UnitComponent") as UnitComponent;
-                    sumOfMoves += unit.GetMovesLeft();
+                    State.sumOfMoves += unit.GetMovesLeft();
                 }
-                if (sumOfMoves <= 0)
+                if (State.sumOfMoves <= 0)
                 {
                     State.turnState = State.TurnState.EnemiesTurn;
                 }
             }
+        }
+
+        public void ResetTurnsLeft()
+        {
+            foreach (Entity ally in boardComponent.alliedUnitList)
+            {
+                UnitComponent unitComp = ally.GetComponent("UnitComponent") as UnitComponent;
+                unitComp.SetMovesLeft(unitComp.GetUnitData().GetMovement());
+            }
+        }
+
+        public List<HexComponent> GetVisibleHexes(Entity myEnt)
+        {
+            List<HexComponent> visibleHexes = new List<HexComponent>();
+
+            UnitComponent unitComp = myEnt.GetComponent("UnitComponent") as UnitComponent;
+            UnitData unitData = unitComp.GetUnitData();
+
+            List<HexComponent> obstructionHexList = new List<HexComponent>();
+
+            for (int r = 0; r <= unitData.GetSightRadius(); r++)
+            {
+                List<HexComponent> currentRing = boardComponent.GetRing(unitComp.GetHex().getCoordPosition(), r);
+                for (int i = 0; i < currentRing.Count; i++) //i is hex index within currentRing
+                {
+                    HexComponent currentHex = currentRing[i];
+                    bool obstructed = false;
+
+                    if (obstructionHexList.Count > 0)
+                    {
+                        foreach (HexComponent obstruction in obstructionHexList)
+                        {
+                            if (Math.Abs(boardComponent.GetTargetAngle(unitComp.GetHex(), obstruction, currentHex)) < Math.Abs(boardComponent.GetObstructionAngle(unitComp.GetHex(), obstruction)))
+                            {
+                                obstructed = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (obstructed == false)
+                    {
+                        visibleHexes.Add(currentHex);
+                    }
+
+                    if (currentHex.GetLargestTerrainVisibilityBlock() != 0)
+                    {
+                        obstructionHexList.Add(currentHex);
+                    }
+                }
+            }
+
+            return visibleHexes;
         }
 
         #endregion
@@ -1506,7 +1590,7 @@ namespace SeniorProjectGame
         {
             GraphicsDevice.Clear(Color.Black);
 
-            EntityManager.Draw(spriteBatch, graphics);                      
+            EntityManager.Draw(spriteBatch, graphics);
 
             spriteBatch.Begin();
 
@@ -1514,24 +1598,25 @@ namespace SeniorProjectGame
             spriteBatch.DrawString(font, InputState.GetMouseScreenPosition().ToString(), new Vector2(0, 2 * font.LineSpacing), Color.White);
             if (boardComponent != null)
             {
-            //    double a = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)));
-            //    double b = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5)));
-            //    double c = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5)));
-            //    double input = Math.Round((-Math.Pow(c, 2) + Math.Pow(a, 2) + Math.Pow(b, 2)) / (2 * a * b), 5);
+                //    double a = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)));
+                //    double b = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5)));
+                //    double c = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5)));
+                //    double input = Math.Round((-Math.Pow(c, 2) + Math.Pow(a, 2) + Math.Pow(b, 2)) / (2 * a * b), 5);
 
-            //    spriteBatch.DrawString(font, boardComponent.GetMouseHex().getCoordPosition().ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
-            //    spriteBatch.DrawString(font, boardComponent.GetTargetAngle(boardComponent.GetHex(5, 5), boardComponent.GetHex(6, 5), boardComponent.GetHex(9, 5)).ToString(), new Vector2(0, 4 * font.LineSpacing), Color.White);
-            //    spriteBatch.DrawString(font, boardComponent.GetObstructionAngle(boardComponent.GetHex(5, 5), boardComponent.GetHex(6, 5)).ToString(), new Vector2(0, 5 * font.LineSpacing), Color.White);
-            //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(6, 5))).ToString(), new Vector2(0, 6 * font.LineSpacing), Color.White);
-            //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 7 * font.LineSpacing), Color.White);
-            //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 8 * font.LineSpacing), Color.White);
-            //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 9 * font.LineSpacing), Color.White);
-            //    spriteBatch.DrawString(font, input.ToString(), new Vector2(0, 10 * font.LineSpacing), Color.White);
+                //    spriteBatch.DrawString(font, boardComponent.GetMouseHex().getCoordPosition().ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
+                //    spriteBatch.DrawString(font, boardComponent.GetTargetAngle(boardComponent.GetHex(5, 5), boardComponent.GetHex(6, 5), boardComponent.GetHex(9, 5)).ToString(), new Vector2(0, 4 * font.LineSpacing), Color.White);
+                //    spriteBatch.DrawString(font, boardComponent.GetObstructionAngle(boardComponent.GetHex(5, 5), boardComponent.GetHex(6, 5)).ToString(), new Vector2(0, 5 * font.LineSpacing), Color.White);
+                //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(6, 5))).ToString(), new Vector2(0, 6 * font.LineSpacing), Color.White);
+                //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 7 * font.LineSpacing), Color.White);
+                //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 8 * font.LineSpacing), Color.White);
+                //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 9 * font.LineSpacing), Color.White);
+                //    spriteBatch.DrawString(font, input.ToString(), new Vector2(0, 10 * font.LineSpacing), Color.White);
                 if (State.originalHexClicked != null)
                 {
                     int movesLeft = State.originalHexClicked.GetUnit().GetMovesLeft();
                     spriteBatch.DrawString(font, movesLeft.ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
                 }
+                spriteBatch.DrawString(font, State.sumOfMoves.ToString(), new Vector2(0, 4 * font.LineSpacing), Color.White);
             }
             numberOfFrames++;
             string fps = string.Format("fps: {0}", framesPerSecond);
