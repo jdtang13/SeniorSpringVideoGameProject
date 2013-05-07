@@ -90,7 +90,12 @@ namespace EntityEngine.Components.Sprites
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, position - offset,
+            Draw(spriteBatch, position);
+        }
+
+        public void Draw(SpriteBatch spriteBatch, Vector2 pos)
+        {
+            spriteBatch.Draw(texture, pos - offset,
                 new Rectangle(frameWidth * (int)currentFrame.X, frameHeight * (int)currentFrame.Y, frameWidth, frameHeight), color);
         }
     }

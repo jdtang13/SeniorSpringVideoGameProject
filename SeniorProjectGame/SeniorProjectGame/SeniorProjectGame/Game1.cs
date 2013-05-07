@@ -1317,7 +1317,11 @@ namespace SeniorProjectGame
             State.currentAttacker = attacker;
             State.currentDefender = defender;
 
-            battleMenu.LoadOptions(new List<string>(new string[] { "Attack", "Cast", "Use Item", "Guard", "Run" }));
+            List<string> options = new List<string>(new string[] { "Attack", "Cast", "Use Item", "Guard", "Run" });
+            battleMenu = new NestedMenu(options, 100, 50, 
+                                    0, 0,
+                                    Color.Gray, dot, font);
+
             battleMenu.AddNestedOptions("Attack", State.currentAttacker.GetUnitData().Attacks());
             battleMenu.AddNestedOptions("Cast", State.currentAttacker.GetUnitData().Spells());
             //battleMenu.AddNestedOptions("Use Item", State.currentAttacker.GetUnitData().Items());
@@ -1330,6 +1334,9 @@ namespace SeniorProjectGame
         {
             State.screenState = State.ScreenState.SKIRMISH;
             State.battleState = State.BattleState.Attack;
+
+            State.attackerBattleStatus = State.BattleStatus.NoStatus;
+            State.defenderBattleStatus = State.BattleStatus.NoStatus;
 
             State.currentAttacker = null;
             State.currentDefender = null;
@@ -1522,6 +1529,10 @@ namespace SeniorProjectGame
             if (State.screenState == State.ScreenState.BATTLING)
             {
                 //  draw battle scene
+
+                (State.currentAttacker._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent).Draw(spriteBatch, new Vector2(200,50));
+
+                (State.currentDefender._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent).Draw(spriteBatch, new Vector2(450,50));
 
                 battleMenu.Draw(spriteBatch);
             }

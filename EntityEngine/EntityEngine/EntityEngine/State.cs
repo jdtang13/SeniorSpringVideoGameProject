@@ -34,6 +34,11 @@ namespace EntityEngine
 
         }
 
+        public enum BattleStatus
+        {
+            NoStatus, Guarding
+        }
+
         public static void Initialize()
         {
             State.screenState = State.ScreenState.WORLD_MAP;
@@ -57,7 +62,13 @@ namespace EntityEngine
 
             State.currentAttacker = null;
             State.currentDefender = null;
+
+            State.attackerBattleStatus = BattleStatus.NoStatus;
+            State.defenderBattleStatus = BattleStatus.NoStatus;
         }
+
+        public static BattleStatus attackerBattleStatus; //  can be states like "guarding", "healing", "cursed", etc
+        public static BattleStatus defenderBattleStatus;
 
         public static int menuPosition = 0;
 

@@ -19,11 +19,30 @@ namespace SeniorProjectGame
         Dictionary<string, List<string>> optionMenuMapper = new Dictionary<string, List<string>>();
 
         List<int> currentOptionIndices = new List<int>(new int[] { -1, -1 });
-        string registeredOption = "";
+        int registeredOptionIndex = 0;
 
         public NestedMenu(bool isVisible)
         {
             this.isVisible = isVisible;
+        }
+
+        public NestedMenu(List<string> options, int width, int height, int x, int y, Color color, Texture2D texture, SpriteFont font)
+        {
+            LoadOptions(options);
+            menuOptionWidth = width;
+            menuOptionHeight = height;
+            menuOptionColor = color;
+
+            menuOptionTexture = texture;
+
+            this.x = x;
+            this.y = y;
+
+            this.font = font;
+
+            currentOptionIndex = 0;
+
+            isVisible = true;
         }
 
         //  adds a new options menu as suboptions of an existing options.
@@ -37,10 +56,10 @@ namespace SeniorProjectGame
         //  when the user clicks "enter", remember which option they entered in through
         public void RegisterOption()
         {
-            registeredOption = this.CurrentOption();
+            registeredOptionIndex = currentOptionIndices[currentLayer];
         }
 
-        public string RegisteredOption() { return registeredOption; }
+        public string RegisteredOption() { return options[registeredOptionIndex]; }
 
         public override void SetSelectedOption(int index)
         {
@@ -69,7 +88,7 @@ namespace SeniorProjectGame
             }
             else
             {
-                SetSelectedOption((optionMenuMapper[registeredOption].Count + CurrentOptionIndex() - 1) % optionMenuMapper[registeredOption].Count);
+                SetSelectedOption((optionMenuMapper[options[registeredOptionIndex]].Count + CurrentOptionIndex() - 1) % optionMenuMapper[RegisteredOption()].Count);
             }
         }
 
@@ -81,7 +100,7 @@ namespace SeniorProjectGame
             }
             else
             {
-                SetSelectedOption((CurrentOptionIndex() + 1) % optionMenuMapper[registeredOption].Count);
+                SetSelectedOption((CurrentOptionIndex() + 1) % optionMenuMapper[RegisteredOption()].Count);
             }
         }
 
@@ -107,6 +126,21 @@ namespace SeniorProjectGame
         }
 
         public override void Draw(SpriteBatch spriteBatch) {
+
+            if (options != null && isVisible)
+            {
+                for (int i = 0; i < options.Count; i++)
+                {
+                    Color tmp = menuOptionColor;
+                    if (i == currentOptionIndex)
+                    {
+                        tmp = Color.Black;
+                    }
+
+                    spriteBatch.Draw(menuOptionTexture, new Rectangle(x, y + i * menuOptionHeight, menuOptionWidth, menuOptionHeight), tmp);
+                    spriteBatch.DrawString(font, options[i], new Vector2(x + .05f * menuOptionWidth, y + i * menuOptionHeight), Color.White);
+                }
+            }
 
         }
     }

@@ -28,11 +28,11 @@ namespace SeniorProjectGame
         protected int x;
         protected int y;
 
-        int menuOptionWidth;
-        int menuOptionHeight;
+        protected int menuOptionWidth;
+        protected int menuOptionHeight;
 
-        Color menuOptionColor;
-        Texture2D menuOptionTexture;
+        protected Color menuOptionColor;
+        protected Texture2D menuOptionTexture;
 
         public Menu() { }
 
