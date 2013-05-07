@@ -107,7 +107,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Globals.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="NestedMenu.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

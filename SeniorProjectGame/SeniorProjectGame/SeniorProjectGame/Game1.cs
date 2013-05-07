@@ -27,8 +27,6 @@ namespace SeniorProjectGame
 
         //Graphics and Content Vars
         GraphicsDeviceManager graphics;
-        int screenWidth = 1280;
-        int screenHeight = 680;
         SpriteBatch spriteBatch;
 
         //  the main game menu
@@ -127,9 +125,12 @@ namespace SeniorProjectGame
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
+            State.screenWidth = 1280;
+            State.screenHeight = 680;
+
             //1280x720
-            graphics.PreferredBackBufferHeight = screenHeight;
-            graphics.PreferredBackBufferWidth = screenWidth;
+            graphics.PreferredBackBufferHeight = State.screenHeight;
+            graphics.PreferredBackBufferWidth = State.screenWidth;
         }
 
         protected override void Initialize()
@@ -189,7 +190,6 @@ namespace SeniorProjectGame
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
-            Globals.font = font;
 
             //Only run the conversions for developement purposes
 
@@ -925,7 +925,7 @@ namespace SeniorProjectGame
 
                     State.dialogueWordPosition = 1;
 
-                    if (gameTime.TotalGameTime.TotalMilliseconds - State.lastTimeDialogueChecked > Globals.dialogueDisplayRate)
+                    if (gameTime.TotalGameTime.TotalMilliseconds - State.lastTimeDialogueChecked > 30)
                     {
                         string line = State.currentDialogueMessage[State.dialogueLinePosition];
                         string[] words = line.Split(' ');
@@ -1266,10 +1266,14 @@ namespace SeniorProjectGame
                         {
                             battleMenu.Enter();
                         }
+                        else if (singleAClick.Evaluate())
+                        {
+                            battleMenu.Back();
+                        }
 
                         if (battleMenu.RegisteredOption() == "Attack")
                         {
-                            if (battleMenu.CurrentOption() == "Strike")
+                            if (battleMenu.CurrentOption() == "Slash")
                             {
                                 if (enterClick.Evaluate())
                                 {
@@ -1318,13 +1322,13 @@ namespace SeniorProjectGame
             State.currentDefender = defender;
 
             List<string> options = new List<string>(new string[] { "Attack", "Cast", "Use Item", "Guard", "Run" });
-            battleMenu = new NestedMenu(options, 100, 50, 
-                                    0, 0,
+            battleMenu = new NestedMenu(options, 200, 50, 
+                                    0, 400,
                                     Color.Gray, dot, font);
 
             battleMenu.AddNestedOptions("Attack", State.currentAttacker.GetUnitData().Attacks());
             battleMenu.AddNestedOptions("Cast", State.currentAttacker.GetUnitData().Spells());
-            //battleMenu.AddNestedOptions("Use Item", State.currentAttacker.GetUnitData().Items());
+            battleMenu.AddNestedOptions("Use Item", State.currentAttacker.GetUnitData().Items());
 
             battleMenu.Show();
         }
@@ -1531,7 +1535,6 @@ namespace SeniorProjectGame
                 //  draw battle scene
 
                 (State.currentAttacker._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent).Draw(spriteBatch, new Vector2(200,50));
-
                 (State.currentDefender._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent).Draw(spriteBatch, new Vector2(450,50));
 
                 battleMenu.Draw(spriteBatch);

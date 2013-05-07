@@ -45,6 +45,9 @@ namespace EntityEngine
             State.selectionState = State.SelectionState.NoSelection;
             State.battleState = State.BattleState.Attack;
 
+            State.screenWidth = 0;
+            State.screenHeight = 0;
+
             State.dialoguePosition = 0;//Which textbox you're in
             State.dialogueChoicePosition = 0;
             State.displayedDialogueMessage = "";
@@ -66,6 +69,9 @@ namespace EntityEngine
             State.attackerBattleStatus = BattleStatus.NoStatus;
             State.defenderBattleStatus = BattleStatus.NoStatus;
         }
+
+        public static int screenWidth = 0;
+        public static int screenHeight = 0;
 
         public static BattleStatus attackerBattleStatus; //  can be states like "guarding", "healing", "cursed", etc
         public static BattleStatus defenderBattleStatus;

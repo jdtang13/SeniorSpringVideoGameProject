@@ -30,13 +30,13 @@ namespace EntityEngine.Stat_Attribute_Classes
             return role;
         }
 
-        List<string> spells = new List<string>();
-        List<string> attacks = new List<string>();
-        List<Item> items = new List<Item>();
+        List<string> spells = new List<string>(new string[] { "Elfire", "Chronosphere", "Arcthunder" });
+        List<string> attacks = new List<string>(new string[] { "Omnislash", "Blink Strike", "Blade Fury" });
+        List<string> items = new List<string>(new string[] { "Potion", "Vulnerary", "Clarity" });
 
         public List<string> Spells() { return spells; }
         public List<string> Attacks() { return attacks; }
-        public List<Item> Items() { return items; }
+        public List<string> Items() { return items; }
 
         int level;
         public int GetCurrentLevel()

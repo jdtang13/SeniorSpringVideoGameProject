@@ -19,7 +19,7 @@ namespace SeniorProjectGame
         Dictionary<string, List<string>> optionMenuMapper = new Dictionary<string, List<string>>();
 
         List<int> currentOptionIndices = new List<int>(new int[] { 0, 0 });
-        int registeredOptionIndex = 0;
+        int registeredOptionIndex = -1;
 
         public NestedMenu(bool isVisible)
         {
@@ -60,7 +60,12 @@ namespace SeniorProjectGame
             registeredOptionIndex = currentOptionIndices[currentLayer];
         }
 
-        public string RegisteredOption() { return options[registeredOptionIndex]; }
+        public string RegisteredOption() {
+
+            if (registeredOptionIndex == -1) return "";
+
+            return options[registeredOptionIndex];
+        }
 
         public override void SetSelectedOption(int index)
         {
@@ -87,7 +92,7 @@ namespace SeniorProjectGame
             {
                 SetSelectedOption((options.Count + CurrentOptionIndex() - 1) % options.Count);
             }
-            else
+            else if (optionMenuMapper.ContainsKey(options[registeredOptionIndex]))
             {
                 SetSelectedOption((optionMenuMapper[options[registeredOptionIndex]].Count + CurrentOptionIndex() - 1) % optionMenuMapper[RegisteredOption()].Count);
             }
@@ -99,7 +104,7 @@ namespace SeniorProjectGame
             {
                 SetSelectedOption((CurrentOptionIndex() + 1) % options.Count);
             }
-            else
+            else if (optionMenuMapper.ContainsKey(options[registeredOptionIndex]))
             {
                 SetSelectedOption((CurrentOptionIndex() + 1) % optionMenuMapper[RegisteredOption()].Count);
             }
@@ -118,6 +123,13 @@ namespace SeniorProjectGame
             currentLayer++;
         }
 
+        public void Back()
+        {
+            currentLayer = 0;
+            currentOptionIndices[1] = 0;
+            registeredOptionIndex = -1;
+        }
+
         public void Leave()
         {
             if (currentLayer != 0)
@@ -133,13 +145,28 @@ namespace SeniorProjectGame
                 for (int i = 0; i < options.Count; i++)
                 {
                     Color tmp = menuOptionColor;
-                    if (i == currentOptionIndices[currentLayer])
+                    if (i == currentOptionIndices[0])
                     {
                         tmp = Color.Black;
                     }
 
                     spriteBatch.Draw(menuOptionTexture, new Rectangle(x, y + i * menuOptionHeight, menuOptionWidth, menuOptionHeight), tmp);
                     spriteBatch.DrawString(font, options[i], new Vector2(x + .05f * menuOptionWidth, y + i * menuOptionHeight), Color.White);
+                }
+
+                if (registeredOptionIndex != -1 && (optionMenuMapper.ContainsKey(options[registeredOptionIndex])))
+                {
+                    for (int i = 0; i < optionMenuMapper[options[registeredOptionIndex]].Count; i++)
+                    {
+                        Color tmp = menuOptionColor;
+                        if (i == currentOptionIndices[currentLayer])
+                        {
+                            tmp = Color.Black;
+                        }
+
+                        spriteBatch.Draw(menuOptionTexture, new Rectangle(x + menuOptionWidth, y + i * menuOptionHeight + registeredOptionIndex*menuOptionHeight, menuOptionWidth, menuOptionHeight), tmp);
+                        spriteBatch.DrawString(font, optionMenuMapper[options[registeredOptionIndex]][i], new Vector2(x + .05f * menuOptionWidth + menuOptionWidth, y + i * menuOptionHeight + registeredOptionIndex*menuOptionHeight), Color.White);
+                    }
                 }
             }
 
