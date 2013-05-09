@@ -830,7 +830,8 @@ namespace SeniorProjectGame
             {
                 this.Exit();
             }
-            if (State.selectionState != State.SelectionState.SelectingMenuOptions)
+            if (State.selectionState == State.SelectionState.NoSelection 
+                && (State.screenState == State.ScreenState.SKIRMISH || State.screenState == State.ScreenState.WORLD_MAP))
             {
                 if (wClick.Evaluate())
                 {
@@ -1250,17 +1251,29 @@ namespace SeniorProjectGame
                     //  the first layer is exactly the same as a normal menu, but the second layers
                     //  are actually menus associated with strings/index numbers for other options. in other
                     //  words it's like menus in menus.
+                    
+                    UnitData attacker = State.currentAttacker.GetUnitData();
+                    UnitData defender = State.currentDefender.GetUnitData();
+
+                    //  switch the attacker and defender if a counterattack is being launched
+                    if (State.battleState == State.BattleState.CounterAttack)
+                    {
+                        UnitData tmp = attacker;
+                        attacker = defender;
+                        defender = tmp;
+                    }
 
                     //  player battle turn
-                    if (State.currentAttacker.GetUnitData().GetAlignment() == Alignment.PLAYER)
+                    if (attacker.GetAlignment() == Alignment.PLAYER)
                     {
+
                         if (singleWClick.Evaluate())
                         {
                             battleMenu.ScrollUp();
                         }
                         else if (singleSClick.Evaluate())
                         {
-                            battleMenu.ScrollDown();    
+                            battleMenu.ScrollDown();
                         }
                         else if (enterClick.Evaluate() && battleMenu.Layer() == 0)
                         {
@@ -1278,6 +1291,7 @@ namespace SeniorProjectGame
                                 if (enterClick.Evaluate())
                                 {
                                     // Todo: physical strike
+                                    defender.RemoveHealth(attacker.PhysicalDamageAgainst(defender));
                                     EndBattleTurn();
                                 }
                             }
@@ -1294,7 +1308,11 @@ namespace SeniorProjectGame
                     }
                     else
                     {
-                        //  todo: enemy battle turn
+                        //  todo: enemy battle turn..deals 10 damage
+
+                        defender.RemoveHealth(10);
+                        EndBattleTurn();
+
                     }
                     break;
                 case State.ScreenState.BATTLE_RESOLUTION:

@@ -31,7 +31,7 @@ namespace EntityEngine.Stat_Attribute_Classes
         }
 
         List<string> spells = new List<string>(new string[] { "Elfire", "Chronosphere", "Arcthunder" });
-        List<string> attacks = new List<string>(new string[] { "Omnislash", "Blink Strike", "Blade Fury" });
+        List<string> attacks = new List<string>(new string[] { "Slash", "Blink Strike", "Blade Fury" });
         List<string> items = new List<string>(new string[] { "Potion", "Vulnerary", "Clarity" });
 
         public List<string> Spells() { return spells; }
@@ -64,10 +64,20 @@ namespace EntityEngine.Stat_Attribute_Classes
         {
             return currentHealth;
         }
-        int totalHealth;
-        public int GetTotalHealth()
+        int maxHealth;
+        public int GetMaxHealth()
         {
-            return totalHealth;
+            return maxHealth;
+        }
+        public void AddToHealth(int diff) //  adds a value to the health safely, without exceeding bounds
+        {
+            currentHealth += diff;
+            if (currentHealth > maxHealth) currentHealth = maxHealth;
+            else if (currentHealth < 0) currentHealth = 0;
+        }
+        public void RemoveHealth(int diff)
+        {
+            AddToHealth(-diff);
         }
 
         int currentMana = 10;
@@ -75,10 +85,10 @@ namespace EntityEngine.Stat_Attribute_Classes
         {
             return currentMana;
         }
-        int totalMana;
-        public int GetTotalMana()
+        int maxMana;
+        public int GetMaxMana()
         {
-            return totalMana;
+            return maxMana;
         }
         
         int experienceBounty; // exp dropped when this unit dies //Maybe like 1/4 of total exp?
@@ -103,6 +113,36 @@ namespace EntityEngine.Stat_Attribute_Classes
         public int GetAttackRadius()
         {
             return attackRadius;
+        }
+
+        Weapon equippedWeapon;
+        public int PhysicalDamageAgainst(UnitData enemy)
+        {
+            int damage = 0;
+            int weaponBonus = 0;
+            if (equippedWeapon != null)
+            {
+                weaponBonus = equippedWeapon.Damage();
+            }
+
+            damage += weaponBonus + attributes["strength"] - enemy.attributes["defense"];
+
+            return damage;
+        }
+
+        public int MagicalDamageAgainst(UnitData enemy)
+        {
+            int damage = 0;
+
+            int weaponBonus = 0;
+            if (equippedWeapon != null)
+            {
+                weaponBonus = equippedWeapon.Damage();
+            }
+
+            damage += weaponBonus + attributes["magic"] - enemy.attributes["resistance"];
+
+            return damage;
         }
 
         public UnitData(string name,     Role role,       Alignment ali,   int level, 
@@ -149,17 +189,20 @@ namespace EntityEngine.Stat_Attribute_Classes
             growths["resistance"] = resGrowth + role.Growths()["resistance"];
             growths["speed"] = spdGrowth + role.Growths()["speed"];
 
-            CalculateValues();
+            Refresh();
         }
 
-        public void CalculateValues()
+        public void Refresh()
         {
             movement += role.movement;
             sightRadius += role.sightRadius;
             attackRadius += role.attackRadius;
 
-            totalHealth = attributes["strength"] * 2; currentHealth = totalHealth;
-            totalMana = attributes["magic"] * 2; currentMana = totalMana;
+            maxHealth = attributes["strength"] * 2; currentHealth = maxHealth;
+            maxMana = attributes["magic"] * 2; currentMana = maxMana;
+
+            // TODO: for each item in this unit's inventory, if have the weapon
+            //  in the highest row be auto-equipped as their current weapon.
         }
 
 
