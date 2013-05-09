@@ -3,20 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace EntityEngine
+namespace EntityEngine.Stat_Attribute_Classes
 {
-    public class Role  //attributes growths and caps for the roll of characters
+    //attributes growths and caps for the roll of characters
+    public class Role : StatisticalEntity
     {
-        public Dictionary<string, int> attributes = new Dictionary<string, int>();
-        public Dictionary<string, float> growths = new Dictionary<string, float>();
-        public Dictionary<string, int> caps = new Dictionary<string, int>();
-
         public string weapon;
-
+        
         //TODO: Calculate these if they need to be calc'd
-        //Aren't these unitdata specific and not class specific?
-        //public int health;
-        //public int mana;
         public int movement;
 
         public int sightRadius;

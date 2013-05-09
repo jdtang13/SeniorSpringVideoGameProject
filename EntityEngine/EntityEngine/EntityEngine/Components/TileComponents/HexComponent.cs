@@ -87,19 +87,19 @@ namespace EntityEngine.Components.TileComponents
 
                 if (myVis == Visibility.Visible)
                 {
-                    sprite.setColor(Color.White);
+                    sprite.SetColor(Color.White);
                     sprite._visible = true;
                 }
 
                 else if (myVis == Visibility.Explored)
                 {
-                    sprite.setColor(Color.SlateGray);
+                    sprite.SetColor(Color.SlateGray);
                     sprite._visible = true;
                 }
 
                 else if (myVis == Visibility.Unexplored)
                 {
-                    sprite.setColor(Color.White);
+                    sprite.SetColor(Color.White);
                     sprite._visible = false;
                 }
             }
@@ -134,7 +134,6 @@ namespace EntityEngine.Components.TileComponents
             {
                 terrain.SetInQueue(myTruth);
             }
-
         }
 
         List<TerrainComponent> terrainList = new List<TerrainComponent>();

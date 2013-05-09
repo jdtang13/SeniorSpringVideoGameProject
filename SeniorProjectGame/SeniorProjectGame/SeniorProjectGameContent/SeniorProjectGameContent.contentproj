@@ -266,13 +266,13 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Graphics\TileTextures\Bases\offical dirt.png">
-      <Name>offical dirt</Name>
+    <Compile Include="Graphics\TileTextures\Bases\official dirt.png">
+      <Name>official dirt</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Graphics\TileTextures\Bases\offical sand hex.png">
-      <Name>offical sand hex</Name>
+    <Compile Include="Graphics\TileTextures\Bases\official sand hex.png">
+      <Name>official sand hex</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -313,6 +313,20 @@
       <Name>wooden Walls</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Graphics\TileTextures\Bases\bush.png">
+      <Name>bush</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Audio\Sounds\down.wav">
+      <Name>down</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

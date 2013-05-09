@@ -23,6 +23,11 @@ namespace EntityEngine
             SelectingUnit, SelectingMenuOptions, NoSelection
         }
 
+        public enum TurnState
+        {
+            AlliesTurn, EnemiesTurn
+        }
+
         //  use this for selecting battles and stuff
         public enum MenuState
         {
@@ -48,16 +53,27 @@ namespace EntityEngine
             State.currentDialogueMessage = new List<string>();
 
             State.originalHexClicked = null;
+
+            State.currentAttacker = null;
+            State.currentDefender = null;
         }
 
         public static int menuPosition = 0;
 
         public static ScreenState screenState;
         public static SelectionState selectionState;
+        public static TurnState turnState;
 
         public static HexComponent originalHexClicked; //  used for selecting units
 
+<<<<<<< HEAD
         
+=======
+        public static UnitComponent currentAttacker;
+        public static UnitComponent currentDefender;
+
+        //public Node currentNode;
+>>>>>>> origin/lionel
         public static int dialoguePosition = 0;
         public static int dialogueChoicePosition = 0;
         public static string displayedDialogueMessage = "";
@@ -70,6 +86,8 @@ namespace EntityEngine
         public static List<string> currentDialogueMessage = new List<string>();
 
         public static int lastTimeDialogueChecked; // TODO
+
+        public static int sumOfMoves = 0; //debugging
 
         //public static List<Unit> units;
     }

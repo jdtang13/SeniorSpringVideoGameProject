@@ -15,13 +15,13 @@ namespace EntityEngine.Components.Sprites
 
         public Vector2 centerScreenPosition;
 
-        public Vector2 getCenterPosition()
+        public Vector2 GetCenterPosition()
         {
             return centerScreenPosition;
         }
 
         float rotation = 0f;
-        public void setRotation(float myRot)
+        public void SetRotation(float myRot)
         {
             rotation = myRot;
         }
@@ -29,7 +29,7 @@ namespace EntityEngine.Components.Sprites
         public int spriteWidth, spriteHeight;
 
         Color color;
-        public void setColor(Color myColor)
+        public void SetColor(Color myColor)
         {
             color = myColor;
         }
