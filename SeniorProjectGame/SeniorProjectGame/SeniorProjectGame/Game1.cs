@@ -1209,11 +1209,7 @@ namespace SeniorProjectGame
                             }
                             else if (State.selectionState != State.SelectionState.SelectingMenuOptions)
                             {
-                                if (State.originalHexClicked.GetUnit().GetMovesLeft() <= 0)
-                                {
-                                    AnimatedSpriteComponent unitSprite = State.originalHexClicked.GetUnit()._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
-                                    unitSprite.SetColor(Color.SlateGray);
-                                }
+                                AvailableToMoveCheck();
 
                                 State.selectionState = State.SelectionState.NoSelection;
 
@@ -1226,6 +1222,7 @@ namespace SeniorProjectGame
                             if (!moving)
                             {
                                 UpdateTurnState();
+                                AvailableToMoveCheck();
                             }
                         }
 
@@ -1289,6 +1286,7 @@ namespace SeniorProjectGame
                         }
                         ResetTurnsLeft();
                         UpdateTurnState();
+                        AvailableToMoveCheck();
                     }
                     #endregion
 
@@ -1346,6 +1344,42 @@ namespace SeniorProjectGame
                 #endregion
             }
             base.Update(gameTime);
+        }
+
+        public void UpdateEnemiesSeen()
+        {
+            foreach (Entity enemy in boardComponent.nonAlliedUnitList)
+            {
+                UnitComponent unitComp = enemy.GetComponent("UnitComponent") as UnitComponent;
+                AnimatedSpriteComponent unitSprite = enemy.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
+                if (unitComp.GetHex().GetVisibility() != Visibility.Visible)
+                {
+                    unitSprite._visible = false;
+                }
+                else
+                {
+                    unitSprite._visible = true;
+                }
+            }
+        }
+
+        public void AvailableToMoveCheck() //if unit has no moves left he/she is turned gray, otherwise he/she is white
+        {
+            foreach (Entity ally in boardComponent.alliedUnitList)
+            {
+                UnitComponent unitComp = ally.GetComponent("UnitComponent") as UnitComponent;
+                AnimatedSpriteComponent unitSprite = ally.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
+                if (unitComp.GetMovesLeft() <= 0)
+                {                    
+                    unitSprite.SetColor(Color.SlateGray);
+                    unitComp.SetAvailableToMove(false);
+                }
+                else
+                {
+                    unitSprite.SetColor(Color.White);
+                    unitComp.SetAvailableToMove(true);
+                }
+            }
         }
 
         //  have two units fight and enter a battle menu
@@ -1478,6 +1512,7 @@ namespace SeniorProjectGame
             final.SetUnit(unit);
 
             boardComponent.UpdateVisibilityAllies();
+            UpdateEnemiesSeen();
 
             original.RemoveUnit();
         }

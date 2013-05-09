@@ -533,6 +533,29 @@ namespace EntityEngine.Components.TileComponents
                     }
                 }
 
+                //foreach (HexComponent hex in newVisible)
+                //{
+                //    if (hex.n.GetVisibility() != Visibility.Visible)
+                //    {
+                //        if (hex.nw.GetVisibility() != Visibility.Visible)
+                //        {
+                //            if (hex.ne.GetVisibility() != Visibility.Visible)
+                //            {
+                //                if (hex.s.GetVisibility() != Visibility.Visible)
+                //                {
+                //                    if (hex.sw.GetVisibility() != Visibility.Visible)
+                //                    {
+                //                        if (hex.se.GetVisibility() != Visibility.Visible)
+                //                        {
+                //                            newVisible.Remove(hex);
+                //                        }
+                //                    }
+                //                }
+                //            }
+                //        }
+                //    }
+                //}
+                //todo:replace with remove all
                 for (int i = 0; i < newVisible.Count; i++)
                 {
                     newVisible[i].SetVisibility(Visibility.Visible);

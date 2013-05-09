@@ -77,7 +77,10 @@ namespace EntityEngine.Components.TileComponents
 
                 if (HasUnit())
                 {
-                    unit.SetVisbility(visibility);
+                    if (unit.GetAvailableToMove())
+                    {
+                        unit.SetVisbility(visibility);
+                    }
                 }
 
                 for (int p = 0; p < terrainList.Count; p++)
