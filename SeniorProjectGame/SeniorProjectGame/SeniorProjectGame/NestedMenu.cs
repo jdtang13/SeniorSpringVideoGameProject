@@ -83,16 +83,22 @@ namespace SeniorProjectGame
 
         public override string CurrentOption()
         {
-            return options[currentOptionIndices[currentLayer]];
+            if (currentLayer == 0)
+            {
+                return options[currentOptionIndices[currentLayer]];
+            }
+            return optionMenuMapper[options[registeredOptionIndex]][currentOptionIndices[currentLayer]];
         }
 
         public void ScrollUp()
         {
+            //  read from normal options on the 0 layer
             if (currentLayer == 0)
             {
                 SetSelectedOption((options.Count + CurrentOptionIndex() - 1) % options.Count);
             }
-            else if (optionMenuMapper.ContainsKey(options[registeredOptionIndex]))
+            //  read from nested options on the >0 layers
+            else if (optionMenuMapper.ContainsKey(options[registeredOptionIndex])) //  check to see if it has any nested options
             {
                 SetSelectedOption((optionMenuMapper[options[registeredOptionIndex]].Count + CurrentOptionIndex() - 1) % optionMenuMapper[RegisteredOption()].Count);
             }

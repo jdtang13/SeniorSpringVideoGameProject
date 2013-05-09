@@ -1275,42 +1275,53 @@ namespace SeniorProjectGame
                         {
                             battleMenu.ScrollDown();
                         }
-                        else if (enterClick.Evaluate() && battleMenu.Layer() == 0)
+                        else if (enterClick.Evaluate())
                         {
-                            battleMenu.Enter();
+                            if (battleMenu.Layer() == 0)
+                            {
+                                battleMenu.Enter();
+                            }
+                            else
+                            {
+                                if (battleMenu.RegisteredOption() == "Attack")
+                                {
+                                    if (battleMenu.CurrentOption() == "Slash")
+                                    {
+                                        // Todo: physical strike
+                                        defender.RemoveHealth(attacker.PhysicalDamageAgainst(defender));
+                                        EndBattleTurn();
+                                    }
+                                }
+                                else if (battleMenu.RegisteredOption() == "Use Item")
+                                {
+                                }
+                                else if (battleMenu.RegisteredOption() == "Cast")
+                                {
+                                    if (battleMenu.CurrentOption() == "Elfire")
+                                    {
+                                        defender.RemoveHealth(attacker.MagicalDamageAgainst(defender));
+                                        EndBattleTurn();
+                                    }
+                                }
+                                else if (battleMenu.RegisteredOption() == "Guard")
+                                {
+                                    //  todo: each unit has a damage resistance variable
+                                    //  similar to "armor" that's 100% by default. guarding
+                                    //  changes that variable to 80% for one turn.
+                                }
+                            }
                         }
                         else if (singleAClick.Evaluate())
                         {
                             battleMenu.Back();
-                        }
-
-                        if (battleMenu.RegisteredOption() == "Attack")
-                        {
-                            if (battleMenu.CurrentOption() == "Slash")
-                            {
-                                if (enterClick.Evaluate())
-                                {
-                                    // Todo: physical strike
-                                    defender.RemoveHealth(attacker.PhysicalDamageAgainst(defender));
-                                    EndBattleTurn();
-                                }
-                            }
-                        }
-                        else if (battleMenu.RegisteredOption() == "Use Item")
-                        {
-                        }
-                        else if (battleMenu.RegisteredOption() == "Spell")
-                        {
-                        }
-                        else if (battleMenu.RegisteredOption() == "Guard")
-                        {
                         }
                     }
                     else
                     {
                         //  todo: enemy battle turn..deals 10 damage
 
-                        defender.RemoveHealth(10);
+                        //defender.RemoveHealth(attacker.PhysicalDamageAgainst(defender));
+                        defender.RemoveHealth(1);
                         EndBattleTurn();
 
                     }
@@ -1356,6 +1367,24 @@ namespace SeniorProjectGame
         {
             State.screenState = State.ScreenState.SKIRMISH;
             State.battleState = State.BattleState.Attack;
+
+            if (State.currentAttacker.GetUnitData().GetCurrentHealth() == 0)
+            {
+                State.currentAttacker.GetHex().SetUnit(null);
+                EntityManager.RemoveEntity(State.currentAttacker._parent);
+
+                // give exp bounty... to the victor go the spoils.
+                State.currentDefender.GetUnitData().GainExp(State.currentAttacker.GetUnitData().ExpBounty());
+            }
+
+            if (State.currentDefender.GetUnitData().GetCurrentHealth() == 0)
+            {
+                State.currentDefender.GetHex().SetUnit(null);
+                EntityManager.RemoveEntity(State.currentDefender._parent);
+
+                State.currentAttacker.GetUnitData().GainExp(State.currentDefender.GetUnitData().ExpBounty());
+
+            }
 
             State.attackerBattleStatus = State.BattleStatus.NoStatus;
             State.defenderBattleStatus = State.BattleStatus.NoStatus;
@@ -1519,8 +1548,7 @@ namespace SeniorProjectGame
             GraphicsDevice.Clear(Color.Black);
 
             EntityManager.Draw(spriteBatch, graphics);
-                      
-
+            
             spriteBatch.Begin();
 
             spriteBatch.DrawString(font, InputState.GetMouseIngamePosition().ToString(), new Vector2(0, font.LineSpacing), Color.White);
@@ -1548,14 +1576,25 @@ namespace SeniorProjectGame
 
             menu.Draw(spriteBatch);
 
-            if (State.screenState == State.ScreenState.BATTLING)
-            {
-                //  draw battle scene
+            switch(State.screenState) {
+                case (State.ScreenState.BATTLING):
+                    //  draw battle scene
 
-                (State.currentAttacker._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent).Draw(spriteBatch, new Vector2(200,50));
-                (State.currentDefender._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent).Draw(spriteBatch, new Vector2(450,50));
+                    (State.currentAttacker._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent).Draw(spriteBatch, new Vector2(200,50));
+                    (State.currentDefender._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent).Draw(spriteBatch, new Vector2(450,50));
 
-                battleMenu.Draw(spriteBatch);
+                    battleMenu.Draw(spriteBatch);
+                    
+                    //  debug code
+                    spriteBatch.DrawString(font, "current option selected: " + battleMenu.CurrentOption(), new Vector2(0, 4 * font.LineSpacing), Color.White);
+                    spriteBatch.DrawString(font, "Attacker HP: " + State.currentAttacker.GetUnitData().GetCurrentHealth(), new Vector2(0, 5*font.LineSpacing), Color.White);
+                    spriteBatch.DrawString(font, "Defender HP: " + State.currentDefender.GetUnitData().GetCurrentHealth(), new Vector2(0, 6 * font.LineSpacing), Color.White);
+                    
+                    break;
+                case (State.ScreenState.SKIRMISH):
+                    //  draw HP bars above units
+
+                    break;
             }
 
             spriteBatch.End();

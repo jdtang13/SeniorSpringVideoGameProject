@@ -53,7 +53,22 @@ namespace EntityEngine.Stat_Attribute_Classes
         {
             return exp;
         }
-        public void AddExp(int myAdd)
+
+        // this is the exp you gain after processing and adjustment based on your current level
+        public void GainExp(int bounty)
+        {
+            AddExp(bounty); //  TODO: for now, no processing
+
+            CheckAndLevelUp();
+        }
+
+        //  todo: right now, leveling up does nothing
+        public void CheckAndLevelUp()
+        {
+        }
+
+        // DON'T use this function. Use GainExp() for exp addition and processing.
+        void AddExp(int myAdd)
         {
             exp += myAdd;
             //TODO: Check to see if you've leveled up
@@ -91,8 +106,6 @@ namespace EntityEngine.Stat_Attribute_Classes
             return maxMana;
         }
         
-        int experienceBounty; // exp dropped when this unit dies //Maybe like 1/4 of total exp?
-
         int movement;
         public int GetMovement()
         {
@@ -143,6 +156,38 @@ namespace EntityEngine.Stat_Attribute_Classes
             damage += weaponBonus + attributes["magic"] - enemy.attributes["resistance"];
 
             return damage;
+        }
+
+        //  the amount of raw exp you receive from beating this unit...this number can
+        //  be processed and adjusted by the client based on exp splitting, exp bonuses,
+        //  exp reduction due to high level, etc.
+        public int ExpBounty()
+        {
+            int sum = 0;
+
+            foreach (KeyValuePair<string, int> kvp in attributes)
+            {
+                int diff = kvp.Value;
+                string attributeName = kvp.Key;
+                
+                float multiplier = 1.0f;
+
+                if (attributeName == "strength" || attributeName == "magic") {
+                    multiplier = 3.0f;
+                }
+                else if (attributeName == "resistance" || attributeName == "defense")
+                {
+                    multiplier = 2.5f;
+                }
+                else if (attributeName == "speed")
+                {
+                    multiplier = 2.0f;
+                }
+
+                sum += (int) (multiplier * diff);
+            }
+
+            return sum;
         }
 
         public UnitData(string name,     Role role,       Alignment ali,   int level, 
