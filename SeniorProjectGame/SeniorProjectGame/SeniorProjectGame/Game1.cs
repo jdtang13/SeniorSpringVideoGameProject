@@ -191,6 +191,7 @@ namespace SeniorProjectGame
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
+            State.font = font;
 
             //Only run the conversions for developement purposes
 
@@ -1119,7 +1120,7 @@ namespace SeniorProjectGame
                         elapsedTimeForMove += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
                         UnitComponent unit = State.originalHexClicked.GetUnit();
-                        AnimatedSpriteComponent sprite = unit._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
+                        UnitSpriteComponent sprite = unit._parent.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent;
                         SpriteComponent originalHexSprite = State.originalHexClicked._parent.GetDrawable("SpriteComponent") as SpriteComponent;
                         SpriteComponent finalHexSprite = pathQueue[0]._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
@@ -1511,7 +1512,7 @@ namespace SeniorProjectGame
             //SpriteComponent hexSprite = Entity.GetDrawable("SpriteComponent") as SpriteComponent;
             //sprite.setPosition(final.
 
-            ((AnimatedSpriteComponent)unitEntity.GetDrawable("AnimatedSpriteComponent")).
+            ((UnitSpriteComponent)unitEntity.GetDrawable("UnitSpriteComponent")).
             SetPosition(final._parent.GetDrawable("SpriteComponent").GetPosition());
 
             unit.SetHex(final);
@@ -1581,8 +1582,8 @@ namespace SeniorProjectGame
                 case (State.ScreenState.BATTLING):
                     //  draw battle scene
 
-                    (State.currentAttacker._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent).Draw(spriteBatch, new Vector2(200,50));
-                    (State.currentDefender._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent).Draw(spriteBatch, new Vector2(450,50));
+                    (State.currentAttacker._parent.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent).Draw(spriteBatch, new Vector2(200,50));
+                    (State.currentDefender._parent.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent).Draw(spriteBatch, new Vector2(450,50));
 
                     battleMenu.Draw(spriteBatch);
                     

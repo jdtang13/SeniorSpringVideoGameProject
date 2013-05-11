@@ -66,13 +66,13 @@ namespace EntityEngine.Components.TileComponents
         public void SetVisbility(Visibility myVis)
         {
             visibility = myVis;
-            AnimatedSpriteComponent sprite = _parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
+            UnitSpriteComponent sprite = _parent.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent;
 
             if (unitData.GetAlignment() == Alignment.PLAYER)
             {
                 sprite.SetColor(Color.White);
 
-            }
+            } 
             else if (visibility == Visibility.Visible)
             {
                 sprite.SetColor(Color.White);

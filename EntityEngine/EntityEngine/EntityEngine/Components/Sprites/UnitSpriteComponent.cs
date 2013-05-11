@@ -33,22 +33,40 @@ namespace EntityEngine.Components.Sprites
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            //  draw the AnimatedSpriteComponent section of the sprite
             base.Draw(spriteBatch);
 
             Entity e = _parent;
-            Vector2 pos = GetPosition();
+            HexComponent hex = (_parent.GetComponent("UnitComponent") as UnitComponent).GetHex();
+            Vector2 pos = hex.GetCenterPosition();
             UnitData u = (e.GetComponent("UnitComponent") as UnitComponent).GetUnitData();
 
             float healthPercentage = u.GetCurrentHealth() / (float)u.GetMaxHealth();
 
+            int hexHeight = (hex._parent.GetDrawable("SpriteComponent") as SpriteComponent).spriteHeight;
+
+            //  draw a health bar. blue = ally health, red = enemy health
             int healthBarThickness = 5;
             Color allyHealthColor = Color.CornflowerBlue;
             Color enemyHealthColor = Color.Red;
-            Color emptyBarColor = Color.DarkGray;
 
-            spriteBatch.Draw(State.dot, new Rectangle((int)pos.X, (int)pos.Y, (int)(frameWidth * healthPercentage), healthBarThickness), allyHealthColor);
-            spriteBatch.Draw(State.dot, new Rectangle((int)pos.X + (int)(frameWidth * healthPercentage), (int)pos.Y, (int)(frameWidth * (1 - healthPercentage)), healthBarThickness), emptyBarColor);
+            Color emptyBarColor = Color.Black;
+            int healthBarHeightOffset = +3;
 
+            Color drawColor = allyHealthColor;
+            if (u.GetAlignment() == Alignment.ENEMY)
+            {
+                drawColor = enemyHealthColor;
+            }
+
+            int healthBarWidth = frameWidth - 5; // make the health bar slightly smaller than the frame
+
+            //  draw two aspects of the health bar: the "colored" section which represents current health,
+            //  and the "black" section which represents health lost
+            spriteBatch.Draw(State.dot, new Rectangle((int)pos.X - healthBarWidth / 2, (int)pos.Y - hexHeight + healthBarHeightOffset, (int)(healthBarWidth * healthPercentage), healthBarThickness), drawColor);
+            spriteBatch.Draw(State.dot, new Rectangle((int)pos.X - healthBarWidth / 2 + (int)(healthBarWidth * healthPercentage), (int)pos.Y - hexHeight + healthBarHeightOffset, (int)(healthBarWidth * (1 - healthPercentage)), healthBarThickness), emptyBarColor);
+
+            spriteBatch.DrawString(State.font, "Lvl " + u.GetCurrentLevel(), new Vector2(pos.X - frameWidth/2, pos.Y - hexHeight - healthBarHeightOffset - healthBarThickness - 10), Color.White);
         }
     }
 }

@@ -75,6 +75,8 @@ namespace EntityEngine
 
             State.attackerBattleStatus = BattleStatus.NoStatus;
             State.defenderBattleStatus = BattleStatus.NoStatus;
+
+            State.font = null;
         }
 
         public static int screenWidth = 0;
@@ -93,6 +95,8 @@ namespace EntityEngine
 
         public static UnitComponent currentAttacker;
         public static UnitComponent currentDefender;
+
+        public static SpriteFont font;
 
         //public Node currentNode;
         public static int dialoguePosition = 0;
