@@ -245,13 +245,30 @@ namespace EntityEngine.Components.TileComponents
         public List<HexComponent> GetAdjacentList(HexComponent hex)
         {
             adjacentList = new List<HexComponent>();
-
-            adjacentList.Add(hex.n);
-            adjacentList.Add(hex.ne);
-            adjacentList.Add(hex.nw);
-            adjacentList.Add(hex.s);
-            adjacentList.Add(hex.sw);
-            adjacentList.Add(hex.se);
+            if (hex.n != null)
+            {
+                adjacentList.Add(hex.n);
+            }
+            if (hex.nw != null)
+            {
+                adjacentList.Add(hex.nw);
+            }
+            if (hex.ne != null)
+            {
+                adjacentList.Add(hex.ne);
+            }
+            if (hex.s != null)
+            {
+                adjacentList.Add(hex.s);
+            }
+            if (hex.se != null)
+            {
+                adjacentList.Add(hex.se);
+            }
+            if (hex.sw != null)
+            {
+                adjacentList.Add(hex.sw);
+            }
 
             return adjacentList;
         }
@@ -533,29 +550,24 @@ namespace EntityEngine.Components.TileComponents
                     }
                 }
 
-                //foreach (HexComponent hex in newVisible)
-                //{
-                //    if (hex.n.GetVisibility() != Visibility.Visible)
-                //    {
-                //        if (hex.nw.GetVisibility() != Visibility.Visible)
-                //        {
-                //            if (hex.ne.GetVisibility() != Visibility.Visible)
-                //            {
-                //                if (hex.s.GetVisibility() != Visibility.Visible)
-                //                {
-                //                    if (hex.sw.GetVisibility() != Visibility.Visible)
-                //                    {
-                //                        if (hex.se.GetVisibility() != Visibility.Visible)
-                //                        {
-                //                            newVisible.Remove(hex);
-                //                        }
-                //                    }
-                //                }
-                //            }
-                //        }
-                //    }
-                //}
-                //todo:replace with remove all
+                for (int i = newVisible.Count() - 1; i > -1; i--)
+                {
+                    List<HexComponent> adjacentHexList = GetAdjacentList(newVisible[i]);
+                    bool surroundedByNotVisible = true;
+                    foreach (HexComponent hex in adjacentHexList)
+                    {
+                        if (newVisible.Contains(hex))
+                        {
+                            surroundedByNotVisible = false;
+                            break;
+                        }
+                    }
+                    if (surroundedByNotVisible)
+                    {
+                        newVisible.Remove(newVisible[i]);
+                    }
+                }
+
                 for (int i = 0; i < newVisible.Count; i++)
                 {
                     newVisible[i].SetVisibility(Visibility.Visible);
