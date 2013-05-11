@@ -148,8 +148,9 @@ namespace SeniorProjectGame
             InitializeInput();
 
             //  dot is a generic white pixel texture used for generating colored rectangles
-            dot = new Texture2D(graphics.GraphicsDevice, 1, 1);
-            dot.SetData(new Color[] { Color.White });
+            State.dot = new Texture2D(graphics.GraphicsDevice, 1, 1);
+            State.dot.SetData(new Color[] { Color.White });
+            dot = State.dot;
 
             State.Initialize();
 
@@ -1592,8 +1593,24 @@ namespace SeniorProjectGame
                     
                     break;
                 case (State.ScreenState.SKIRMISH):
-                    //  draw HP bars above units
+                    //  TODO: draw HP bars above units
+                    //  TODO: probably need a UnitDrawableComponent that has this
+                    /*int healthBarThickness = 5;
+                    Color allyHealthColor = Color.CornflowerBlue;
+                    Color enemyHealthColor = Color.Red;
+                    Color emptyBarColor = Color.DarkGray;
+                    foreach (Entity e in boardComponent.alliedUnitList)
+                    {
+                        AnimatedSpriteComponent a = (e.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent);
+                        Vector2 pos = a.GetPosition() - new Vector2(State.screenWidth/2f, State.screenHeight/2f);
+                        UnitData u = (e.GetComponent("UnitComponent") as UnitComponent).GetUnitData();
 
+                        float healthPercentage = u.GetCurrentHealth() / (float)u.GetMaxHealth();
+
+                        spriteBatch.Draw(dot, new Rectangle((int)pos.X, (int)pos.Y, (int)(a.frameWidth * healthPercentage), healthBarThickness), allyHealthColor);
+                        spriteBatch.Draw(dot, new Rectangle((int)pos.X + (int)(a.frameWidth * healthPercentage), (int)pos.Y, (int)(a.frameWidth * (1 - healthPercentage)), healthBarThickness), emptyBarColor);
+
+                    }*/
                     break;
             }
 

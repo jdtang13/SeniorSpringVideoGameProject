@@ -62,9 +62,23 @@ namespace EntityEngine.Stat_Attribute_Classes
             CheckAndLevelUp();
         }
 
+        public int ExpRequiredForLevelUp()
+        {
+            return 100 * (int)(Math.Pow(2, level));
+            // level up requirement goes from 100, 200, 400...
+        }
+
         //  todo: right now, leveling up does nothing
         public void CheckAndLevelUp()
         {
+            int expRequirement = ExpRequiredForLevelUp();
+            while (exp >= expRequirement)
+            {
+                level++;
+                exp -= expRequirement;
+
+                expRequirement = ExpRequiredForLevelUp();
+            }
         }
 
         // DON'T use this function. Use GainExp() for exp addition and processing.

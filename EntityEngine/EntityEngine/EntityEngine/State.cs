@@ -6,6 +6,13 @@ using EntityEngine;
 using EntityEngine.Components.TileComponents;
 using EntityEngine.Components.Sprites;
 using EntityEngine.Input;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.GamerServices;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 
 namespace EntityEngine
 {
@@ -91,6 +98,8 @@ namespace EntityEngine
         public static int dialoguePosition = 0;
         public static int dialogueChoicePosition = 0;
         public static string displayedDialogueMessage = "";
+
+        public static Texture2D dot;
 
         public static bool messageBegin = false;
         public static int dialogueLinePosition = 0;
