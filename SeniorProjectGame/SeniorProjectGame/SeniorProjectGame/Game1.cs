@@ -596,7 +596,7 @@ namespace SeniorProjectGame
                     Vector2 coordinate = boardComponent.GetOneAlliedSpawnPoint(rand);
                     SpriteComponent hexSprite = boardComponent.GetHex(coordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                    partyMemberEntity.AddComponent(new AnimatedSpriteComponent(true, hexSprite.GetCenterPosition(), unitTextureDictionary[graphicName]));
+                    partyMemberEntity.AddComponent(new UnitSpriteComponent(true, hexSprite.GetCenterPosition(), unitTextureDictionary[graphicName]));
 
                     partyMemberEntity.AddComponent(new UnitComponent(boardComponent.GetHex(coordinate), true));
                     (partyMemberEntity.GetComponent("UnitComponent") as UnitComponent).SetUnitData(unitData);
@@ -748,7 +748,7 @@ namespace SeniorProjectGame
                     SpriteComponent hexSprite = hex._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
                     Entity blob = new Entity(EntityManager.GetHighestLayer() + 1, State.ScreenState.SKIRMISH);
-                    blob.AddComponent(new AnimatedSpriteComponent(true, hexSprite.GetPosition(), unitTextureDictionary[graphicName]));
+                    blob.AddComponent(new UnitSpriteComponent(true, hexSprite.GetPosition(), unitTextureDictionary[graphicName]));
                     blob.AddComponent(new UnitComponent(hex, false));
 
                     hex.SetUnit(blob.GetComponent("UnitComponent") as UnitComponent);
