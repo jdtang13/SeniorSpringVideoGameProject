@@ -767,6 +767,7 @@ namespace SeniorProjectGame
                                         movement, sightRange, attackRange));
                     EntityManager.AddEntity(blob);
                     boardComponent.nonAlliedUnitList.Add(blob);
+                    boardComponent.totalUnitList.Add(blob);
                 }
             }
         }
@@ -1281,7 +1282,7 @@ namespace SeniorProjectGame
                                 {
                                     downSound.Play();
                                     break;
-                                }                                
+                                }
                             }
                         }
                         ResetTurnsLeft();
@@ -1370,7 +1371,7 @@ namespace SeniorProjectGame
                 UnitComponent unitComp = ally.GetComponent("UnitComponent") as UnitComponent;
                 AnimatedSpriteComponent unitSprite = ally.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
                 if (unitComp.GetMovesLeft() <= 0)
-                {                    
+                {
                     unitSprite.SetColor(Color.SlateGray);
                     unitComp.SetAvailableToMove(false);
                 }
@@ -1496,6 +1497,18 @@ namespace SeniorProjectGame
             return convertedVector;
         }
 
+        public bool AreAdjacent(HexComponent one, HexComponent two)
+        {
+            if (boardComponent.GetAdjacentList(one).Contains(two))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         void MoveUnit(HexComponent original, HexComponent final)
         {
             UnitComponent unit = original.GetUnit();
@@ -1521,18 +1534,6 @@ namespace SeniorProjectGame
         {
             UnitComponent unit = original.GetUnit();
             AnimatedSpriteComponent tempSprite = unit._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
-        }
-
-        public bool AreAdjacent(HexComponent one, HexComponent two)
-        {
-            if (boardComponent.GetAdjacentList(one).Contains(two))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
         }
 
         public void UpdateTurnState()
@@ -1615,6 +1616,48 @@ namespace SeniorProjectGame
             }
 
             return visibleHexes;
+        }
+
+        public void UpdateAllSeenUnitList() // this function is used exclusively for enemies
+        {
+            foreach (Entity enemy in boardComponent.nonAlliedUnitList)
+            {
+                UnitComponent unit = enemy.GetComponent("UnitComponent") as UnitComponent;
+                List<HexComponent> visibleHexes = GetVisibleHexes(unit._parent);
+                foreach (Entity unitSeen in boardComponent.totalUnitList)
+                {
+                    UnitComponent unitComp = unitSeen.GetComponent("UnitComponent") as UnitComponent;
+                    if (visibleHexes.Contains(unitComp.GetHex()))
+                    {
+                        unit.AddToSeenUnitList(unitComp);
+                    }
+                }
+            }
+        }
+
+        public void UpdateAllKnownUnitList() // takes all allies that other enemies current enemy sees and puts in list
+        {
+            foreach (Entity enemy in boardComponent.nonAlliedUnitList)
+            {
+                UnitComponent unit = enemy.GetComponent("UnitComponent") as UnitComponent;
+                foreach (UnitComponent unitSeen in unit.seenUnitList)
+                {
+                    if (boardComponent.nonAlliedUnitList.Contains(unitSeen._parent)) // if it's an enemy
+                    {
+                        if (unitSeen != unit) // if it's not itself
+                        {
+                            List<UnitComponent> alliesEnemySees = unitSeen.GetSeenUnitList();
+                            foreach (UnitComponent enemySees in alliesEnemySees)
+                            {
+                                if (boardComponent.alliedUnitList.Contains(enemySees._parent))
+                                {
+                                    unit.AddToKnownUnitList(enemySees);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         #endregion

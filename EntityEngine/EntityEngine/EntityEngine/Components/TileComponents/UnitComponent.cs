@@ -79,6 +79,26 @@ namespace EntityEngine.Components.TileComponents
             return selectable;
         }
 
+        public List<UnitComponent> seenUnitList = new List<UnitComponent>();
+        public List<UnitComponent> GetSeenUnitList()
+        {
+            return seenUnitList;
+        }
+        public void AddToSeenUnitList(UnitComponent unit)
+        {
+            seenUnitList.Add(unit);
+        }
+
+        public List<UnitComponent> knownUnitList = new List<UnitComponent>();
+        public List<UnitComponent> GetKnownUnitList()
+        {
+            return knownUnitList;
+        }
+        public void AddToKnownUnitList(UnitComponent unit)
+        {
+            knownUnitList.Add(unit);
+        }
+
         Orient orientation = Orient.s;
         public void changeOrientation(Orient myOar)
         {

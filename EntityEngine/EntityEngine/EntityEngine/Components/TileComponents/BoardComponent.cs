@@ -34,7 +34,7 @@ namespace EntityEngine.Components.TileComponents
 
         public List<Entity> alliedUnitList = new List<Entity>();
         public List<Entity> nonAlliedUnitList = new List<Entity>();
-
+        public List<Entity> totalUnitList = new List<Entity>();
 
         List<Vector2> alliedSpawnPoints = new List<Vector2>();
         public void AddAlliedSpawnPoint(Vector2 myVector)
@@ -295,6 +295,7 @@ namespace EntityEngine.Components.TileComponents
                 EntityManager.AddEntity(unitEntity);
 
                 alliedUnitList.Add(unitEntity);
+                totalUnitList.Add(unitEntity);
 
                 hexComp.SetUnit(unitComp);
                 UpdateVisibilityAllies();
