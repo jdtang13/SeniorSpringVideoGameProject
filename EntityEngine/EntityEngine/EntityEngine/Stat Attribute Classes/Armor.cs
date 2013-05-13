@@ -7,7 +7,6 @@ namespace EntityEngine.Stat_Attribute_Classes
 {
     class Armor
     {
-
         StatisticalBuff buff;
 
         int durability;

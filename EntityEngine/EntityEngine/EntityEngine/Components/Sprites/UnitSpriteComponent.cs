@@ -33,6 +33,9 @@ namespace EntityEngine.Components.Sprites
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+
+            base.Draw(spriteBatch);
+
             Entity e = _parent;
             HexComponent hex = (_parent.GetComponent("UnitComponent") as UnitComponent).GetHex();
             Vector2 pos = hex.GetCenterPosition();
@@ -78,6 +81,7 @@ namespace EntityEngine.Components.Sprites
             spriteBatch.Draw(State.dot, new Rectangle((int)pos.X - healthBarWidth / 2 + (int)(healthBarWidth * healthPercentage), (int)pos.Y - hexHeight + healthBarHeightOffset, (int)(healthBarWidth * (1 - healthPercentage)), healthBarThickness), emptyBarColor);
 
             spriteBatch.DrawString(State.font, "Lvl " + u.GetCurrentLevel(), new Vector2(pos.X - frameWidth/2, pos.Y - hexHeight - healthBarHeightOffset - healthBarThickness - 10), Color.White);
+
         }
     }
 }

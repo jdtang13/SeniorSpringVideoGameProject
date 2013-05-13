@@ -207,7 +207,6 @@ namespace EntityEngine.Components.TileComponents
 
                     GetHex(coordPosition).SetVisibility(Visibility.Unexplored);
                 }
-
             }
 
             //Giving all the hex's their adjacents
@@ -246,13 +245,30 @@ namespace EntityEngine.Components.TileComponents
         public List<HexComponent> GetAdjacentList(HexComponent hex)
         {
             adjacentList = new List<HexComponent>();
-
-            adjacentList.Add(hex.n);
-            adjacentList.Add(hex.ne);
-            adjacentList.Add(hex.nw);
-            adjacentList.Add(hex.s);
-            adjacentList.Add(hex.sw);
-            adjacentList.Add(hex.se);
+            if (hex.n != null)
+            {
+                adjacentList.Add(hex.n);
+            }
+            if (hex.nw != null)
+            {
+                adjacentList.Add(hex.nw);
+            }
+            if (hex.ne != null)
+            {
+                adjacentList.Add(hex.ne);
+            }
+            if (hex.s != null)
+            {
+                adjacentList.Add(hex.s);
+            }
+            if (hex.se != null)
+            {
+                adjacentList.Add(hex.se);
+            }
+            if (hex.sw != null)
+            {
+                adjacentList.Add(hex.sw);
+            }
 
             return adjacentList;
         }
@@ -486,17 +502,12 @@ namespace EntityEngine.Components.TileComponents
         {
             if (fogOfWarToggle)
             {
-                for (int u = 0; u < oldVisible.Count; u++)
-                {
-                    oldVisible[u].SetVisibility(Visibility.Explored);
-                }
-
                 newVisible.Clear();
 
                 for (int p = 0; p < alliedUnitList.Count; p++)
                 {
                     UnitComponent unitComp = alliedUnitList[p].GetComponent("UnitComponent") as UnitComponent;
-                    UnitData unitData = (alliedUnitList[p].GetComponent("UnitComponent") as UnitComponent).GetUnitData();
+                    UnitData unitData = unitComp.GetUnitData();
 
                     List<HexComponent> obstructionHexList = new List<HexComponent>();
 
@@ -531,6 +542,24 @@ namespace EntityEngine.Components.TileComponents
                                 obstructionHexList.Add(currentHex);
                             }
                         }
+                    }
+                }
+
+                for (int i = newVisible.Count() - 1; i > -1; i--)
+                {
+                    List<HexComponent> adjacentHexList = GetAdjacentList(newVisible[i]);
+                    bool surroundedByNotVisible = true;
+                    foreach (HexComponent hex in adjacentHexList)
+                    {
+                        if (newVisible.Contains(hex))
+                        {
+                            surroundedByNotVisible = false;
+                            break;
+                        }
+                    }
+                    if (surroundedByNotVisible)
+                    {
+                        newVisible.Remove(newVisible[i]);
                     }
                 }
 

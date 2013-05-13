@@ -34,6 +34,10 @@ namespace EntityEngine
         {
             Attack, CounterAttack
         }
+        public enum TurnState
+        {
+            AlliesTurn, EnemiesTurn
+        }
 
         //  use this for selecting battles and stuff
         public enum MenuState
@@ -90,6 +94,7 @@ namespace EntityEngine
         public static BattleState battleState;
         public static ScreenState screenState;
         public static SelectionState selectionState;
+        public static TurnState turnState;
 
         public static HexComponent originalHexClicked; //  used for selecting units
 
@@ -113,6 +118,8 @@ namespace EntityEngine
         public static List<string> currentDialogueMessage = new List<string>();
 
         public static int lastTimeDialogueChecked; // TODO
+
+        public static int sumOfMoves = 0; //debugging
 
         //public static List<Unit> units;
     }

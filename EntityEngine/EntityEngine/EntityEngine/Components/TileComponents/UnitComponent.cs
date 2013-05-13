@@ -25,6 +25,30 @@ namespace EntityEngine.Components.TileComponents
             myHex.SetUnit(this);
         }
 
+        bool availableToMove = true;
+        public bool GetAvailableToMove()
+        {
+            return availableToMove;
+        }
+        public void SetAvailableToMove(bool myTruth)
+        {
+            availableToMove = myTruth;
+        }
+
+        int movesLeft;
+        public int GetMovesLeft()
+        {
+            return movesLeft;
+        }
+        public void SetMovesLeft(int myMoves)
+        {
+            movesLeft = myMoves;
+        }
+        public void ChangeMovesLeft(int changeToMoves)
+        {
+            movesLeft += changeToMoves;
+        }
+
         bool selected = false;
         public bool GetSelected()
         {
@@ -108,6 +132,12 @@ namespace EntityEngine.Components.TileComponents
         public void SetUnitData(UnitData unitData)
         {
             this.unitData = unitData;
+            InitializeUnitData();            
+        }
+
+        public void InitializeUnitData()
+        {
+            SetMovesLeft(GetUnitData().GetMovement());
         }
         public UnitData GetUnitData()
         {
