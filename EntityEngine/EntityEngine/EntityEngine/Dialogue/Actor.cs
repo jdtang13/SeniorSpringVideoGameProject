@@ -15,10 +15,10 @@ namespace EntityEngine.Dialogue
         Smile, Scowl, Frown, Laugh, Nuetral
     }
 
-    public class Portrait
+    public class Actor
     {
         ChatSlot slot;
-        Boolean glow;
+        Boolean isSpeaker;
 
         PortraitPackage portraitPackage;
         public void SetPortraitPackage(PortraitPackage myPackage)
@@ -40,11 +40,11 @@ namespace EntityEngine.Dialogue
             return emotion;
         }
 
-        public Portrait(PortraitPackage myPackage, Emotion myEmotion, int mySlot, Boolean myGlow)
+        public Actor(PortraitPackage myPackage, Emotion myEmotion, int mySlot, Boolean myIsSpeaker)
         {
             portraitPackage = myPackage;
             emotion = myEmotion;
-
+            isSpeaker = myIsSpeaker;
             if (mySlot == 0)
             {
                 slot = ChatSlot.Left;
@@ -69,25 +69,25 @@ namespace EntityEngine.Dialogue
             switch (slot)
             {
                 case ChatSlot.Left:
-                    if (glow)
+                    if (isSpeaker)
                     {
 
                     }
                     break;
                 case ChatSlot.LeftCenter:
-                    if (glow)
+                    if (isSpeaker)
                     {
 
                     }
                     break;
                 case ChatSlot.RightCenter:
-                    if (glow)
+                    if (isSpeaker)
                     {
 
                     }
                     break;
                 case ChatSlot.Right:
-                    if (glow)
+                    if (isSpeaker)
                     {
 
                     }

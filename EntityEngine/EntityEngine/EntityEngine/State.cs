@@ -14,7 +14,7 @@ namespace EntityEngine
         public enum ScreenState
         {
             LOADING_FILES, MAIN_PAGE, SETTINGS_MENU, WORLD_MAP, MAP_EDITOR, SHOP, DIALOGUE,
-            SKIRMISH, BATTLING, BATTLE_FORECAST, BATTLE_RESOLUTION,
+            SKIRMISH, BATTLING, BATTLE_FORECAST, BATTLE_RESOLUTION, SKIRMISH_PREPARATION
             //SELECTING_UNIT_ON_SKIRMISH_MAP, SELECTING_OPTIONS_FOR_SKIRMISH_UNITS
         }
 
@@ -66,14 +66,11 @@ namespace EntityEngine
 
         public static HexComponent originalHexClicked; //  used for selecting units
 
-<<<<<<< HEAD
-        
-=======
         public static UnitComponent currentAttacker;
         public static UnitComponent currentDefender;
 
         //public Node currentNode;
->>>>>>> origin/lionel
+
         public static int dialoguePosition = 0;
         public static int dialogueChoicePosition = 0;
         public static string displayedDialogueMessage = "";

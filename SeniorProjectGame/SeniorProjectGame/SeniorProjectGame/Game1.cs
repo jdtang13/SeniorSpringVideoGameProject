@@ -37,25 +37,27 @@ namespace SeniorProjectGame
         Texture2D dot;
 
         //Textures and other content
+        //HexmapStuffs
         Texture2D worldMapTexture, nodeTexture, pointerTexture;
         Texture2D hexBaseTexture, dirtTexture, grassTexture, gravelTexture, sandTexture, woodTexture,
             waterTexture, stoneTexture;
         Texture2D treeTexture, wallTexture, bushTexture, tableTexture, carpetTexture, throneTexture, tentTexture;
         Texture2D markerTexture, questionTexture;
 
+        //UnitStuffs
         Dictionary<string, Texture2DFramed> unitTextureDictionary = new Dictionary<string, Texture2DFramed>();
 
         Texture2DFramed unitFramedTexture, axemanFramedTexture, battlemageFramedTexture, bowmanFramedTexture, crossbowmanFramedTexture,
             flailmanFramedTexture, halberdierFramedTexture, knightFramedTexture, mageAssassinFramedTexture, manAtArmsFramedTexture,
             pikemanFramedTexture, riflemanFramedTexture, spearmanFramedTexture, swordsmanFramedTexture, wizardFramedTexture, slimeFramedTexture;
 
-<<<<<<< HEAD
+        //DialogueStuffs
+        Texture2D dialogueBackdropTexture;
         Dictionary<string, PortraitPackage> portraitDictionary = new Dictionary<string, PortraitPackage>();
 
-        SoundEffect selectSound;
-=======
+        //Sounds?
         SoundEffect selectSound, downSound;
->>>>>>> origin/lionel
+
 
         SpriteFont font;
 
@@ -146,7 +148,7 @@ namespace SeniorProjectGame
             LoadContent();
             PopulateUnitTextureDictionary();
             PopulatePortraitDictionary();
-            Chatbox.Initialize(portraitDictionary, font, hexBaseTexture);
+            ChatboxManager.Initialize(portraitDictionary, font, dialogueBackdropTexture);
 
             ProcessWorldMapBin();
             ProcessPlayerRolesBin();
@@ -200,55 +202,55 @@ namespace SeniorProjectGame
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
             Globals.font = font;
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
             //Only run the conversions for developement purposes
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Enemies.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Player_Roles.txt");
+//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Enemies.txt");
+//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Player_Roles.txt");
                                                        
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Party_Members.txt");
+//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Party_Members.txt");
                                                     
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\WorldMap.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level_Enemies.txt");
+//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\WorldMap.txt");
+//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level.txt");
+//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level_Enemies.txt");
 
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Lab_Yard.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Lab_Yard_Enemies.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Lab_Yard_Dialogue.txt");
+//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Lab_Yard.txt");
+//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Lab_Yard_Enemies.txt");
+//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Lab_Yard_Dialogue.txt");
                        
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Alchemist's_Laboratory.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Ambushed.txt");
+//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Alchemist's_Laboratory.txt");
+//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Ambushed.txt");
                       
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Pavilion.txt");
-            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Throne_Room.txt");
-=======
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Enemies.txt");
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Player_Roles.txt");
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Party_Members.txt");
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\WorldMap.txt");
+//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Pavilion.txt");
+//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Throne_Room.txt");
+//=======
+//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Enemies.txt");
+//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Player_Roles.txt");
+//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Party_Members.txt");
+//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\WorldMap.txt");
 
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Testing_Grounds.txt");
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Testing_Grounds_Enemies.txt");
+//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Testing_Grounds.txt");
+//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Testing_Grounds_Enemies.txt");
 
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Tutorial_Level.txt");
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Tutorial_Level_Enemies.txt");
+//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Tutorial_Level.txt");
+//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Tutorial_Level_Enemies.txt");
 
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Ambushed.txt");
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Ambushed_Enemies.txt");
+//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Ambushed.txt");
+//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Ambushed_Enemies.txt");
 
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Pavilion.txt");
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Pavilion_Enemies.txt");
+//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Pavilion.txt");
+//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Pavilion_Enemies.txt");
 
-            //Only run the conversions for developement purposes
-            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\WorldMap.txt");
+//            //Only run the conversions for developement purposes
+//            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\WorldMap.txt");
 
-            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard.txt");
-            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard_Enemies.txt");
-            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard_Dialogue.txt");
+//            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard.txt");
+//            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard_Enemies.txt");
+//            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard_Dialogue.txt");
 
-            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Alchemist's_Laboratory.txt");
+//            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Alchemist's_Laboratory.txt");
 
-            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Throne_Room.txt");
->>>>>>> origin/lionel
+//            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Throne_Room.txt");
+//>>>>>>> origin/lionel
 
             worldMapTexture = Content.Load<Texture2D>("Graphics\\Backgrounds\\island");
             pointerTexture = Content.Load<Texture2D>("Graphics\\Other\\pointer");
@@ -268,6 +270,8 @@ namespace SeniorProjectGame
             bushTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\bush");
             wallTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\wooden Walls");
             questionTexture = Content.Load<Texture2D>("Graphics\\Other\\questionTexture");
+
+            dialogueBackdropTexture = Content.Load<Texture2D>("Graphics\\Dialogue\\chatboxBackdrop");
 
             PopulateTerrainDictionary();
 
@@ -825,7 +829,7 @@ namespace SeniorProjectGame
             }
 
             List<string> dialogueLines = new List<string>();
-            //string typeOfChat = relevantLines[0];
+
 
             for (int lineIndex = 0; lineIndex < relevantLines.Count; lineIndex++)
             {
@@ -946,27 +950,26 @@ namespace SeniorProjectGame
                 #region Dialogue
                 case State.ScreenState.DIALOGUE:
 
-                    Chatbox.Update(gameTime);
+                    ChatboxManager.Update(gameTime);
                     
-                    if (Chatbox.GetStatus() == ChatboxStatus.Idle)
+                    if (ChatboxManager.GetStatus() == ChatboxStatus.Idle)
                     {
-                        string events  = Chatbox.GetEvent().ToString();
-                        List<string> messageLines = ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), events);
-                        Chatbox.SetNewInfo(messageLines);
-                        //Produces every line
+                        String temporaryEventStandIn = "Beginning";
+                        List<string> messageLines = ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), temporaryEventStandIn);
+                        ChatboxManager.SetNewInfo(messageLines);
                     }
-                    else if(Chatbox.GetStatus() == ChatboxStatus.Writing)
+                    else if(ChatboxManager.GetStatus() == ChatboxStatus.Writing)
                     {
                         if(singleLeftClick.Evaluate())
                         {
-                            Chatbox.RushTyping();
+                            ChatboxManager.RushTyping();
                         }
                     }
-                    else//Waiting input
+                    else if(ChatboxManager.GetStatus() == ChatboxStatus.WaitingInput)
                     {
                         if (singleLeftClick.Evaluate())
                         {
-                            Chatbox.Advance();
+                            ChatboxManager.Advance();
                         }
                     }
                     
@@ -1069,15 +1072,9 @@ namespace SeniorProjectGame
                             }
                         }
 
-<<<<<<< HEAD
-                    // handles the actions when you Left click while selecting an option
-                    if ((leftHold.Evaluate() || enterClick.Evaluate()) && State.selectionState == State.SelectionState.SelectingMenuOptions)
-                    {
-                        if (menu.CurrentOptionIndex() != -1)
-=======
+
                         // handles the actions when you left click while selecting an option
                         if ((leftHold.Evaluate() || enterClick.Evaluate()) && State.selectionState == State.SelectionState.SelectingMenuOptions)
->>>>>>> origin/lionel
                         {
                             if (menu.CurrentOptionIndex() != -1)
                             {
@@ -1597,7 +1594,7 @@ namespace SeniorProjectGame
 
             spriteBatch.Begin();
 
-            Chatbox.Draw(spriteBatch);
+            ChatboxManager.Draw(spriteBatch);
 
             spriteBatch.DrawString(font, InputState.GetMouseIngamePosition().ToString(), new Vector2(0, font.LineSpacing), Color.White);
             spriteBatch.DrawString(font, InputState.GetMouseScreenPosition().ToString(), new Vector2(0, 2 * font.LineSpacing), Color.White);
