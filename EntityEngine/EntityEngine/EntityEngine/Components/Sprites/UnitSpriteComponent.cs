@@ -33,13 +33,24 @@ namespace EntityEngine.Components.Sprites
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            //  draw the AnimatedSpriteComponent section of the sprite
-            base.Draw(spriteBatch);
-
             Entity e = _parent;
             HexComponent hex = (_parent.GetComponent("UnitComponent") as UnitComponent).GetHex();
             Vector2 pos = hex.GetCenterPosition();
             UnitData u = (e.GetComponent("UnitComponent") as UnitComponent).GetUnitData();
+
+            Color unitColor = new Color(140, 140, 255); // light blue
+
+            if (u.GetAlignment() == Alignment.ENEMY)
+            {
+                //  draw the AnimatedSpriteComponent section of the sprite
+                unitColor = new Color(255, 140, 140); // light red
+            }
+            else if (u.GetAlignment() == Alignment.NEUTRAL)
+            {
+                unitColor = new Color(140, 255, 140); // light green
+            }
+            //  draw the AnimatedSpriteComponent section of the sprite
+            base.Draw(spriteBatch, unitColor);
 
             float healthPercentage = u.GetCurrentHealth() / (float)u.GetMaxHealth();
 

@@ -1582,8 +1582,8 @@ namespace SeniorProjectGame
                 case (State.ScreenState.BATTLING):
                     //  draw battle scene
 
-                    (State.currentAttacker._parent.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent).Draw(spriteBatch, new Vector2(200,50));
-                    (State.currentDefender._parent.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent).Draw(spriteBatch, new Vector2(450,50));
+                    (State.currentAttacker._parent.GetDrawable("UnitSpriteComponent") as AnimatedSpriteComponent).Draw(spriteBatch, new Vector2(200,50));
+                    (State.currentDefender._parent.GetDrawable("UnitSpriteComponent") as AnimatedSpriteComponent).Draw(spriteBatch, new Vector2(450, 50));
 
                     battleMenu.Draw(spriteBatch);
                     
