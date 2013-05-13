@@ -30,13 +30,13 @@ namespace EntityEngine.Stat_Attribute_Classes
             return role;
         }
 
-        List<string> spells = new List<string>();
-        List<string> attacks = new List<string>();
-        List<Item> items = new List<Item>();
+        List<string> spells = new List<string>(new string[] { "Elfire", "Chronosphere", "Arcthunder" });
+        List<string> attacks = new List<string>(new string[] { "Slash", "Blink Strike", "Blade Fury" });
+        List<string> items = new List<string>(new string[] { "Potion", "Vulnerary", "Clarity" });
 
         public List<string> Spells() { return spells; }
         public List<string> Attacks() { return attacks; }
-        public List<Item> Items() { return items; }
+        public List<string> Items() { return items; }
 
         int level;
         public int GetCurrentLevel()
@@ -53,7 +53,36 @@ namespace EntityEngine.Stat_Attribute_Classes
         {
             return exp;
         }
-        public void AddExp(int myAdd)
+
+        // this is the exp you gain after processing and adjustment based on your current level
+        public void GainExp(int bounty)
+        {
+            AddExp(bounty); //  TODO: for now, no processing
+
+            CheckAndLevelUp();
+        }
+
+        public int ExpRequiredForLevelUp()
+        {
+            return 100 * (int)(Math.Pow(2, level));
+            // level up requirement goes from 100, 200, 400...
+        }
+
+        //  todo: right now, leveling up does nothing
+        public void CheckAndLevelUp()
+        {
+            int expRequirement = ExpRequiredForLevelUp();
+            while (exp >= expRequirement)
+            {
+                level++;
+                exp -= expRequirement;
+
+                expRequirement = ExpRequiredForLevelUp();
+            }
+        }
+
+        // DON'T use this function. Use GainExp() for exp addition and processing.
+        void AddExp(int myAdd)
         {
             exp += myAdd;
             //TODO: Check to see if you've leveled up
@@ -64,10 +93,20 @@ namespace EntityEngine.Stat_Attribute_Classes
         {
             return currentHealth;
         }
-        int totalHealth;
-        public int GetTotalHealth()
+        int maxHealth;
+        public int GetMaxHealth()
         {
-            return totalHealth;
+            return maxHealth;
+        }
+        public void AddToHealth(int diff) //  adds a value to the health safely, without exceeding bounds
+        {
+            currentHealth += diff;
+            if (currentHealth > maxHealth) currentHealth = maxHealth;
+            else if (currentHealth < 0) currentHealth = 0;
+        }
+        public void RemoveHealth(int diff)
+        {
+            AddToHealth(-diff);
         }
 
         int currentMana = 10;
@@ -75,14 +114,12 @@ namespace EntityEngine.Stat_Attribute_Classes
         {
             return currentMana;
         }
-        int totalMana;
-        public int GetTotalMana()
+        int maxMana;
+        public int GetMaxMana()
         {
-            return totalMana;
+            return maxMana;
         }
         
-        int experienceBounty; // exp dropped when this unit dies //Maybe like 1/4 of total exp?
-
         int movement;
         public int GetMovement()
         {
@@ -103,6 +140,68 @@ namespace EntityEngine.Stat_Attribute_Classes
         public int GetAttackRadius()
         {
             return attackRadius;
+        }
+
+        Weapon equippedWeapon;
+        public int PhysicalDamageAgainst(UnitData enemy)
+        {
+            int damage = 0;
+            int weaponBonus = 0;
+            if (equippedWeapon != null)
+            {
+                weaponBonus = equippedWeapon.Damage();
+            }
+
+            damage += weaponBonus + attributes["strength"] - enemy.attributes["defense"];
+
+            return damage;
+        }
+
+        public int MagicalDamageAgainst(UnitData enemy)
+        {
+            int damage = 0;
+
+            int weaponBonus = 0;
+            if (equippedWeapon != null)
+            {
+                weaponBonus = equippedWeapon.Damage();
+            }
+
+            damage += weaponBonus + attributes["magic"] - enemy.attributes["resistance"];
+
+            return damage;
+        }
+
+        //  the amount of raw exp you receive from beating this unit...this number can
+        //  be processed and adjusted by the client based on exp splitting, exp bonuses,
+        //  exp reduction due to high level, etc.
+        public int ExpBounty()
+        {
+            int sum = 0;
+
+            foreach (KeyValuePair<string, int> kvp in attributes)
+            {
+                int diff = kvp.Value;
+                string attributeName = kvp.Key;
+                
+                float multiplier = 1.0f;
+
+                if (attributeName == "strength" || attributeName == "magic") {
+                    multiplier = 3.0f;
+                }
+                else if (attributeName == "resistance" || attributeName == "defense")
+                {
+                    multiplier = 2.5f;
+                }
+                else if (attributeName == "speed")
+                {
+                    multiplier = 2.0f;
+                }
+
+                sum += (int) (multiplier * diff);
+            }
+
+            return sum;
         }
 
         public UnitData(string name,     Role role,       Alignment ali,   int level, 
@@ -149,17 +248,20 @@ namespace EntityEngine.Stat_Attribute_Classes
             growths["resistance"] = resGrowth + role.Growths()["resistance"];
             growths["speed"] = spdGrowth + role.Growths()["speed"];
 
-            CalculateValues();
+            Refresh();
         }
 
-        public void CalculateValues()
+        public void Refresh()
         {
             movement += role.movement;
             sightRadius += role.sightRadius;
             attackRadius += role.attackRadius;
 
-            totalHealth = attributes["strength"] * 2; currentHealth = totalHealth;
-            totalMana = attributes["magic"] * 2; currentMana = totalMana;
+            maxHealth = attributes["strength"] * 2; currentHealth = maxHealth;
+            maxMana = attributes["magic"] * 2; currentMana = maxMana;
+
+            // TODO: for each item in this unit's inventory, if have the weapon
+            //  in the highest row be auto-equipped as their current weapon.
         }
 
 

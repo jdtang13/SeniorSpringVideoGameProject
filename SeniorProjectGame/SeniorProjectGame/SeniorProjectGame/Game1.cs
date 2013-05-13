@@ -27,13 +27,14 @@ namespace SeniorProjectGame
 
         //Graphics and Content Vars
         GraphicsDeviceManager graphics;
-        int screenWidth = 1280;
-        int screenHeight = 680;
         SpriteBatch spriteBatch;
 
         //  the main game menu
         Menu menu = new Menu(false);
         Texture2D dot;
+
+        //  the main menu for the battle screen (3rd layer)
+        NestedMenu battleMenu = new NestedMenu(false);
 
         Texture2D worldMapTexture, nodeTexture, pointerTexture;
         Texture2D hexBaseTexture, dirtTexture, grassTexture, gravelTexture, sandTexture, woodTexture,
@@ -126,9 +127,12 @@ namespace SeniorProjectGame
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
+            State.screenWidth = 1280;
+            State.screenHeight = 680;
+
             //1280x720
-            graphics.PreferredBackBufferHeight = screenHeight;
-            graphics.PreferredBackBufferWidth = screenWidth;
+            graphics.PreferredBackBufferHeight = State.screenHeight;
+            graphics.PreferredBackBufferWidth = State.screenWidth;
         }
 
         protected override void Initialize()
@@ -146,8 +150,9 @@ namespace SeniorProjectGame
             InitializeInput();
 
             //  dot is a generic white pixel texture used for generating colored rectangles
-            dot = new Texture2D(graphics.GraphicsDevice, 1, 1);
-            dot.SetData(new Color[] { Color.White });
+            State.dot = new Texture2D(graphics.GraphicsDevice, 1, 1);
+            State.dot.SetData(new Color[] { Color.White });
+            dot = State.dot;
 
             State.Initialize();
 
@@ -188,24 +193,26 @@ namespace SeniorProjectGame
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
-            Globals.font = font;
+            State.font = font;
 
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Enemies.txt");
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Player_Roles.txt");
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Party_Members.txt");
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\WorldMap.txt");
+            string prefix = "C:\\Users\\Jonathan\\Dropbox\\Senior Project Material\\WorldMap and HexMap txts\\Lionel's Maps\\";
 
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Testing_Grounds.txt");
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Testing_Grounds_Enemies.txt");
+            /*ConvertTxtToBin(prefix+"Enemies.txt");
+            ConvertTxtToBin(prefix+"Player_Roles.txt");
+            ConvertTxtToBin(prefix+"Party_Members.txt");
+            ConvertTxtToBin(prefix+"WorldMap.txt");
 
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Tutorial_Level.txt");
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Tutorial_Level_Enemies.txt");
+            ConvertTxtToBin(prefix+"Testing_Grounds.txt");
+            ConvertTxtToBin(prefix+"Testing_Grounds_Enemies.txt");
 
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Ambushed.txt");
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Ambushed_Enemies.txt");
+            ConvertTxtToBin(prefix+"Tutorial_Level.txt");
+            ConvertTxtToBin(prefix+"Tutorial_Level_Enemies.txt");
 
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Pavilion.txt");
-            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Pavilion_Enemies.txt");
+            ConvertTxtToBin(prefix+"Ambushed.txt");
+            ConvertTxtToBin(prefix+"Ambushed_Enemies.txt");
+
+            ConvertTxtToBin(prefix+"Pavilion.txt");
+            ConvertTxtToBin(prefix+"Pavilion_Enemies.txt");*/
 
             //Only run the conversions for developement purposes
             //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\WorldMap.txt");
@@ -603,7 +610,7 @@ namespace SeniorProjectGame
                     Vector2 coordinate = boardComponent.GetOneAlliedSpawnPoint(rand);
                     SpriteComponent hexSprite = boardComponent.GetHex(coordinate)._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                    partyMemberEntity.AddComponent(new AnimatedSpriteComponent(true, hexSprite.GetCenterPosition(), unitTextureDictionary[graphicName]));
+                    partyMemberEntity.AddComponent(new UnitSpriteComponent(true, hexSprite.GetCenterPosition(), unitTextureDictionary[graphicName]));
 
                     partyMemberEntity.AddComponent(new UnitComponent(boardComponent.GetHex(coordinate), true));
                     (partyMemberEntity.GetComponent("UnitComponent") as UnitComponent).SetUnitData(unitData);
@@ -754,7 +761,7 @@ namespace SeniorProjectGame
                     SpriteComponent hexSprite = hex._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
                     Entity blob = new Entity(EntityManager.GetHighestLayer() + 1, State.ScreenState.SKIRMISH);
-                    blob.AddComponent(new AnimatedSpriteComponent(true, hexSprite.GetPosition(), unitTextureDictionary[graphicName]));
+                    blob.AddComponent(new UnitSpriteComponent(true, hexSprite.GetPosition(), unitTextureDictionary[graphicName]));
                     blob.AddComponent(new UnitComponent(hex, false));
 
                     hex.SetUnit(blob.GetComponent("UnitComponent") as UnitComponent);
@@ -838,7 +845,8 @@ namespace SeniorProjectGame
             {
                 this.Exit();
             }
-            if (State.selectionState != State.SelectionState.SelectingMenuOptions)
+            if (State.selectionState == State.SelectionState.NoSelection 
+                && (State.screenState == State.ScreenState.SKIRMISH || State.screenState == State.ScreenState.WORLD_MAP))
             {
                 if (wClick.Evaluate())
                 {
@@ -933,7 +941,7 @@ namespace SeniorProjectGame
 
                     State.dialogueWordPosition = 1;
 
-                    if (gameTime.TotalGameTime.TotalMilliseconds - State.lastTimeDialogueChecked > Globals.dialogueDisplayRate)
+                    if (gameTime.TotalGameTime.TotalMilliseconds - State.lastTimeDialogueChecked > 30)
                     {
                         string line = State.currentDialogueMessage[State.dialogueLinePosition];
                         string[] words = line.Split(' ');
@@ -1129,19 +1137,18 @@ namespace SeniorProjectGame
                         {
                             if (spaceHold.Evaluate())
                             {
-                                //hold space to accelerate
+                                //  hold space to accelerate
                                 timePerMove = 120;
                             }
                             else
                             {
                                 timePerMove = 360;
                             }
-
                             elapsedTimeForMove += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
                             //animated movement
                             UnitComponent unit = State.originalHexClicked.GetUnit();
-                            AnimatedSpriteComponent sprite = unit._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
+                            UnitSpriteComponent sprite = unit._parent.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent;
                             SpriteComponent originalHexSprite = State.originalHexClicked._parent.GetDrawable("SpriteComponent") as SpriteComponent;
                             SpriteComponent finalHexSprite = pathQueue[0]._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
@@ -1198,6 +1205,7 @@ namespace SeniorProjectGame
                                 }
                             }
                         }
+
                         if (enterClick.Evaluate())
                         {
                             if (pathQueue.Count != 0)
@@ -1305,34 +1313,80 @@ namespace SeniorProjectGame
                     //  the first layer is exactly the same as a normal menu, but the second layers
                     //  are actually menus associated with strings/index numbers for other options. in other
                     //  words it's like menus in menus.
-                    /*
-                    if (singleWClick.Evaluate())
+                    
+                    UnitData attacker = State.currentAttacker.GetUnitData();
+                    UnitData defender = State.currentDefender.GetUnitData();
+
+                    //  switch the attacker and defender if a counterattack is being launched
+                    if (State.battleState == State.BattleState.CounterAttack)
                     {
-                        battleMenu.SetSelectedOption((battleMenu.Options().Count + battleMenu.CurrentOptionIndex() - 1) % battleMenu.Options().Count);
-                    }
-                    else if (singleSClick.Evaluate())
-                    {
-                        battleMenu.SetSelectedOption((battleMenu.CurrentOptionIndex() + 1) % battleMenu.Options().Count);
+                        UnitData tmp = attacker;
+                        attacker = defender;
+                        defender = tmp;
                     }
 
-                    if (selectedFirstOption == "Attack")
+                    //  player battle turn
+                    if (attacker.GetAlignment() == Alignment.PLAYER)
                     {
-                        if (menuHasMoreThanOneLayer && selectedSecondOption == "Strike")
+
+                        if (singleWClick.Evaluate())
                         {
-
+                            battleMenu.ScrollUp();
+                        }
+                        else if (singleSClick.Evaluate())
+                        {
+                            battleMenu.ScrollDown();
+                        }
+                        else if (enterClick.Evaluate())
+                        {
+                            if (battleMenu.Layer() == 0)
+                            {
+                                battleMenu.Enter();
+                            }
+                            else
+                            {
+                                if (battleMenu.RegisteredOption() == "Attack")
+                                {
+                                    if (battleMenu.CurrentOption() == "Slash")
+                                    {
+                                        // Todo: physical strike
+                                        defender.RemoveHealth(attacker.PhysicalDamageAgainst(defender));
+                                        EndBattleTurn();
+                                    }
+                                }
+                                else if (battleMenu.RegisteredOption() == "Use Item")
+                                {
+                                }
+                                else if (battleMenu.RegisteredOption() == "Cast")
+                                {
+                                    if (battleMenu.CurrentOption() == "Elfire")
+                                    {
+                                        defender.RemoveHealth(attacker.MagicalDamageAgainst(defender));
+                                        EndBattleTurn();
+                                    }
+                                }
+                                else if (battleMenu.RegisteredOption() == "Guard")
+                                {
+                                    //  todo: each unit has a damage resistance variable
+                                    //  similar to "armor" that's 100% by default. guarding
+                                    //  changes that variable to 80% for one turn.
+                                }
+                            }
+                        }
+                        else if (singleAClick.Evaluate())
+                        {
+                            battleMenu.Back();
                         }
                     }
-                    else if (selectedFirstOption == "Item")
+                    else
                     {
-                    }
-                    else if (selectedFirstOption == "Spell")
-                    {
-                    }
-                    else if (selectedFirstOption == "Guard")
-                    {
-                    }
-                    */
+                        //  todo: enemy battle turn..deals 10 damage
 
+                        //defender.RemoveHealth(attacker.PhysicalDamageAgainst(defender));
+                        defender.RemoveHealth(1);
+                        EndBattleTurn();
+
+                    }
                     break;
                 case State.ScreenState.BATTLE_RESOLUTION:
                     break;
@@ -1352,7 +1406,7 @@ namespace SeniorProjectGame
             foreach (Entity enemy in boardComponent.nonAlliedUnitList)
             {
                 UnitComponent unitComp = enemy.GetComponent("UnitComponent") as UnitComponent;
-                AnimatedSpriteComponent unitSprite = enemy.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
+                UnitSpriteComponent unitSprite = enemy.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent;
                 if (unitComp.GetHex().GetVisibility() != Visibility.Visible)
                 {
                     unitSprite._visible = false;
@@ -1369,7 +1423,7 @@ namespace SeniorProjectGame
             foreach (Entity ally in boardComponent.alliedUnitList)
             {
                 UnitComponent unitComp = ally.GetComponent("UnitComponent") as UnitComponent;
-                AnimatedSpriteComponent unitSprite = ally.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
+                UnitSpriteComponent unitSprite = ally.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent;
                 if (unitComp.GetMovesLeft() <= 0)
                 {
                     unitSprite.SetColor(Color.SlateGray);
@@ -1393,15 +1447,63 @@ namespace SeniorProjectGame
 
             State.currentAttacker = attacker;
             State.currentDefender = defender;
+
+            List<string> options = new List<string>(new string[] { "Attack", "Cast", "Use Item", "Guard", "Run" });
+            battleMenu = new NestedMenu(options, 200, 50, 
+                                    0, 400,
+                                    Color.Gray, dot, font);
+
+            battleMenu.AddNestedOptions("Attack", State.currentAttacker.GetUnitData().Attacks());
+            battleMenu.AddNestedOptions("Cast", State.currentAttacker.GetUnitData().Spells());
+            battleMenu.AddNestedOptions("Use Item", State.currentAttacker.GetUnitData().Items());
+
+            battleMenu.Show();
         }
 
         //  exit the fight scene and clean up the changed variables
         public void EndCurrentFight()
         {
             State.screenState = State.ScreenState.SKIRMISH;
+            State.battleState = State.BattleState.Attack;
+
+            if (State.currentAttacker.GetUnitData().GetCurrentHealth() == 0)
+            {
+                State.currentAttacker.GetHex().SetUnit(null);
+                EntityManager.RemoveEntity(State.currentAttacker._parent);
+
+                // give exp bounty... to the victor go the spoils.
+                State.currentDefender.GetUnitData().GainExp(State.currentAttacker.GetUnitData().ExpBounty());
+            }
+
+            if (State.currentDefender.GetUnitData().GetCurrentHealth() == 0)
+            {
+                State.currentDefender.GetHex().SetUnit(null);
+                EntityManager.RemoveEntity(State.currentDefender._parent);
+
+                State.currentAttacker.GetUnitData().GainExp(State.currentDefender.GetUnitData().ExpBounty());
+
+            }
+
+            State.attackerBattleStatus = State.BattleStatus.NoStatus;
+            State.defenderBattleStatus = State.BattleStatus.NoStatus;
 
             State.currentAttacker = null;
             State.currentDefender = null;
+
+            battleMenu.Hide();
+        }
+
+        // todo: end the turn for the current user and allow the enemy to attack
+        public void EndBattleTurn()
+        {
+            if (State.battleState == State.BattleState.Attack)
+            {
+                State.battleState = State.BattleState.CounterAttack;
+            }
+            else
+            {
+                EndCurrentFight();
+            }
         }
 
         //  given a position on the map, return all enemies adjacent to it
@@ -1518,13 +1620,13 @@ namespace SeniorProjectGame
             //SpriteComponent hexSprite = Entity.GetDrawable("SpriteComponent") as SpriteComponent;
             //sprite.setPosition(final.
 
-            ((AnimatedSpriteComponent)unitEntity.GetDrawable("AnimatedSpriteComponent")).
-            SetPosition(final._parent.GetDrawable("SpriteComponent").GetPosition());
+            ((UnitSpriteComponent)unitEntity.GetDrawable("UnitSpriteComponent")).
+                 SetPosition(final._parent.GetDrawable("SpriteComponent").GetPosition());
 
             unit.SetHex(final);
             final.SetUnit(unit);
 
-            boardComponent.UpdateVisibilityAllies();
+            boardComponent.UpdateVisibilityAllies(); // TODO: Lag
             UpdateEnemiesSeen();
 
             original.RemoveUnit();
@@ -1533,7 +1635,7 @@ namespace SeniorProjectGame
         void MoveAnimation(HexComponent original, HexComponent final, GameTime gameTime)
         {
             UnitComponent unit = original.GetUnit();
-            AnimatedSpriteComponent tempSprite = unit._parent.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent;
+            UnitSpriteComponent tempSprite = unit._parent.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent;
         }
 
         public void UpdateTurnState()
@@ -1701,6 +1803,43 @@ namespace SeniorProjectGame
             spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);
 
             menu.Draw(spriteBatch);
+
+            switch(State.screenState) {
+                case (State.ScreenState.BATTLING):
+                    //  draw battle scene
+
+                    (State.currentAttacker._parent.GetDrawable("UnitSpriteComponent") as AnimatedSpriteComponent).Draw(spriteBatch, new Vector2(200,50));
+                    (State.currentDefender._parent.GetDrawable("UnitSpriteComponent") as AnimatedSpriteComponent).Draw(spriteBatch, new Vector2(450, 50));
+
+                    battleMenu.Draw(spriteBatch);
+                    
+                    //  debug code
+                    spriteBatch.DrawString(font, "current option selected: " + battleMenu.CurrentOption(), new Vector2(0, 4 * font.LineSpacing), Color.White);
+                    spriteBatch.DrawString(font, "Attacker HP: " + State.currentAttacker.GetUnitData().GetCurrentHealth(), new Vector2(0, 5*font.LineSpacing), Color.White);
+                    spriteBatch.DrawString(font, "Defender HP: " + State.currentDefender.GetUnitData().GetCurrentHealth(), new Vector2(0, 6 * font.LineSpacing), Color.White);
+                    
+                    break;
+                case (State.ScreenState.SKIRMISH):
+                    //  TODO: draw HP bars above units
+                    //  TODO: probably need a UnitDrawableComponent that has this
+                    /*int healthBarThickness = 5;
+                    Color allyHealthColor = Color.CornflowerBlue;
+                    Color enemyHealthColor = Color.Red;
+                    Color emptyBarColor = Color.DarkGray;
+                    foreach (Entity e in boardComponent.alliedUnitList)
+                    {
+                        AnimatedSpriteComponent a = (e.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent);
+                        Vector2 pos = a.GetPosition() - new Vector2(State.screenWidth/2f, State.screenHeight/2f);
+                        UnitData u = (e.GetComponent("UnitComponent") as UnitComponent).GetUnitData();
+
+                        float healthPercentage = u.GetCurrentHealth() / (float)u.GetMaxHealth();
+
+                        spriteBatch.Draw(dot, new Rectangle((int)pos.X, (int)pos.Y, (int)(a.frameWidth * healthPercentage), healthBarThickness), allyHealthColor);
+                        spriteBatch.Draw(dot, new Rectangle((int)pos.X + (int)(a.frameWidth * healthPercentage), (int)pos.Y, (int)(a.frameWidth * (1 - healthPercentage)), healthBarThickness), emptyBarColor);
+
+                    }*/
+                    break;
+            }
 
             spriteBatch.End();
 

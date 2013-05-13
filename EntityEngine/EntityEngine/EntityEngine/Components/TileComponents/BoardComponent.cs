@@ -503,11 +503,6 @@ namespace EntityEngine.Components.TileComponents
         {
             if (fogOfWarToggle)
             {
-                for (int u = 0; u < oldVisible.Count; u++)
-                {
-                    oldVisible[u].SetVisibility(Visibility.Explored);
-                }
-
                 newVisible.Clear();
 
                 for (int p = 0; p < alliedUnitList.Count; p++)

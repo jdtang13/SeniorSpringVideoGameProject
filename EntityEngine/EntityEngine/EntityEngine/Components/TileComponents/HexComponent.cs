@@ -149,6 +149,11 @@ namespace EntityEngine.Components.TileComponents
             terrainList.Remove(myTerrain);
         }
 
+        public Vector2 GetCenterPosition()
+        {
+            return (_parent.GetDrawable("SpriteComponent") as SpriteComponent).GetCenterPosition();
+        }
+
         public List<TerrainComponent> GetTerrain()
         {
             return terrainList;

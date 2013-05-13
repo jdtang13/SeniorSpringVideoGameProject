@@ -13,26 +13,28 @@ using EntityEngine.Components.World_Map;
 
 namespace SeniorProjectGame
 {
-    class Menu
+    public class Menu
     {
-        Vector2 position;
-        List<string> options;
-        List<ClickableComponent> hitboxes;
+        protected Vector2 position;
+        protected List<string> options;
+        protected List<ClickableComponent> hitboxes;
 
-        int currentOptionIndex;
+        protected int currentOptionIndex;
 
-        bool isVisible;
+        protected bool isVisible;
 
-        SpriteFont font;
+        protected SpriteFont font;
 
-        int x;
-        int y;
+        protected int x;
+        protected int y;
 
-        int menuOptionWidth;
-        int menuOptionHeight;
+        protected int menuOptionWidth;
+        protected int menuOptionHeight;
 
-        Color menuOptionColor;
-        Texture2D menuOptionTexture;
+        protected Color menuOptionColor;
+        protected Texture2D menuOptionTexture;
+
+        public Menu() { }
 
         public Menu(bool visible)
         {
@@ -49,14 +51,19 @@ namespace SeniorProjectGame
             return options;
         }
 
-        public void SetSelectedOption(int index)
+        public virtual void SetSelectedOption(int index)
         {
             currentOptionIndex = index;
         }
 
-        public int CurrentOptionIndex()
+        public virtual int CurrentOptionIndex()
         {
             return currentOptionIndex;
+        }
+
+        public virtual string CurrentOption()
+        {
+            return options[currentOptionIndex];
         }
 
         public Menu(List<string> options, int width, int height, int x, int y, Color color, Texture2D texture, SpriteFont font)
@@ -87,7 +94,7 @@ namespace SeniorProjectGame
         public void Show() { isVisible = true; }
         public void Hide() { isVisible = false; }
 
-        void LoadOptions(List<string> options)
+        public void LoadOptions(List<string> options)
         {
             this.options = options;
             hitboxes = new List<ClickableComponent>();
@@ -100,7 +107,7 @@ namespace SeniorProjectGame
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public virtual void Draw(SpriteBatch spriteBatch)
         {
             if (options != null && isVisible)
             {

@@ -26,14 +26,20 @@ namespace EntityEngine
             return highestLayer;
         }
 
+        public static void RemoveEntity(Entity myEntity)
+        {
+            masterList.Remove(myEntity);
+        }
+
         public static void AddEntity(Entity myEntity)
         {
             masterList.Add(myEntity);
             if (myEntity.GetLayer() > highestLayer)
             {
-                highestLayer = myEntity.GetLayer()+1;
+                highestLayer = myEntity.GetLayer() + 1;
             }
         }
+        
         public static void ClearEntities()
         {
             masterList.Clear();

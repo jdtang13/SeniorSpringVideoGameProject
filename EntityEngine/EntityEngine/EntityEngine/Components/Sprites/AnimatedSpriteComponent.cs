@@ -13,7 +13,7 @@ namespace EntityEngine.Components.Sprites
     {
         //Use this component when you want to have a sprite that is animated
 
-        Vector2 currentFrame;
+        protected Vector2 currentFrame;
         public void setCurrentFrame(Vector2 myFrame)
         {
             currentFrame = myFrame;
@@ -28,9 +28,9 @@ namespace EntityEngine.Components.Sprites
         }
         public int frameWidth, frameHeight;
 
-        float timer = 0;
-        float interval;
-        int numberFrames;
+        protected float timer = 0;
+        protected float interval;
+        protected int numberFrames;
 
         Color color;
         public void SetColor(Color myColor)
@@ -38,7 +38,7 @@ namespace EntityEngine.Components.Sprites
             color = myColor;
         }
 
-        bool animating;//Turns the animating on and off
+        protected bool animating;//Turns the animating on and off
         public void SetAnimated(bool myTruth)
         {
             animating = myTruth;
@@ -90,8 +90,23 @@ namespace EntityEngine.Components.Sprites
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, position - offset,
-                new Rectangle(frameWidth * (int)currentFrame.X, frameHeight * (int)currentFrame.Y, frameWidth, frameHeight), color);
+            Draw(spriteBatch, position, color);
+        }
+
+        public void Draw(SpriteBatch spriteBatch, Vector2 pos)
+        {
+            Draw(spriteBatch, pos, color);
+        }
+
+        public void Draw(SpriteBatch spriteBatch, Color myColor)
+        {
+            Draw(spriteBatch, position, myColor);
+        }
+
+        public void Draw(SpriteBatch spriteBatch, Vector2 pos, Color myColor)
+        {
+            spriteBatch.Draw(texture, pos - offset,
+                new Rectangle(frameWidth * (int)currentFrame.X, frameHeight * (int)currentFrame.Y, frameWidth, frameHeight), myColor);
         }
     }
 }

@@ -6,6 +6,13 @@ using EntityEngine;
 using EntityEngine.Components.TileComponents;
 using EntityEngine.Components.Sprites;
 using EntityEngine.Input;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.GamerServices;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 
 namespace EntityEngine
 {
@@ -23,6 +30,10 @@ namespace EntityEngine
             SelectingUnit, SelectingMenuOptions, NoSelection
         }
 
+        public enum BattleState
+        {
+            Attack, CounterAttack
+        }
         public enum TurnState
         {
             AlliesTurn, EnemiesTurn
@@ -34,10 +45,19 @@ namespace EntityEngine
 
         }
 
+        public enum BattleStatus
+        {
+            NoStatus, Guarding
+        }
+
         public static void Initialize()
         {
             State.screenState = State.ScreenState.WORLD_MAP;
             State.selectionState = State.SelectionState.NoSelection;
+            State.battleState = State.BattleState.Attack;
+
+            State.screenWidth = 0;
+            State.screenHeight = 0;
 
             State.dialoguePosition = 0;//Which textbox you're in
             State.dialogueChoicePosition = 0;
@@ -56,10 +76,22 @@ namespace EntityEngine
 
             State.currentAttacker = null;
             State.currentDefender = null;
+
+            State.attackerBattleStatus = BattleStatus.NoStatus;
+            State.defenderBattleStatus = BattleStatus.NoStatus;
+
+            State.font = null;
         }
+
+        public static int screenWidth = 0;
+        public static int screenHeight = 0;
+
+        public static BattleStatus attackerBattleStatus; //  can be states like "guarding", "healing", "cursed", etc
+        public static BattleStatus defenderBattleStatus;
 
         public static int menuPosition = 0;
 
+        public static BattleState battleState;
         public static ScreenState screenState;
         public static SelectionState selectionState;
         public static TurnState turnState;
@@ -69,10 +101,14 @@ namespace EntityEngine
         public static UnitComponent currentAttacker;
         public static UnitComponent currentDefender;
 
+        public static SpriteFont font;
+
         //public Node currentNode;
         public static int dialoguePosition = 0;
         public static int dialogueChoicePosition = 0;
         public static string displayedDialogueMessage = "";
+
+        public static Texture2D dot;
 
         public static bool messageBegin = false;
         public static int dialogueLinePosition = 0;
