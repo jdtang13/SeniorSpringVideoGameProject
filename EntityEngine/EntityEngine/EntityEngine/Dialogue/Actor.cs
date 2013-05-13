@@ -12,7 +12,7 @@ namespace EntityEngine.Dialogue
     }
     public enum Emotion
     {
-        Smile, Scowl, Frown, Laugh, Nuetral
+        Smile, Scowl, Frown, Laugh, Neutral, None
     }
 
     public class Actor

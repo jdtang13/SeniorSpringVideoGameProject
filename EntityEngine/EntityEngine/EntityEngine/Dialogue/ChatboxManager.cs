@@ -59,7 +59,11 @@ namespace EntityEngine.Dialogue
         static List<ChatBox> chatboxes = new List<ChatBox>();
         static int currentChatboxIndex = 0; static ChatBox currentChatbox;
 
-        public static float slowTypingSpeed = 200f; public static float fastTypingSpeed = 15f;
+        static string eventName;
+
+        static float slowTypingSpeed = 50f; public static float fastTypingSpeed = .001f;
+        static float currentTypingSpeed = slowTypingSpeed;
+        static float timeSinceLastCharacter = 0f;
 
         public static void Initialize(Dictionary<string, PortraitPackage> myDictionary, SpriteFont myFont, Texture2D myBackdrop, Vector4 myMargins)
         {
@@ -78,7 +82,8 @@ namespace EntityEngine.Dialogue
 
             messageStartingPosition = new Vector2(backdropPosition.X + leftMargin, backdropPosition.Y + topMargin);
 
-            maxCharactersPerLine = Convert.ToInt32(backdrop.Width - leftMargin - rightMargin);
+            maxCharactersPerLine = Convert.ToInt32((backdrop.Width - leftMargin - rightMargin) / font.MeasureString("W").X);
+
             maxLines = Convert.ToInt32((backdrop.Height - topMargin - bottomMargin) / font.LineSpacing);
         }
 
@@ -113,7 +118,7 @@ namespace EntityEngine.Dialogue
 
                             string[] chatboxParameters = uninterpretedMessages[line].Split(new string[] { " ; " }, StringSplitOptions.None);
 
-                            string[] uninterpretedActors = chatboxParameters[0].Split(new string[] { " , " }, StringSplitOptions.None);
+
                             Actor[] tempActorArray = new Actor[4];
 
                             string tempSpeakerName = "";
@@ -121,23 +126,18 @@ namespace EntityEngine.Dialogue
                             //Creating the actors array for the chatbox
                             for (int p = 0; p < 4; p++)
                             {
-                                if (Convert.ToInt32(chatboxParameters[1]) == p)
+                                string[] characterInfo = chatboxParameters[p].Split(new string[] { " , " }, StringSplitOptions.None);
+                                if (characterInfo[0] != "None")
                                 {
-                                    //IF THIS IS THE SPEAKER
-                                    if (uninterpretedActors[p] != "None")
+                                    if (ConvertDirectionToNumber(chatboxParameters[4]) == p)
                                     {
-                                        string[] characterInfo = uninterpretedActors[p].Split(' ');
                                         tempActorArray[p] = new Actor(portraitDictionary[characterInfo[0]],
                                             (Emotion)Enum.Parse(typeof(Emotion), characterInfo[1]), p, true);
+
                                         tempSpeakerName = characterInfo[0];
                                     }
-                                }
-                                else
-                                {
-                                    //If this aint the speakerNumber
-                                    if (uninterpretedActors[p] != "None")
+                                    else
                                     {
-                                        string[] characterInfo = uninterpretedActors[p].Split(' ');
                                         tempActorArray[p] = new Actor(portraitDictionary[characterInfo[0]],
                                             (Emotion)Enum.Parse(typeof(Emotion), characterInfo[1]), p, false);
                                     }
@@ -147,14 +147,17 @@ namespace EntityEngine.Dialogue
                             string tempMessage = "";
 
                             //We are fetching the message of the chatbox here
-                            for (int messageIndex = line + 1; line < uninterpretedMessages.Count; messageIndex++)
+                            for (int messageIndex = line + 1; messageIndex < uninterpretedMessages.Count; messageIndex++)
                             {
-                                tempMessage += uninterpretedMessages[messageIndex];
-
-                                if (uninterpretedMessages[messageIndex].Contains(" ; "))
+                                if (messageIndex < uninterpretedMessages.Count)
                                 {
-                                    //If we reach teh next chatbox we stop what we are doing
-                                    break;
+                                    if (uninterpretedMessages[messageIndex].Contains(" ; "))
+                                    {
+                                        //If we reach the next chatbox we stop what we are doing
+                                        break;
+                                    }
+                                    //TODO: FIX THE ERROR
+                                    tempMessage += uninterpretedMessages[messageIndex] + " ";
                                 }
                             }
 
@@ -163,13 +166,17 @@ namespace EntityEngine.Dialogue
 
                             string[] chatboxSpecificMessageLines = new string[maxLines];
                             int currentLine = 0;
-                            //Go through everyword
+
+                            //Go through everyword and put it on a line
                             for (int w = 0; w < tempMessageWords.Length; w++)
                             {
                                 if (charactersUsedOnCurrentLine + tempMessageWords[w].ToCharArray().Length <= maxCharactersPerLine)
                                 {
                                     //If we can fit the word on the line put it in
-                                    chatboxSpecificMessageLines[currentLine] += tempMessageWords[w];
+                                    chatboxSpecificMessageLines[currentLine] += tempMessageWords[w] + " ";
+
+                                    charactersUsedOnCurrentLine += tempMessageWords[w].ToCharArray().Length;
+                                    charactersUsedOnCurrentLine++;//The space
                                 }
                                 else
                                 {
@@ -179,7 +186,9 @@ namespace EntityEngine.Dialogue
                                     if (currentLine < maxLines)
                                     {
                                         //The word is placed on the next lien
-                                        chatboxSpecificMessageLines[currentLine] += tempMessageWords[w];
+                                        chatboxSpecificMessageLines[currentLine] += tempMessageWords[w] + " ";
+                                        charactersUsedOnCurrentLine += tempMessageWords[w].ToCharArray().Length;
+                                        charactersUsedOnCurrentLine++;
                                     }
                                     else
                                     {
@@ -187,8 +196,14 @@ namespace EntityEngine.Dialogue
                                         ChatBox box = new ChatBox(tempSpeakerName, tempActorArray, chatboxSpecificMessageLines);
                                         chatboxes.Add(box);
                                         chatboxSpecificMessageLines = new string[maxLines];
+                                        currentLine = 0;
                                     }
                                 }
+                            }
+                            if (charactersUsedOnCurrentLine != 0)
+                            {
+                                ChatBox box = new ChatBox(tempSpeakerName, tempActorArray, chatboxSpecificMessageLines);
+                                chatboxes.Add(box);
                             }
 
                         }
@@ -196,6 +211,7 @@ namespace EntityEngine.Dialogue
 
                     currentCharacter = 0;
                     currentWritten = new string[maxLines];
+                    currentChatbox = chatboxes[currentChatboxIndex];
                     status = ChatboxStatus.Writing;
                 }
 
@@ -203,11 +219,16 @@ namespace EntityEngine.Dialogue
                 else if (status == ChatboxStatus.Writing)
                 {
                     messageCharacters = currentChatbox.GetMessageLine(currentLine).ToCharArray();
+                    speakerName = currentChatbox.GetSpeaker();
 
-                    if (myTime.TotalGameTime.TotalMilliseconds - State.lastTimeDialogueChecked > slowTypingSpeed)
+                    timeSinceLastCharacter += (float)myTime.ElapsedGameTime.TotalMilliseconds;
+
+                    if (timeSinceLastCharacter > currentTypingSpeed)
                     {
+                        timeSinceLastCharacter -= currentTypingSpeed;
                         if (currentCharacter < messageCharacters.Length)
                         {
+                            int p = (int)(State.lastTimeDialogueChecked / currentTypingSpeed);
                             currentWritten[currentLine] += messageCharacters[currentCharacter];
                             currentCharacter++;
                         }
@@ -225,15 +246,9 @@ namespace EntityEngine.Dialogue
                             {
                                 //We have reached the end of the lines, time to click next
                                 currentLine = 0;
-
-                                currentChatboxIndex++;
-                                currentChatbox = chatboxes[currentChatboxIndex];
-
                                 status = ChatboxStatus.WaitingInput;
                             }
                         }
-
-                        State.lastTimeDialogueChecked = (int)myTime.TotalGameTime.TotalMilliseconds;
                     }
                 }
                 else if (status == ChatboxStatus.WaitingInput)
@@ -244,19 +259,48 @@ namespace EntityEngine.Dialogue
             }
         }
 
+        public static int ConvertDirectionToNumber(string myString)
+        {
+            if (myString == "Left")
+            {
+                return 0;
+            }
+            else if (myString == "Left Center")
+            {
+                return 1;
+            }
+            else if (myString == "Right Center")
+            {
+                return 2;
+            }
+            else if (myString == "Right")
+            {
+                return 3;
+            }
+            else
+            {
+                //If its none return arbitrary wrong number
+                return 10101010;
+            }
+
+        }
+
         public static void RushTyping()
         {
             //Type whole tempMessage quickly
+            currentTypingSpeed = fastTypingSpeed;
         }
 
         //Called after user clicks to say display next
         public static void Advance()
         {
             //IF we aren't at the end of the chatboxes
-            if (currentChatboxIndex <= chatboxes.Count)
+            if (currentChatboxIndex < chatboxes.Count)
             {
                 currentChatboxIndex++;
+                currentChatbox = chatboxes[currentChatboxIndex];
                 ChatboxManager.status = ChatboxStatus.WaitingNext;
+                currentTypingSpeed = slowTypingSpeed;
             }
             else
             {
@@ -281,16 +325,22 @@ namespace EntityEngine.Dialogue
 
                 myBatch.Draw(backdrop, backdropPosition, Color.White);
 
-                myBatch.DrawString(font, speakerName, speakerNameStartingPosition, Color.White);
-
-                for (int line = 0; line < currentWritten.Length; line++)
+                myBatch.DrawString(font, speakerName, speakerNameStartingPosition, Color.Green);
+                if (currentWritten != null)
                 {
-                    myBatch.DrawString( font,
-                                        currentWritten[line],
-                                        new Vector2(messageStartingPosition.X,
-                                        messageStartingPosition.Y + (line * font.MeasureString("T").Y)),
-                                        Color.White
-                                      );
+                    for (int line = 0; line < currentWritten.Length; line++)
+                    {
+                        if (currentWritten[line] != null)
+                        {
+
+                            myBatch.DrawString(font,
+                                                currentWritten[line],
+                                                new Vector2(messageStartingPosition.X,
+                                                messageStartingPosition.Y + (line * font.MeasureString(" ").Y)),
+                                                Color.Black
+                                              );
+                        }
+                    }
                 }
             }
         }

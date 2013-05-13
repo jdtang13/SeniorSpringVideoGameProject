@@ -148,7 +148,7 @@ namespace SeniorProjectGame
             LoadContent();
             PopulateUnitTextureDictionary();
             PopulatePortraitDictionary();
-            ChatboxManager.Initialize(portraitDictionary, font, dialogueBackdropTexture);
+            ChatboxManager.Initialize(portraitDictionary, font, dialogueBackdropTexture,new Vector4(50,50,50,50));
 
             ProcessWorldMapBin();
             ProcessPlayerRolesBin();
@@ -199,23 +199,23 @@ namespace SeniorProjectGame
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
+            font = Content.Load<SpriteFont>("Graphics\\Fonts\\chatboxFont");
             Globals.font = font;
 
 //<<<<<<< HEAD
             //Only run the conversions for developement purposes
-//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Enemies.txt");
-//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Player_Roles.txt");
-                                                       
-//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Party_Members.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Enemies.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Player_Roles.txt");
+                                                     
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Party_Members.txt");
                                                     
-//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\WorldMap.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\WorldMap.txt");
 //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level.txt");
 //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level_Enemies.txt");
 
-//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Lab_Yard.txt");
-//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Lab_Yard_Enemies.txt");
-//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Lab_Yard_Dialogue.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Lab_Yard.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Lab_Yard_Enemies.txt");
+            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Lab_Yard_Dialogue.txt");
                        
 //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Alchemist's_Laboratory.txt");
 //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Ambushed.txt");
@@ -833,7 +833,7 @@ namespace SeniorProjectGame
 
             for (int lineIndex = 0; lineIndex < relevantLines.Count; lineIndex++)
             {
-                if (relevantLines[lineIndex].Contains("-") && relevantLines[lineIndex].Split(' ')[1] == myEventName)
+                if (relevantLines[lineIndex].Contains("-") && relevantLines[lineIndex].Contains( myEventName))
                 {
                     int lineBuffer = 1;
                     string currentLine = relevantLines[lineIndex + lineBuffer];
@@ -841,13 +841,16 @@ namespace SeniorProjectGame
                     {
                         dialogueLines.Add(relevantLines[lineIndex + lineBuffer]);
                         lineBuffer++;
-                        currentLine = relevantLines[lineIndex + lineBuffer];
+                        if (lineIndex + lineBuffer < relevantLines.Count)
+                        {
+                            currentLine = relevantLines[lineIndex + lineBuffer];
+                        }
                     }
 
                 }
             }
             return dialogueLines;
-        }
+        } 
 
 
         #endregion
@@ -1435,7 +1438,7 @@ namespace SeniorProjectGame
             //If there aren't enough spaces for them the highest in your queue will go
             //You should be able to reorder your party
 
-            State.screenState = State.ScreenState.SKIRMISH;
+            State.screenState = State.ScreenState.DIALOGUE;
         }
 
         void EndLevel()
@@ -1620,6 +1623,7 @@ namespace SeniorProjectGame
                 }
                 spriteBatch.DrawString(font, State.sumOfMoves.ToString(), new Vector2(0, 4 * font.LineSpacing), Color.White);
             }
+            
             numberOfFrames++;
             string fps = string.Format("fps: {0}", framesPerSecond);
             spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);

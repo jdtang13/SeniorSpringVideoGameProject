@@ -9,6 +9,10 @@ namespace EntityEngine.Dialogue
     {
         Actor[] actors;
         string speaker;
+        public string GetSpeaker()
+        {
+            return speaker;
+        }
         string[] messageLines;
         public string GetMessageLine(int myIndex)
         {
