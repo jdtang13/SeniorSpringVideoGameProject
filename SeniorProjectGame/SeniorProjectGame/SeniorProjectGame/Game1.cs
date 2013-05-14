@@ -52,7 +52,7 @@ namespace SeniorProjectGame
             pikemanFramedTexture, riflemanFramedTexture, spearmanFramedTexture, swordsmanFramedTexture, wizardFramedTexture, slimeFramedTexture;
 
         //DialogueStuffs
-        Texture2D dialogueBackdropTexture;
+        Texture2D dialogueBackdropTexture, dialogueWideBackdropTexture;
         Dictionary<string, PortraitPackage> portraitDictionary = new Dictionary<string, PortraitPackage>();
 
         //Sounds?
@@ -148,7 +148,7 @@ namespace SeniorProjectGame
             LoadContent();
             PopulateUnitTextureDictionary();
             PopulatePortraitDictionary();
-            ChatboxManager.Initialize(portraitDictionary, font, dialogueBackdropTexture,new Vector4(50,50,50,50));
+            ChatboxManager.Initialize(portraitDictionary, font, dialogueWideBackdropTexture,new Vector4(50,50,50,50));
 
             ProcessWorldMapBin();
             ProcessPlayerRolesBin();
@@ -272,6 +272,7 @@ namespace SeniorProjectGame
             questionTexture = Content.Load<Texture2D>("Graphics\\Other\\questionTexture");
 
             dialogueBackdropTexture = Content.Load<Texture2D>("Graphics\\Dialogue\\chatboxBackdrop");
+            dialogueWideBackdropTexture = Content.Load<Texture2D>("Graphics\\Dialogue\\chatboxWideBackdrop");
 
             PopulateTerrainDictionary();
 
@@ -348,10 +349,12 @@ namespace SeniorProjectGame
         }
         void PopulatePortraitDictionary()
         {
-            portraitDictionary.Add("Harry", new PortraitPackage(null, null, null, null, null, null, null, null, null, null));
-            portraitDictionary.Add("Liam", new PortraitPackage(null, null, null, null, null, null, null, null, null, null));
-            portraitDictionary.Add("Jon", new PortraitPackage(null, null, null, null, null, null, null, null, null, null));
-            portraitDictionary.Add("Nosa", new PortraitPackage(null, null, null, null, null, null, null, null, null, null));
+            portraitDictionary.Add("Harry", new PortraitPackage ());
+            portraitDictionary["Harry"].AddEmotionTexture(Emotion.Neutral,new Texture2D[2]{hexBaseTexture,hexBaseTexture});
+
+            portraitDictionary.Add("Liam",  new PortraitPackage ());
+            portraitDictionary.Add("Jon",   new PortraitPackage ());
+            portraitDictionary.Add("Nosa",  new PortraitPackage ());
 
         }
 

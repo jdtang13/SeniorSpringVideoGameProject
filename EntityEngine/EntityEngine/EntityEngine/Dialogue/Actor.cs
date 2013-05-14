@@ -73,11 +73,18 @@ namespace EntityEngine.Dialogue
                     {
 
                     }
+                    else
+                    {
+
+                    }
                     break;
                 case ChatSlot.LeftCenter:
                     if (isSpeaker)
                     {
 
+                    }
+                    else
+                    {
                     }
                     break;
                 case ChatSlot.RightCenter:
@@ -85,9 +92,16 @@ namespace EntityEngine.Dialogue
                     {
 
                     }
+                    else
+                    {
+                    }
                     break;
                 case ChatSlot.Right:
                     if (isSpeaker)
+                    {
+
+                    }
+                    else
                     {
 
                     }

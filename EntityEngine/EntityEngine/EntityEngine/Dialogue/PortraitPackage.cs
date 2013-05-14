@@ -8,22 +8,27 @@ namespace EntityEngine.Dialogue
 {
     public class PortraitPackage
     {
-        //int ID;
-        //public int GetID()
-        //{
-        //    return ID;
-        //}
-
-        public Texture2D leftFacing, rightFacing;
-
-        public PortraitPackage(//int myID, 
-            Texture2D myLeftFacingTexture,
-            Texture myLeftSmile, Texture2D myLeftFrown, Texture2D myLeftScowl, Texture2D myLeftLaugh,
-
-            Texture2D myRightFacingTexture, 
-            Texture2D myRightSmile, Texture2D myRightFrown, Texture2D myRightScowl, Texture2D myRightLaugh)
+        public Dictionary<Emotion, Texture2D[]> textures = new Dictionary<Emotion, Texture2D[]>();
+        public void AddEmotionTexture(Emotion myEmotion, Texture2D[] myTextures)
         {
-            //ID = myID;
+            textures.Add(myEmotion, myTextures);
         }
+        public Texture2D GetTexture(Emotion myEmotion, int myLeftOrRight)
+        {
+            if (textures[myEmotion][myLeftOrRight] != null)
+            {
+                return textures[myEmotion][myLeftOrRight];
+            }
+            else
+            {
+                //Woah! You better handle that null, bro!
+                return null;
+            }
+        }
+
+        public PortraitPackage()
+        {
+        }
+        
     }
 }

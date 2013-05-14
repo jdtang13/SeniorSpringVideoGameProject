@@ -26,7 +26,7 @@ namespace EntityEngine.Dialogue
         static Vector2 screenSize = new Vector2(1280, 680);
         static Vector2 screenCenter = screenSize / 2;
         static Vector2 backdropPosition;
-        static Vector2 offset = new Vector2(0, 0);
+        static Vector2 offset = new Vector2(0, 200);
 
         static Vector2 bounds;
         static Vector2 speakerNameStartingPosition;
