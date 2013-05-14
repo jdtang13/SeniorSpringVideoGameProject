@@ -17,7 +17,7 @@ namespace EntityEngine.Dialogue
 
     public enum ChatboxStatus
     {
-        Writing, WaitingInput, WaitingNext, Idle, Finished
+        Writing, WaitingInput, Idle, Finished
     }
 
     public static class ChatboxManager
@@ -98,123 +98,123 @@ namespace EntityEngine.Dialogue
             speakerName = "";
             messageLines = new string[maxLines];
 
+            chatboxes = new List<ChatBox>();
+
+            for (int line = 0; line < uninterpretedMessages.Count; line++)
+            {
+                //We found a new chatbox
+                if (uninterpretedMessages[line].Contains(" ; "))
+                {
+                    string[] chatboxParameters = uninterpretedMessages[line].Split(new string[] { " ; " }, StringSplitOptions.None);
+
+                    Actor[] tempActorArray = new Actor[4];
+
+                    string tempSpeakerName = "";
+
+                    //Creating the actors array and the speaker for the chatbox
+                    for (int p = 0; p < 4; p++)
+                    {
+                        string[] characterInfo = chatboxParameters[p].Split(new string[] { " , " }, StringSplitOptions.None);
+                        if (characterInfo[0] != "None")
+                        {
+                            if (ConvertDirectionToNumber(chatboxParameters[4]) == p)
+                            {
+                                tempActorArray[p] = new Actor(portraitDictionary[characterInfo[0]],
+                                    (Emotion)Enum.Parse(typeof(Emotion), characterInfo[1]), p, true);
+
+                                tempSpeakerName = characterInfo[0];
+                            }
+                            else
+                            {
+                                tempActorArray[p] = new Actor(portraitDictionary[characterInfo[0]],
+                                    (Emotion)Enum.Parse(typeof(Emotion), characterInfo[1]), p, false);
+                            }
+                        }
+                    }
+
+                    string tempMessage = "";
+
+                    //We are fetching the message of the chatbox here
+                    for (int messageIndex = line + 1; messageIndex < uninterpretedMessages.Count; messageIndex++)
+                    {
+                        if (messageIndex < uninterpretedMessages.Count)
+                        {
+                            if (uninterpretedMessages[messageIndex].Contains(" ; "))
+                            {
+                                //If we reach the next chatbox we stop what we are doing
+                                break;
+                            }
+                            //TODO: FIX THE ERROR
+                            tempMessage += uninterpretedMessages[messageIndex] + " ";
+                        }
+                    }
+
+                    int charactersUsedOnCurrentLine = 0;
+                    string[] tempMessageWords = tempMessage.Split(' ');
+
+                    string[] chatboxSpecificMessageLines = new string[maxLines];
+                    int currentLine = 0;
+
+                    //Go through everyword and put it on a line
+                    for (int w = 0; w < tempMessageWords.Length; w++)
+                    {
+                        //OK we have to add a space at the end of every word, make dealings
+                        if (charactersUsedOnCurrentLine + tempMessageWords[w].ToCharArray().Length+1 <= maxCharactersPerLine)
+                        {
+                            //If we can fit the word on the line put it in
+                            chatboxSpecificMessageLines[currentLine] += tempMessageWords[w] + " ";
+
+                            charactersUsedOnCurrentLine += tempMessageWords[w].ToCharArray().Length;
+                            charactersUsedOnCurrentLine++;//The space
+                        }
+                        else//What happens when the word we are adding puts us over the line limit
+                        {
+                            currentLine++;//Go to the next line and clear the numuber of chars used
+                            charactersUsedOnCurrentLine = 0;
+
+                            if (currentLine < maxLines)
+                            {
+                                //The word is placed on the next lien
+                                chatboxSpecificMessageLines[currentLine] += tempMessageWords[w] + " ";
+
+                                charactersUsedOnCurrentLine += tempMessageWords[w].ToCharArray().Length;
+                                charactersUsedOnCurrentLine++;
+                            }
+                            else//We would normally go to the next line, but low and behold, we are out of lines!
+                            {
+                                currentLine = 0;
+                                //Create a new chatbox, we're at the extent of this one
+                                ChatBox box = new ChatBox(tempSpeakerName, tempActorArray, chatboxSpecificMessageLines);
+                                chatboxes.Add(box);
+                                chatboxSpecificMessageLines = new string[maxLines];
+
+                                chatboxSpecificMessageLines[currentLine] += tempMessageWords[w] + " ";
+
+                                charactersUsedOnCurrentLine += tempMessageWords[w].ToCharArray().Length;
+                                charactersUsedOnCurrentLine++;
+                                
+                            }
+                        }
+                    }
+                    if (charactersUsedOnCurrentLine != 0)
+                    {
+                        ChatBox box = new ChatBox(tempSpeakerName, tempActorArray, chatboxSpecificMessageLines);
+                        chatboxes.Add(box);
+                    }
+                }
+            }
+            currentWritten = new string[maxLines];
             active = true;
-            status = ChatboxStatus.WaitingNext;
+            status = ChatboxStatus.Writing;
         }
 
         public static void Update(GameTime myTime)
         {
             if (active)
             {
-                if (status == ChatboxStatus.WaitingNext)
+                if (status == ChatboxStatus.Writing)
                 {
-                    chatboxes = new List<ChatBox>();
-
-                    for (int line = 0; line < uninterpretedMessages.Count; line++)
-                    {
-                        //We found a new chatbox
-                        if (uninterpretedMessages[line].Contains(" ; "))
-                        {
-                            string[] chatboxParameters = uninterpretedMessages[line].Split(new string[] { " ; " }, StringSplitOptions.None);
-
-                            Actor[] tempActorArray = new Actor[4];
-
-                            string tempSpeakerName = "";
-
-                            //Creating the actors array for the chatbox
-                            for (int p = 0; p < 4; p++)
-                            {
-                                string[] characterInfo = chatboxParameters[p].Split(new string[] { " , " }, StringSplitOptions.None);
-                                if (characterInfo[0] != "None")
-                                {
-                                    if (ConvertDirectionToNumber(chatboxParameters[4]) == p)
-                                    {
-                                        tempActorArray[p] = new Actor(portraitDictionary[characterInfo[0]],
-                                            (Emotion)Enum.Parse(typeof(Emotion), characterInfo[1]), p, true);
-
-                                        tempSpeakerName = characterInfo[0];
-                                    }
-                                    else
-                                    {
-                                        tempActorArray[p] = new Actor(portraitDictionary[characterInfo[0]],
-                                            (Emotion)Enum.Parse(typeof(Emotion), characterInfo[1]), p, false);
-                                    }
-                                }
-                            }
-
-                            string tempMessage = "";
-
-                            //We are fetching the message of the chatbox here
-                            for (int messageIndex = line + 1; messageIndex < uninterpretedMessages.Count; messageIndex++)
-                            {
-                                if (messageIndex < uninterpretedMessages.Count)
-                                {
-                                    if (uninterpretedMessages[messageIndex].Contains(" ; "))
-                                    {
-                                        //If we reach the next chatbox we stop what we are doing
-                                        break;
-                                    }
-                                    //TODO: FIX THE ERROR
-                                    tempMessage += uninterpretedMessages[messageIndex] + " ";
-                                }
-                            }
-
-                            int charactersUsedOnCurrentLine = 0;
-                            string[] tempMessageWords = tempMessage.Split(' ');
-
-                            string[] chatboxSpecificMessageLines = new string[maxLines];
-                            int currentLine = 0;
-
-                            //Go through everyword and put it on a line
-                            for (int w = 0; w < tempMessageWords.Length; w++)
-                            {
-                                if (charactersUsedOnCurrentLine + tempMessageWords[w].ToCharArray().Length <= maxCharactersPerLine)
-                                {
-                                    //If we can fit the word on the line put it in
-                                    chatboxSpecificMessageLines[currentLine] += tempMessageWords[w] + " ";
-
-                                    charactersUsedOnCurrentLine += tempMessageWords[w].ToCharArray().Length;
-                                    charactersUsedOnCurrentLine++;//The space
-                                }
-                                else
-                                {
-                                    currentLine++;
-                                    charactersUsedOnCurrentLine = 0;
-
-                                    if (currentLine < maxLines)
-                                    {
-                                        //The word is placed on the next lien
-                                        chatboxSpecificMessageLines[currentLine] += tempMessageWords[w] + " ";
-                                        charactersUsedOnCurrentLine += tempMessageWords[w].ToCharArray().Length;
-                                        charactersUsedOnCurrentLine++;
-                                    }
-                                    else
-                                    {
-                                        //Create a new chatbox, we're at the extent of this one
-                                        ChatBox box = new ChatBox(tempSpeakerName, tempActorArray, chatboxSpecificMessageLines);
-                                        chatboxes.Add(box);
-                                        chatboxSpecificMessageLines = new string[maxLines];
-                                        currentLine = 0;
-                                    }
-                                }
-                            }
-                            if (charactersUsedOnCurrentLine != 0)
-                            {
-                                ChatBox box = new ChatBox(tempSpeakerName, tempActorArray, chatboxSpecificMessageLines);
-                                chatboxes.Add(box);
-                            }
-
-                        }
-                    }
-
-                    currentCharacterOfLine = 0;
-                    currentWritten = new string[maxLines];
                     currentChatbox = chatboxes[currentChatboxIndex];
-                    status = ChatboxStatus.Writing;
-                }
-
-                else if (status == ChatboxStatus.Writing)
-                {
                     if (currentChatbox.GetMessageLine(currentLine) != null)
                     {
                         messageCharacters = currentChatbox.GetMessageLine(currentLine).ToCharArray();
@@ -306,15 +306,16 @@ namespace EntityEngine.Dialogue
             //IF we aren't at the end of the chatboxes
             if (currentChatboxIndex < chatboxes.Count)
             {
-                currentChatbox = chatboxes[currentChatboxIndex];
-                ChatboxManager.status = ChatboxStatus.WaitingNext;
+                currentCharacterOfLine = 0;
+                currentWritten = new string[maxLines];
+                ChatboxManager.status = ChatboxStatus.Writing;
                 currentTypingSpeed = slowTypingSpeed;
             }
             else
             {
                 //THAT'S THE WHOLE DIALOGUE SESSION
                 //TODO: Somehow quit since we are doen with dialogue
-                status = ChatboxStatus.Idle;
+                status = ChatboxStatus.Finished;
                 active = false;
             }
         }
