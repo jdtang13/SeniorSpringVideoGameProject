@@ -114,6 +114,7 @@ namespace SeniorProjectGame
 
         InputAction wClick, aClick, sClick, dClick, enterClick, escapeClick;
         InputAction singleWClick, singleAClick, singleSClick, singleDClick;
+        float doubleClickTimer;
 
         //Menu Vars
         List<Entity> orderButtonEntityList = new List<Entity>();
@@ -886,6 +887,7 @@ namespace SeniorProjectGame
             {
                 this.Exit();
             }
+
             if (State.selectionState != State.SelectionState.SelectingMenuOptions)
             {
                 if (wClick.Evaluate())
@@ -966,10 +968,24 @@ namespace SeniorProjectGame
                     }
                     else if(ChatboxManager.GetStatus() == ChatboxStatus.Writing)
                     {
-                        if(singleLeftClick.Evaluate())
+                        doubleClickTimer +=(float) gameTime.ElapsedGameTime.TotalMilliseconds;
+                        if (singleLeftClick.Evaluate())
+                        {
+                            if (doubleClickTimer < State.doubleClickSpeed)
+                            {
+                                ChatboxManager.Instawrite();
+                            }
+                            doubleClickTimer = 0;
+                        }
+                        if (leftHold.Evaluate())
                         {
                             ChatboxManager.RushTyping();
                         }
+                        else
+                        {
+                            ChatboxManager.SlowTyping();
+                        }
+                        
                     }
                     else if(ChatboxManager.GetStatus() == ChatboxStatus.WaitingInput)
                     {
@@ -1602,8 +1618,9 @@ namespace SeniorProjectGame
 
             ChatboxManager.Draw(spriteBatch);
 
-            spriteBatch.DrawString(font, InputState.GetMouseIngamePosition().ToString(), new Vector2(0, font.LineSpacing), Color.White);
-            spriteBatch.DrawString(font, InputState.GetMouseScreenPosition().ToString(), new Vector2(0, 2 * font.LineSpacing), Color.White);
+            //spriteBatch.DrawString(font, InputState.GetMouseIngamePosition().ToString(), new Vector2(0, font.LineSpacing), Color.White);
+            //spriteBatch.DrawString(font, InputState.GetMouseScreenPosition().ToString(), new Vector2(0, 2 * font.LineSpacing), Color.White);
+            
             if (boardComponent != null)
             {
                 //    double a = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)));
@@ -1624,7 +1641,7 @@ namespace SeniorProjectGame
                     int movesLeft = State.originalHexClicked.GetUnit().GetMovesLeft();
                     spriteBatch.DrawString(font, movesLeft.ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
                 }
-                spriteBatch.DrawString(font, State.sumOfMoves.ToString(), new Vector2(0, 4 * font.LineSpacing), Color.White);
+                //spriteBatch.DrawString(font, State.sumOfMoves.ToString(), new Vector2(0, 4 * font.LineSpacing), Color.White);
             }
             
             numberOfFrames++;

@@ -58,6 +58,8 @@ namespace EntityEngine
             State.currentDefender = null;
         }
 
+        public static float doubleClickSpeed = 300f;
+
         public static int menuPosition = 0;
 
         public static ScreenState screenState;

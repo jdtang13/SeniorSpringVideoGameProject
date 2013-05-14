@@ -159,7 +159,7 @@ namespace EntityEngine.Dialogue
                     for (int w = 0; w < tempMessageWords.Length; w++)
                     {
                         //OK we have to add a space at the end of every word, make dealings
-                        if (charactersUsedOnCurrentLine + tempMessageWords[w].ToCharArray().Length+1 <= maxCharactersPerLine)
+                        if (charactersUsedOnCurrentLine + tempMessageWords[w].ToCharArray().Length + 1 <= maxCharactersPerLine)
                         {
                             //If we can fit the word on the line put it in
                             chatboxSpecificMessageLines[currentLine] += tempMessageWords[w] + " ";
@@ -192,7 +192,7 @@ namespace EntityEngine.Dialogue
 
                                 charactersUsedOnCurrentLine += tempMessageWords[w].ToCharArray().Length;
                                 charactersUsedOnCurrentLine++;
-                                
+
                             }
                         }
                     }
@@ -297,6 +297,53 @@ namespace EntityEngine.Dialogue
         {
             //Type whole tempMessage quickly
             currentTypingSpeed = fastTypingSpeed;
+        }
+        public static void SlowTyping()
+        {
+            currentTypingSpeed = slowTypingSpeed;
+        }
+        public static void Instawrite()
+        {
+            currentChatbox = chatboxes[currentChatboxIndex];
+            currentWritten = new string[maxLines];
+
+            for (int l = 0; l < maxLines; l++)
+            {
+
+                if (currentChatbox.GetMessageLine(l) != null)
+                {
+                    speakerName = currentChatbox.GetSpeaker();
+                    currentWritten[l] = currentChatbox.GetMessageLine(l);
+
+                    //if (currentCharacterOfLine < messageCharacters.Length)
+                    //{
+                    //    currentWritten[currentLine] += messageCharacters[currentCharacterOfLine];
+                    //    currentCharacterOfLine++;
+                    //}
+                    //else
+                    //{
+                    //    currentCharacterOfLine = 0;
+                    //    currentLine++;
+                    //    if (currentLine < maxLines)
+                    //    {
+
+                    //        if (currentChatbox.GetMessageLine(currentLine) != null)
+                    //        {
+                    //            messageCharacters = currentChatbox.GetMessageLine(currentLine).ToCharArray();
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        We have reached the end of the lines, time to click next
+                    //        currentLine = 0;
+                    //        status = ChatboxStatus.WaitingInput;
+                    //    }
+
+                }
+            }
+
+            currentLine = 0;
+            status = ChatboxStatus.WaitingInput;
         }
 
         //Called after user clicks to say display next
