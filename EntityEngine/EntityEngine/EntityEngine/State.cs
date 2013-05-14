@@ -77,6 +77,8 @@ namespace EntityEngine
             State.currentAttacker = null;
             State.currentDefender = null;
 
+            State.battleMessage = "";
+
             State.attackerBattleStatus = BattleStatus.NoStatus;
             State.defenderBattleStatus = BattleStatus.NoStatus;
 
@@ -95,6 +97,8 @@ namespace EntityEngine
         public static ScreenState screenState;
         public static SelectionState selectionState;
         public static TurnState turnState;
+
+        public static string battleMessage;
 
         public static HexComponent originalHexClicked; //  used for selecting units
 

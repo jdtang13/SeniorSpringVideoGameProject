@@ -1319,6 +1319,7 @@ namespace SeniorProjectGame
                                     {
                                         // Todo: physical strike
                                         defender.RemoveHealth(attacker.PhysicalDamageAgainst(defender));
+                                        State.battleMessage = "Attacked with a slash!";
                                         EndBattleTurn();
                                     }
                                 }
@@ -1330,6 +1331,7 @@ namespace SeniorProjectGame
                                     if (battleMenu.CurrentOption() == "Elfire")
                                     {
                                         defender.RemoveHealth(attacker.MagicalDamageAgainst(defender));
+                                        State.battleMessage = "Cast Elfire!";
                                         EndBattleTurn();
                                     }
                                 }
@@ -1440,7 +1442,15 @@ namespace SeniorProjectGame
                 EntityManager.RemoveEntity(State.currentAttacker._parent);
 
                 // give exp bounty... to the victor go the spoils.
+                int oldLevel = State.currentDefender.GetUnitData().GetCurrentLevel();
+
                 State.currentDefender.GetUnitData().GainExp(State.currentAttacker.GetUnitData().ExpBounty());
+                
+                int newLevel = State.currentDefender.GetUnitData().GetCurrentLevel();
+                if (newLevel - oldLevel > 0)
+                {
+                    // TODO: level up message
+                }
             }
 
             if (State.currentDefender.GetUnitData().GetCurrentHealth() == 0)
@@ -1448,7 +1458,15 @@ namespace SeniorProjectGame
                 State.currentDefender.GetHex().SetUnit(null);
                 EntityManager.RemoveEntity(State.currentDefender._parent);
 
+                int oldLevel = State.currentDefender.GetUnitData().GetCurrentLevel();
+
                 State.currentAttacker.GetUnitData().GainExp(State.currentDefender.GetUnitData().ExpBounty());
+
+                int newLevel = State.currentDefender.GetUnitData().GetCurrentLevel();
+                if (newLevel - oldLevel > 0)
+                {
+                    // TODO: level up message
+                }
 
             }
 
@@ -1472,6 +1490,8 @@ namespace SeniorProjectGame
             {
                 EndCurrentFight();
             }
+
+            State.battleMessage = "";
         }
 
         //  given a position on the map, return all enemies adjacent to it
@@ -1766,9 +1786,9 @@ namespace SeniorProjectGame
                 if (State.originalHexClicked != null)
                 {
                     int movesLeft = State.originalHexClicked.GetUnit().GetMovesLeft();
-                    spriteBatch.DrawString(font, movesLeft.ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
+                   //  spriteBatch.DrawString(font, movesLeft.ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
                 }
-                spriteBatch.DrawString(font, State.sumOfMoves.ToString(), new Vector2(0, 4 * font.LineSpacing), Color.White);
+                //  spriteBatch.DrawString(font, State.sumOfMoves.ToString(), new Vector2(0, 4 * font.LineSpacing), Color.White);
             }
             numberOfFrames++;
             string fps = string.Format("fps: {0}", framesPerSecond);
@@ -1780,8 +1800,8 @@ namespace SeniorProjectGame
                 case (State.ScreenState.BATTLING):
                     //  draw battle scene
 
-                    (State.currentAttacker._parent.GetDrawable("UnitSpriteComponent") as AnimatedSpriteComponent).Draw(spriteBatch, new Vector2(200,50));
-                    (State.currentDefender._parent.GetDrawable("UnitSpriteComponent") as AnimatedSpriteComponent).Draw(spriteBatch, new Vector2(450, 50));
+                    (State.currentAttacker._parent.GetDrawable("UnitSpriteComponent") as AnimatedSpriteComponent).Draw(spriteBatch, new Vector2(400, 200));
+                    (State.currentDefender._parent.GetDrawable("UnitSpriteComponent") as AnimatedSpriteComponent).Draw(spriteBatch, new Vector2(800, 200));
 
                     battleMenu.Draw(spriteBatch);
                     
@@ -1792,24 +1812,7 @@ namespace SeniorProjectGame
                     
                     break;
                 case (State.ScreenState.SKIRMISH):
-                    //  TODO: draw HP bars above units
-                    //  TODO: probably need a UnitDrawableComponent that has this
-                    /*int healthBarThickness = 5;
-                    Color allyHealthColor = Color.CornflowerBlue;
-                    Color enemyHealthColor = Color.Red;
-                    Color emptyBarColor = Color.DarkGray;
-                    foreach (Entity e in boardComponent.alliedUnitList)
-                    {
-                        AnimatedSpriteComponent a = (e.GetDrawable("AnimatedSpriteComponent") as AnimatedSpriteComponent);
-                        Vector2 pos = a.GetPosition() - new Vector2(State.screenWidth/2f, State.screenHeight/2f);
-                        UnitData u = (e.GetComponent("UnitComponent") as UnitComponent).GetUnitData();
 
-                        float healthPercentage = u.GetCurrentHealth() / (float)u.GetMaxHealth();
-
-                        spriteBatch.Draw(dot, new Rectangle((int)pos.X, (int)pos.Y, (int)(a.frameWidth * healthPercentage), healthBarThickness), allyHealthColor);
-                        spriteBatch.Draw(dot, new Rectangle((int)pos.X + (int)(a.frameWidth * healthPercentage), (int)pos.Y, (int)(a.frameWidth * (1 - healthPercentage)), healthBarThickness), emptyBarColor);
-
-                    }*/
                     break;
             }
 
