@@ -90,6 +90,8 @@ namespace SeniorProjectGame
         }
         HexComponent ghostHex = null;
         List<HexComponent> pathQueue = new List<HexComponent>();
+        List<UnitComponent> enemiesYouSee = new List<UnitComponent>();
+        int clusterDectectionRadius = 4;
 
         bool moving = false;
         bool yourTurn = true;
@@ -1090,7 +1092,7 @@ namespace SeniorProjectGame
                                         int selectedEnemyIndex = 0;
 
                                         StartFight(State.originalHexClicked.GetUnit(),
-                                            enemiesAdjacentTo(boardComponent, State.originalHexClicked.getCoordPosition())[selectedEnemyIndex]);
+                                            enemiesAdjacentTo(boardComponent, State.originalHexClicked.GetCoordPosition())[selectedEnemyIndex]);
 
                                         // todo: end battle
                                         // EndCurrentFight();
@@ -1130,8 +1132,10 @@ namespace SeniorProjectGame
                                 pathQueue[0].SetInQueue(false);
                                 MoveUnit(State.originalHexClicked, pathQueue[0]);
                                 State.originalHexClicked = pathQueue[0];
-
                                 pathQueue.Remove(pathQueue[0]);
+
+
+
                                 if (pathQueue.Count == 0)
                                 {
                                     int skirmishMenuX = 300;
@@ -1147,12 +1151,12 @@ namespace SeniorProjectGame
                                     int skirmishMenuOptionWidth = 200;
                                     Color skirmishMenuColor = Color.DarkGray;
 
-                                    if (enemiesAdjacentTo(boardComponent, State.originalHexClicked.getCoordPosition()).Count > 0)
+                                    if (enemiesAdjacentTo(boardComponent, State.originalHexClicked.GetCoordPosition()).Count > 0)
                                     {
                                         options.Insert(0, "Attack"); //  have "attack" as an option if enemy nearby
                                     }
 
-                                    if (alliesAdjacentTo(boardComponent, State.originalHexClicked.getCoordPosition()).Count > 0)
+                                    if (alliesAdjacentTo(boardComponent, State.originalHexClicked.GetCoordPosition()).Count > 0)
                                     {
                                         options.Insert(0, "Heal"); //  have "attack" as an option if enemy nearby
                                     }
@@ -1594,7 +1598,7 @@ namespace SeniorProjectGame
             unit.SetHex(final);
             final.SetUnit(unit);
 
-            boardComponent.UpdateVisibilityAllies(); // TODO: Lag
+            boardComponent.UpdateVisibilityAllies();
             UpdateEnemiesSeen();
 
             original.RemoveUnit();
@@ -1656,7 +1660,7 @@ namespace SeniorProjectGame
 
             for (int r = 0; r <= unitData.GetSightRadius(); r++)
             {
-                List<HexComponent> currentRing = boardComponent.GetRing(unitComp.GetHex().getCoordPosition(), r);
+                List<HexComponent> currentRing = boardComponent.GetRing(unitComp.GetHex().GetCoordPosition(), r);
                 for (int i = 0; i < currentRing.Count; i++) //i is hex index within currentRing
                 {
                     HexComponent currentHex = currentRing[i];
@@ -1687,6 +1691,25 @@ namespace SeniorProjectGame
 
             return visibleHexes;
         }
+
+        //public bool CheckForNewEnemies()
+        //{
+        //    foreach (Entity ally in boardComponent.alliedUnitList)
+        //    {                
+        //        List<HexComponent> hexesAllySees = GetVisibleHexes(ally);
+        //        foreach (Entity enemy in boardComponent.nonAlliedUnitList)
+        //        {
+        //            UnitComponent enemyComp = enemy.GetComponent("UnitComponent") as UnitComponent;
+        //            if (hexesAllySees.Contains(enemyComp.GetHex()))
+        //            {
+        //                enemiesYouSee.Add(enemyComp);
+        //                List<HexComponent> clusterCheck = boardComponent.GetAllRings(enemyComp.GetHex().GetCoordPosition(), clusterDectectionRadius);
+        //                clusterCheck.Remove(enemyComp.GetHex());
+
+        //            }
+        //        }
+        //    }
+        //}
 
         public void UpdateAllSeenUnitList() // this function is used exclusively for enemies
         {
