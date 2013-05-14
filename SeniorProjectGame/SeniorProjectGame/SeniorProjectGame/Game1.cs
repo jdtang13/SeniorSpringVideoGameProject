@@ -116,10 +116,10 @@ namespace SeniorProjectGame
         InputAction singleWClick, singleAClick, singleSClick, singleDClick;
         float doubleClickTimer;
 
-        //Menu Vars
-        List<Entity> orderButtonEntityList = new List<Entity>();
-        Entity attackOrderEntity, moveOrderEntity, noOrderEntity, spellOrderEntity;
-        Texture2D attackOrderTexture, moveOrderTexture, noOrderTexture, spellOrderTexture;
+        ////Menu Vars
+        //List<Entity> orderButtonEntityList = new List<Entity>();
+        //Entity attackOrderEntity, moveOrderEntity, noOrderEntity, spellOrderEntity;
+        //Texture2D attackOrderTexture, moveOrderTexture, noOrderTexture, spellOrderTexture;
 
         //FPS Vars
         float framesPerSecond = 60;

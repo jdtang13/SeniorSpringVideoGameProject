@@ -346,7 +346,6 @@ namespace EntityEngine.Dialogue
             status = ChatboxStatus.WaitingInput;
         }
 
-        //Called after user clicks to say display next
         public static void Advance()
         {
             currentChatboxIndex++;
