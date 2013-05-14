@@ -49,7 +49,7 @@ namespace EntityEngine.Dialogue
 
         static string speakerName;
         static int currentLine = 0;
-        static string[] currentWritten; static int currentCharacter = 0;
+        static string[] currentWritten; static int currentCharacterOfLine = 0;
         static string[] messageLines; static char[] messageCharacters;
 
         static Dictionary<string, PortraitPackage> portraitDictionary;
@@ -61,7 +61,7 @@ namespace EntityEngine.Dialogue
 
         static string eventName;
 
-        static float slowTypingSpeed = 50f; public static float fastTypingSpeed = .001f;
+        static float slowTypingSpeed = 100f; public static float fastTypingSpeed = 1f;
         static float currentTypingSpeed = slowTypingSpeed;
         static float timeSinceLastCharacter = 0f;
 
@@ -115,9 +115,7 @@ namespace EntityEngine.Dialogue
                         //We found a new chatbox
                         if (uninterpretedMessages[line].Contains(" ; "))
                         {
-
                             string[] chatboxParameters = uninterpretedMessages[line].Split(new string[] { " ; " }, StringSplitOptions.None);
-
 
                             Actor[] tempActorArray = new Actor[4];
 
@@ -209,46 +207,56 @@ namespace EntityEngine.Dialogue
                         }
                     }
 
-                    currentCharacter = 0;
+                    currentCharacterOfLine = 0;
                     currentWritten = new string[maxLines];
                     currentChatbox = chatboxes[currentChatboxIndex];
                     status = ChatboxStatus.Writing;
                 }
 
-
                 else if (status == ChatboxStatus.Writing)
                 {
-                    messageCharacters = currentChatbox.GetMessageLine(currentLine).ToCharArray();
-                    speakerName = currentChatbox.GetSpeaker();
-
-                    timeSinceLastCharacter += (float)myTime.ElapsedGameTime.TotalMilliseconds;
-
-                    if (timeSinceLastCharacter > currentTypingSpeed)
+                    if (currentChatbox.GetMessageLine(currentLine) != null)
                     {
-                        timeSinceLastCharacter -= currentTypingSpeed;
-                        if (currentCharacter < messageCharacters.Length)
-                        {
-                            int p = (int)(State.lastTimeDialogueChecked / currentTypingSpeed);
-                            currentWritten[currentLine] += messageCharacters[currentCharacter];
-                            currentCharacter++;
-                        }
-                        else
-                        {
-                            currentLine++;
-                            currentCharacter = 0;
+                        messageCharacters = currentChatbox.GetMessageLine(currentLine).ToCharArray();
 
-                            if (currentLine < maxLines)
+                        speakerName = currentChatbox.GetSpeaker();
+
+                        timeSinceLastCharacter += (float)myTime.ElapsedGameTime.TotalMilliseconds;
+
+                        if (timeSinceLastCharacter > currentTypingSpeed)
+                        {
+                            timeSinceLastCharacter -= currentTypingSpeed;
+
+                            if (currentCharacterOfLine < messageCharacters.Length)
                             {
-                                //We're just moving to the next line
-                                messageCharacters = currentChatbox.GetMessageLine(currentLine).ToCharArray();
+                                currentWritten[currentLine] += messageCharacters[currentCharacterOfLine];
+                                currentCharacterOfLine++;
                             }
                             else
                             {
-                                //We have reached the end of the lines, time to click next
-                                currentLine = 0;
-                                status = ChatboxStatus.WaitingInput;
+                                currentCharacterOfLine = 0;
+                                currentLine++;
+                                if (currentLine < maxLines)
+                                {
+
+                                    if (currentChatbox.GetMessageLine(currentLine) != null)
+                                    {
+                                        messageCharacters = currentChatbox.GetMessageLine(currentLine).ToCharArray();
+                                    }
+                                }
+                                else
+                                {
+                                    //We have reached the end of the lines, time to click next
+                                    currentLine = 0;
+                                    status = ChatboxStatus.WaitingInput;
+                                }
                             }
                         }
+                    }
+                    else//If the line is null
+                    {
+                        currentLine = 0;
+                        status = ChatboxStatus.WaitingInput;
                     }
                 }
                 else if (status == ChatboxStatus.WaitingInput)
@@ -294,10 +302,10 @@ namespace EntityEngine.Dialogue
         //Called after user clicks to say display next
         public static void Advance()
         {
+            currentChatboxIndex++;
             //IF we aren't at the end of the chatboxes
             if (currentChatboxIndex < chatboxes.Count)
             {
-                currentChatboxIndex++;
                 currentChatbox = chatboxes[currentChatboxIndex];
                 ChatboxManager.status = ChatboxStatus.WaitingNext;
                 currentTypingSpeed = slowTypingSpeed;
