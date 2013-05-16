@@ -211,9 +211,9 @@ namespace SeniorProjectGame
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
             State.font = font;
 
-            string prefix = "C:\\Users\\Jonathan\\Dropbox\\Senior Project Material\\WorldMap and HexMap txts\\Lionel's Maps\\";
+            string prefix = "C:\\Users\\Jonathan\\Dropbox\\Senior Project Material\\TxtFiles\\Development\\";
 
-            /*ConvertTxtToBin(prefix+"Enemies.txt");
+            ConvertTxtToBin(prefix+"Enemies.txt");
             ConvertTxtToBin(prefix+"Player_Roles.txt");
             ConvertTxtToBin(prefix+"Party_Members.txt");
             ConvertTxtToBin(prefix+"WorldMap.txt");
@@ -228,7 +228,14 @@ namespace SeniorProjectGame
             ConvertTxtToBin(prefix+"Ambushed_Enemies.txt");
 
             ConvertTxtToBin(prefix+"Pavilion.txt");
-            ConvertTxtToBin(prefix+"Pavilion_Enemies.txt");*/
+            ConvertTxtToBin(prefix+"Pavilion_Enemies.txt");
+
+            //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level.txt");
+            //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level_Enemies.txt");
+
+            ConvertTxtToBin(prefix+"Lab_Yard.txt");
+            ConvertTxtToBin(prefix+"Lab_Yard_Enemies.txt");
+            ConvertTxtToBin(prefix+"Lab_Yard_Dialogue.txt");
 
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\chatboxFont");
 
