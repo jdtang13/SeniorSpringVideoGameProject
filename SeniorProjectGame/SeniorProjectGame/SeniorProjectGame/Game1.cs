@@ -1420,16 +1420,19 @@ namespace SeniorProjectGame
         //  calculate a destination for an enemy or neutral unit
         //  that is "optimal" in terms of its artificial intelligence.
         //  the destination is guaranteed to be within the unit's moverange.
-        public HexComponent DestinationForUnit(UnitComponent unit)
+
+        //  the AI will have a specified "strategy" that determines how it behaves,
+        //  e.g. "berserk" might be overly aggressive, "passive" might never attack anything.
+        public HexComponent DestinationForUnit(UnitComponent unit, string strategy)
         {
             return boardComponent.GetHex(new Vector2(0, 0));
         }
 
         //  calculate an optimal action for a unit to perform when its done moving.
         //  for example, a unit may choose to attack, heal, or simply "wait".
-        public void ActionForUnit(UnitComponent unit)
+        public void ActionForUnit(UnitComponent unit, string strategy)
         {
-            
+            // todo: get adjacent hexes. calculate best action according to those.
         }
 
         //  have two units fight and enter a battle menu
