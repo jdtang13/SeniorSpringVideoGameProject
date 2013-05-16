@@ -53,6 +53,7 @@ namespace SeniorProjectGame
 
         //DialogueStuffs
         Texture2D dialogueBackdropTexture, dialogueWideBackdropTexture;
+        Texture2D missingActorTexture;
         Dictionary<string, PortraitPackage> portraitDictionary = new Dictionary<string, PortraitPackage>();
 
         //Sounds?
@@ -149,7 +150,7 @@ namespace SeniorProjectGame
             LoadContent();
             PopulateUnitTextureDictionary();
             PopulatePortraitDictionary();
-            ChatboxManager.Initialize(portraitDictionary, font, dialogueWideBackdropTexture,new Vector4(50,50,50,50));
+            ChatboxManager.Initialize(portraitDictionary, font, dialogueWideBackdropTexture, new Vector4(50, 50, 50, 50));
 
             ProcessWorldMapBin();
             ProcessPlayerRolesBin();
@@ -203,55 +204,55 @@ namespace SeniorProjectGame
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\chatboxFont");
             Globals.font = font;
 
-//<<<<<<< HEAD
+            //<<<<<<< HEAD
             //Only run the conversions for developement purposes
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Enemies.txt");
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Player_Roles.txt");
-                                                     
+
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Party_Members.txt");
-                                                    
+
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\WorldMap.txt");
-//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level.txt");
-//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level_Enemies.txt");
+            //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level.txt");
+            //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level_Enemies.txt");
 
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Lab_Yard.txt");
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Lab_Yard_Enemies.txt");
             ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Lab_Yard_Dialogue.txt");
-                       
-//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Alchemist's_Laboratory.txt");
-//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Ambushed.txt");
-                      
-//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Pavilion.txt");
-//            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Throne_Room.txt");
-//=======
-//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Enemies.txt");
-//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Player_Roles.txt");
-//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Party_Members.txt");
-//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\WorldMap.txt");
 
-//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Testing_Grounds.txt");
-//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Testing_Grounds_Enemies.txt");
+            //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Alchemist's_Laboratory.txt");
+            //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Ambushed.txt");
 
-//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Tutorial_Level.txt");
-//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Tutorial_Level_Enemies.txt");
+            //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Pavilion.txt");
+            //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Throne_Room.txt");
+            //=======
+            //            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Enemies.txt");
+            //            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Player_Roles.txt");
+            //            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Party_Members.txt");
+            //            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\WorldMap.txt");
 
-//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Ambushed.txt");
-//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Ambushed_Enemies.txt");
+            //            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Testing_Grounds.txt");
+            //            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Testing_Grounds_Enemies.txt");
 
-//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Pavilion.txt");
-//            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Pavilion_Enemies.txt");
+            //            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Tutorial_Level.txt");
+            //            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Tutorial_Level_Enemies.txt");
 
-//            //Only run the conversions for developement purposes
-//            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\WorldMap.txt");
+            //            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Ambushed.txt");
+            //            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Ambushed_Enemies.txt");
 
-//            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard.txt");
-//            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard_Enemies.txt");
-//            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard_Dialogue.txt");
+            //            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Pavilion.txt");
+            //            ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Pavilion_Enemies.txt");
 
-//            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Alchemist's_Laboratory.txt");
+            //            //Only run the conversions for developement purposes
+            //            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\WorldMap.txt");
 
-//            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Throne_Room.txt");
-//>>>>>>> origin/lionel
+            //            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard.txt");
+            //            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard_Enemies.txt");
+            //            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard_Dialogue.txt");
+
+            //            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Alchemist's_Laboratory.txt");
+
+            //            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Throne_Room.txt");
+            //>>>>>>> origin/lionel
 
             worldMapTexture = Content.Load<Texture2D>("Graphics\\Backgrounds\\island");
             pointerTexture = Content.Load<Texture2D>("Graphics\\Other\\pointer");
@@ -274,6 +275,7 @@ namespace SeniorProjectGame
 
             dialogueBackdropTexture = Content.Load<Texture2D>("Graphics\\Dialogue\\chatboxBackdrop");
             dialogueWideBackdropTexture = Content.Load<Texture2D>("Graphics\\Dialogue\\chatboxWideBackdrop");
+            missingActorTexture = Content.Load<Texture2D>("Graphics\\Dialogue\\Actors\\missing");
 
             PopulateTerrainDictionary();
 
@@ -350,12 +352,12 @@ namespace SeniorProjectGame
         }
         void PopulatePortraitDictionary()
         {
-            portraitDictionary.Add("Harry", new PortraitPackage ());
-            portraitDictionary["Harry"].AddEmotionTexture(Emotion.Neutral,new Texture2D[2]{hexBaseTexture,hexBaseTexture});
+            portraitDictionary.Add("Harry", new PortraitPackage(missingActorTexture));
+            //portraitDictionary["Harry"].AddEmotionTexture(Emotion.Neutral, new Texture2D[2] { hexBaseTexture, hexBaseTexture });
 
-            portraitDictionary.Add("Liam",  new PortraitPackage ());
-            portraitDictionary.Add("Jon",   new PortraitPackage ());
-            portraitDictionary.Add("Nosa",  new PortraitPackage ());
+            portraitDictionary.Add("Liam", new PortraitPackage(missingActorTexture));
+            portraitDictionary.Add("Jon", new PortraitPackage(missingActorTexture));
+            portraitDictionary.Add("Nosa", new PortraitPackage(missingActorTexture));
 
         }
 
@@ -837,7 +839,7 @@ namespace SeniorProjectGame
 
             for (int lineIndex = 0; lineIndex < relevantLines.Count; lineIndex++)
             {
-                if (relevantLines[lineIndex].Contains("-") && relevantLines[lineIndex].Contains( myEventName))
+                if (relevantLines[lineIndex].Contains("-") && relevantLines[lineIndex].Contains(myEventName))
                 {
                     int lineBuffer = 1;
                     string currentLine = relevantLines[lineIndex + lineBuffer];
@@ -854,7 +856,7 @@ namespace SeniorProjectGame
                 }
             }
             return dialogueLines;
-        } 
+        }
 
 
         #endregion
@@ -959,16 +961,10 @@ namespace SeniorProjectGame
                 case State.ScreenState.DIALOGUE:
 
                     ChatboxManager.Update(gameTime);
-                    
-                    if (ChatboxManager.GetStatus() == ChatboxStatus.Idle)
+
+                    if (ChatboxManager.GetStatus() == ChatboxStatus.Writing)
                     {
-                        String temporaryEventStandIn = "Beginning";
-                        List<string> messageLines = ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), temporaryEventStandIn);
-                        ChatboxManager.SetNewInfo(messageLines);
-                    }
-                    else if(ChatboxManager.GetStatus() == ChatboxStatus.Writing)
-                    {
-                        doubleClickTimer +=(float) gameTime.ElapsedGameTime.TotalMilliseconds;
+                        doubleClickTimer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
                         if (singleLeftClick.Evaluate())
                         {
                             if (doubleClickTimer < State.doubleClickSpeed)
@@ -985,16 +981,16 @@ namespace SeniorProjectGame
                         {
                             ChatboxManager.SlowTyping();
                         }
-                        
+
                     }
-                    else if(ChatboxManager.GetStatus() == ChatboxStatus.WaitingInput)
+                    else if (ChatboxManager.GetStatus() == ChatboxStatus.WaitingInput)
                     {
                         if (singleLeftClick.Evaluate())
                         {
                             ChatboxManager.Advance();
                         }
                     }
-                    
+
 
                     break;
                 #endregion
@@ -1304,7 +1300,7 @@ namespace SeniorProjectGame
                                 {
                                     downSound.Play();
                                     break;
-                                }                                
+                                }
                             }
                         }
                         ResetTurnsLeft();
@@ -1458,11 +1454,20 @@ namespace SeniorProjectGame
             //You should be able to reorder your party
 
             State.screenState = State.ScreenState.DIALOGUE;
+            ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(),"Beginning"));
         }
 
         void EndLevel()
         {
             //Save party members to bin
+        }
+
+        void StartDialogue(String myEventName)
+        {
+            //Even if there is one already going it starts it over with thos event
+            String temporaryEventStandIn = "Beginning";
+            List<string> messageLines = ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), temporaryEventStandIn);
+            ChatboxManager.SetNewInfo(messageLines);
         }
 
         Vector2 ConvertToHexCoordinate(Vector2 myVec)
@@ -1610,7 +1615,7 @@ namespace SeniorProjectGame
         {
             GraphicsDevice.Clear(Color.Black);
 
-            
+
 
             EntityManager.Draw(spriteBatch, graphics);
 
@@ -1620,7 +1625,7 @@ namespace SeniorProjectGame
 
             //spriteBatch.DrawString(font, InputState.GetMouseIngamePosition().ToString(), new Vector2(0, font.LineSpacing), Color.White);
             //spriteBatch.DrawString(font, InputState.GetMouseScreenPosition().ToString(), new Vector2(0, 2 * font.LineSpacing), Color.White);
-            
+
             if (boardComponent != null)
             {
                 //    double a = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)));
@@ -1643,7 +1648,7 @@ namespace SeniorProjectGame
                 }
                 //spriteBatch.DrawString(font, State.sumOfMoves.ToString(), new Vector2(0, 4 * font.LineSpacing), Color.White);
             }
-            
+
             numberOfFrames++;
             string fps = string.Format("fps: {0}", framesPerSecond);
             spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);

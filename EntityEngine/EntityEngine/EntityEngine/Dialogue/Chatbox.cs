@@ -8,6 +8,11 @@ namespace EntityEngine.Dialogue
     public class ChatBox
     {
         Actor[] actors;
+        public Actor[] GetActors()
+        {
+            return actors;
+        }
+
         string speaker;
         public string GetSpeaker()
         {

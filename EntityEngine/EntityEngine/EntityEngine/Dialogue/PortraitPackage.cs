@@ -15,19 +15,22 @@ namespace EntityEngine.Dialogue
         }
         public Texture2D GetTexture(Emotion myEmotion, int myLeftOrRight)
         {
-            if (textures[myEmotion][myLeftOrRight] != null)
+            if (textures.ContainsKey(myEmotion))
             {
                 return textures[myEmotion][myLeftOrRight];
             }
             else
             {
                 //Woah! You better handle that null, bro!
-                return null;
+                return missingTextureTexture;
             }
         }
 
-        public PortraitPackage()
+        Texture2D missingTextureTexture;
+
+        public PortraitPackage(Texture2D myMissingTexture)
         {
+            missingTextureTexture = myMissingTexture;
         }
         
     }

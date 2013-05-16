@@ -85,6 +85,13 @@ namespace EntityEngine.Dialogue
             maxCharactersPerLine = Convert.ToInt32((backdrop.Width - leftMargin - rightMargin) / font.MeasureString("W").X);
 
             maxLines = Convert.ToInt32((backdrop.Height - topMargin - bottomMargin) / font.LineSpacing);
+
+            int buffer = backdrop.Width / 5;
+
+            actorPositions[0] = new Vector2(backdropPosition.X , backdropPosition.Y);
+            actorPositions[1] = new Vector2(backdropPosition.X + buffer, backdropPosition.Y);
+            actorPositions[2] = new Vector2(backdropPosition.X + backdrop.Width - buffer, backdropPosition.Y);
+            actorPositions[3] = new Vector2(backdropPosition.X + backdrop.Width , backdropPosition.Y);
         }
 
         //The function is given new messages from the Game1 class as a new event is raised
@@ -120,14 +127,14 @@ namespace EntityEngine.Dialogue
                             if (ConvertDirectionToNumber(chatboxParameters[4]) == p)
                             {
                                 tempActorArray[p] = new Actor(portraitDictionary[characterInfo[0]],
-                                    (Emotion)Enum.Parse(typeof(Emotion), characterInfo[1]), p, true);
+                                    (Emotion)Enum.Parse(typeof(Emotion), characterInfo[1]), p, actorPositions, true);
 
                                 tempSpeakerName = characterInfo[0];
                             }
                             else
                             {
                                 tempActorArray[p] = new Actor(portraitDictionary[characterInfo[0]],
-                                    (Emotion)Enum.Parse(typeof(Emotion), characterInfo[1]), p, false);
+                                    (Emotion)Enum.Parse(typeof(Emotion), characterInfo[1]), p, actorPositions, false);
                             }
                         }
                     }
@@ -314,31 +321,6 @@ namespace EntityEngine.Dialogue
                 {
                     speakerName = currentChatbox.GetSpeaker();
                     currentWritten[l] = currentChatbox.GetMessageLine(l);
-
-                    //if (currentCharacterOfLine < messageCharacters.Length)
-                    //{
-                    //    currentWritten[currentLine] += messageCharacters[currentCharacterOfLine];
-                    //    currentCharacterOfLine++;
-                    //}
-                    //else
-                    //{
-                    //    currentCharacterOfLine = 0;
-                    //    currentLine++;
-                    //    if (currentLine < maxLines)
-                    //    {
-
-                    //        if (currentChatbox.GetMessageLine(currentLine) != null)
-                    //        {
-                    //            messageCharacters = currentChatbox.GetMessageLine(currentLine).ToCharArray();
-                    //        }
-                    //    }
-                    //    else
-                    //    {
-                    //        We have reached the end of the lines, time to click next
-                    //        currentLine = 0;
-                    //        status = ChatboxStatus.WaitingInput;
-                    //    }
-
                 }
             }
 
@@ -370,13 +352,22 @@ namespace EntityEngine.Dialogue
         {
             if (active)
             {
-                //for (int p = 0; p < 4; p++)
-                //{
-                //    if (actorArray[p] != null)
-                //    {
-                //        actorArray[p].Draw(myBatch);
-                //    }
-                //}
+
+                if (currentChatbox != null)
+                {
+                    actorArray = currentChatbox.GetActors();
+                    if (actorArray[1] != null)
+                        actorArray[1].Draw(myBatch);
+
+                    if (actorArray[2] != null)
+                        actorArray[2].Draw(myBatch);
+
+                    if (actorArray[0] != null)
+                        actorArray[0].Draw(myBatch);
+
+                    if (actorArray[3] != null)
+                        actorArray[3].Draw(myBatch);
+                }
 
                 myBatch.Draw(backdrop, backdropPosition, Color.White);
 
