@@ -1407,6 +1407,31 @@ namespace SeniorProjectGame
             }
         }
 
+        //  given a board, start, and destination, return a list
+        //  of hexes that form an optimal path.
+        public List<HexComponent> PathToHex(BoardComponent board, HexComponent start, HexComponent destination)
+        {
+            List<HexComponent> path = new List<HexComponent>();
+            path.Add(start);
+            path.Add(destination);
+            return path;
+        }
+
+        //  calculate a destination for an enemy or neutral unit
+        //  that is "optimal" in terms of its artificial intelligence.
+        //  the destination is guaranteed to be within the unit's moverange.
+        public HexComponent DestinationForUnit(UnitComponent unit)
+        {
+            return boardComponent.GetHex(new Vector2(0, 0));
+        }
+
+        //  calculate an optimal action for a unit to perform when its done moving.
+        //  for example, a unit may choose to attack, heal, or simply "wait".
+        public void ActionForUnit(UnitComponent unit)
+        {
+            
+        }
+
         //  have two units fight and enter a battle menu
         //  TODO: add turn based fighting system. one unit strikes, then the other strikes back.
         //  TODO: in the update code, keep track of who's the active unit (e.g., who's turn it is)
