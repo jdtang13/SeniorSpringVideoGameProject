@@ -37,20 +37,28 @@ namespace SeniorProjectGame
         //  the main menu for the battle screen (3rd layer)
         NestedMenu battleMenu = new NestedMenu(false);
 
+        //Textures and other content
+        //HexmapStuffs
+
         Texture2D worldMapTexture, nodeTexture, pointerTexture;
         Texture2D hexBaseTexture, dirtTexture, grassTexture, gravelTexture, sandTexture, woodTexture,
             waterTexture, stoneTexture;
         Texture2D treeTexture, wallTexture, bushTexture, tableTexture, carpetTexture, throneTexture, tentTexture;
         Texture2D markerTexture, questionTexture;
 
+        //UnitStuffs
         Dictionary<string, Texture2DFramed> unitTextureDictionary = new Dictionary<string, Texture2DFramed>();
 
         Texture2DFramed unitFramedTexture, axemanFramedTexture, battlemageFramedTexture, bowmanFramedTexture, crossbowmanFramedTexture,
             flailmanFramedTexture, halberdierFramedTexture, knightFramedTexture, mageAssassinFramedTexture, manAtArmsFramedTexture,
             pikemanFramedTexture, riflemanFramedTexture, spearmanFramedTexture, swordsmanFramedTexture, wizardFramedTexture, slimeFramedTexture;
 
+        //DialogueStuffs
+        Texture2D dialogueBackdropTexture, dialogueWideBackdropTexture;
+        Texture2D missingActorTexture;
         Dictionary<string, PortraitPackage> portraitDictionary = new Dictionary<string, PortraitPackage>();
 
+        //Sounds?
         SoundEffect selectSound, downSound;
 
         SpriteFont font;
@@ -108,13 +116,14 @@ namespace SeniorProjectGame
         InputAction singleLeftClick, singleRightClick, singleMiddleClick;
         InputAction leftHold, spaceHold;
 
-        InputAction wClick, aClick, sClick, dClick, enterClick, escapeClick;
+        InputAction wClick, aClick, sClick, dClick, enterClick, escapeClick,qClick;
         InputAction singleWClick, singleAClick, singleSClick, singleDClick;
+        float doubleClickTimer;
 
-        //Menu Vars
-        List<Entity> orderButtonEntityList = new List<Entity>();
-        Entity attackOrderEntity, moveOrderEntity, noOrderEntity, spellOrderEntity;
-        Texture2D attackOrderTexture, moveOrderTexture, noOrderTexture, spellOrderTexture;
+        ////Menu Vars
+        //List<Entity> orderButtonEntityList = new List<Entity>();
+        //Entity attackOrderEntity, moveOrderEntity, noOrderEntity, spellOrderEntity;
+        //Texture2D attackOrderTexture, moveOrderTexture, noOrderTexture, spellOrderTexture;
 
         //FPS Vars
         float framesPerSecond = 60;
@@ -147,7 +156,7 @@ namespace SeniorProjectGame
             LoadContent();
             PopulateUnitTextureDictionary();
             PopulatePortraitDictionary();
-            Chatbox.Initialize(portraitDictionary, font, hexBaseTexture);
+            ChatboxManager.Initialize(portraitDictionary, font, dialogueWideBackdropTexture, new Vector4(50, 50, 50, 50));
 
             ProcessWorldMapBin();
             ProcessPlayerRolesBin();
@@ -176,6 +185,7 @@ namespace SeniorProjectGame
             dClick = new InputAction(new Keys[] { Keys.D, Keys.Right }, false);
             sClick = new InputAction(new Keys[] { Keys.S, Keys.Down }, false);
             aClick = new InputAction(new Keys[] { Keys.A, Keys.Left }, false);
+            qClick = new InputAction(new Keys[] { Keys.Q }, false);
 
             singleWClick = new InputAction(new Keys[] { Keys.W, Keys.Up }, true);
             singleDClick = new InputAction(new Keys[] { Keys.D, Keys.Right }, true);
@@ -188,7 +198,6 @@ namespace SeniorProjectGame
 
             singleRightClick = new InputAction(MouseButton.right, false);
             singleMiddleClick = new InputAction(MouseButton.middle, true);
-
         }
 
         #endregion
@@ -221,16 +230,7 @@ namespace SeniorProjectGame
             ConvertTxtToBin(prefix+"Pavilion.txt");
             ConvertTxtToBin(prefix+"Pavilion_Enemies.txt");*/
 
-            //Only run the conversions for developement purposes
-            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\WorldMap.txt");
-
-            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard.txt");
-            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard_Enemies.txt");
-            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Lab_Yard_Dialogue.txt");
-
-            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Alchemist's_Laboratory.txt");
-
-            //ConvertTxtToBin("C:\\Users\\Lionel\\Desktop\\Throne_Room.txt");
+            font = Content.Load<SpriteFont>("Graphics\\Fonts\\chatboxFont");
 
             worldMapTexture = Content.Load<Texture2D>("Graphics\\Backgrounds\\island");
             pointerTexture = Content.Load<Texture2D>("Graphics\\Other\\pointer");
@@ -250,6 +250,10 @@ namespace SeniorProjectGame
             bushTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\bush");
             wallTexture = Content.Load<Texture2D>("Graphics\\TileTextures\\Decorations\\wooden Walls");
             questionTexture = Content.Load<Texture2D>("Graphics\\Other\\questionTexture");
+
+            dialogueBackdropTexture = Content.Load<Texture2D>("Graphics\\Dialogue\\chatboxBackdrop");
+            dialogueWideBackdropTexture = Content.Load<Texture2D>("Graphics\\Dialogue\\chatboxWideBackdrop");
+            missingActorTexture = Content.Load<Texture2D>("Graphics\\Dialogue\\Actors\\missing");
 
             PopulateTerrainDictionary();
 
@@ -326,10 +330,12 @@ namespace SeniorProjectGame
         }
         void PopulatePortraitDictionary()
         {
-            portraitDictionary.Add("Harry", new PortraitPackage(null, null, null, null, null, null, null, null, null, null));
-            portraitDictionary.Add("Liam", new PortraitPackage(null, null, null, null, null, null, null, null, null, null));
-            portraitDictionary.Add("Jon", new PortraitPackage(null, null, null, null, null, null, null, null, null, null));
-            portraitDictionary.Add("Nosa", new PortraitPackage(null, null, null, null, null, null, null, null, null, null));
+            portraitDictionary.Add("Harry", new PortraitPackage(missingActorTexture));
+            //portraitDictionary["Harry"].AddEmotionTexture(Emotion.Neutral, new Texture2D[2] { hexBaseTexture, hexBaseTexture });
+
+            portraitDictionary.Add("Liam", new PortraitPackage(missingActorTexture));
+            portraitDictionary.Add("Jon", new PortraitPackage(missingActorTexture));
+            portraitDictionary.Add("Nosa", new PortraitPackage(missingActorTexture));
 
         }
 
@@ -655,7 +661,7 @@ namespace SeniorProjectGame
             List<string> hexMapLines = new List<string>();
             for (int line = 2; line < binLines.Count; line++)
             {
-                if (binLines[line] != "")
+                if (binLines[line] != "" && !binLines[line].Contains("//"))
                     hexMapLines.Add(binLines[line]);
             }
 
@@ -808,11 +814,11 @@ namespace SeniorProjectGame
             }
 
             List<string> dialogueLines = new List<string>();
-            //string typeOfChat = relevantLines[0];
+
 
             for (int lineIndex = 0; lineIndex < relevantLines.Count; lineIndex++)
             {
-                if (relevantLines[lineIndex].Contains("-") && relevantLines[lineIndex].Split(' ')[1] == myEventName)
+                if (relevantLines[lineIndex].Contains("-") && relevantLines[lineIndex].Contains(myEventName))
                 {
                     int lineBuffer = 1;
                     string currentLine = relevantLines[lineIndex + lineBuffer];
@@ -820,7 +826,10 @@ namespace SeniorProjectGame
                     {
                         dialogueLines.Add(relevantLines[lineIndex + lineBuffer]);
                         lineBuffer++;
-                        currentLine = relevantLines[lineIndex + lineBuffer];
+                        if (lineIndex + lineBuffer < relevantLines.Count)
+                        {
+                            currentLine = relevantLines[lineIndex + lineBuffer];
+                        }
                     }
 
                 }
@@ -859,6 +868,7 @@ namespace SeniorProjectGame
             {
                 this.Exit();
             }
+
             if (State.selectionState == State.SelectionState.NoSelection
                 && (State.screenState == State.ScreenState.SKIRMISH || State.screenState == State.ScreenState.WORLD_MAP))
             {
@@ -930,28 +940,49 @@ namespace SeniorProjectGame
                 #region Dialogue
                 case State.ScreenState.DIALOGUE:
 
-                    Chatbox.Update(gameTime);
+                    ChatboxManager.Update(gameTime);
 
-                    if (Chatbox.GetStatus() == ChatboxStatus.Idle)
+                    if (ChatboxManager.GetStatus() == ChatboxStatus.Writing)
                     {
-                        string events = Chatbox.GetEvent().ToString();
-                        List<string> messageLines = ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), events);
-                        Chatbox.SetNewInfo(messageLines);
-                        //Produces every line
-                    }
+                        doubleClickTimer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                        if (singleLeftClick.Evaluate())
+                        {
+                            if (doubleClickTimer < State.doubleClickSpeed)
+                            {
+                                ChatboxManager.Instawrite();
+                            }
+                            doubleClickTimer = 0;
+                        }
+                        if (leftHold.Evaluate())
+                        {
+                            ChatboxManager.RushTyping();
+                        }
+                        else
+                        {
+                            ChatboxManager.SlowTyping();
+                        }
 
-                    else if (Chatbox.GetStatus() == ChatboxStatus.Writing)
+                    }
+                    else if (ChatboxManager.GetStatus() == ChatboxStatus.WaitingInput)
                     {
                         if (singleLeftClick.Evaluate())
                         {
-                            Chatbox.RushTyping();
+                            ChatboxManager.Advance();
                         }
                     }
-                    else//Waiting input
+                    else if (ChatboxManager.GetStatus() == ChatboxStatus.Finished)
                     {
-                        if (singleLeftClick.Evaluate())
+                        if (ChatboxManager.GetEvent() == "Beginning")
                         {
-                            Chatbox.Advance();
+                            State.screenState = State.ScreenState.SKIRMISH;
+                        }
+                        if (ChatboxManager.GetEvent() == "Victory" || ChatboxManager.GetEvent() == "Defeat")
+                        {
+                            State.screenState = State.ScreenState.WORLD_MAP;
+                        }
+                        else
+                        {
+                            State.screenState = State.ScreenState.SKIRMISH;
                         }
                     }
 
@@ -1270,6 +1301,13 @@ namespace SeniorProjectGame
                         AvailableToMoveCheck();
                     }
                     #endregion
+
+                    if (qClick.Evaluate())
+                    {
+                        ChatboxManager.SetEvent("Testing");
+                        ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(),ChatboxManager.GetEvent()));
+                        State.screenState = State.ScreenState.DIALOGUE;
+                    }
 
                     break;
                 #endregion
@@ -1594,12 +1632,22 @@ namespace SeniorProjectGame
             //If there aren't enough spaces for them the highest in your queue will go
             //You should be able to reorder your party
 
-            State.screenState = State.ScreenState.SKIRMISH;
+            State.screenState = State.ScreenState.DIALOGUE;
+            ChatboxManager.SetEvent("Beginning");
+            ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(),ChatboxManager.GetEvent()));
         }
 
         void EndLevel()
         {
             //Save party members to bin
+        }
+
+        void StartDialogue(String myEventName)
+        {
+            //Even if there is one already going it starts it over with thos event
+            String temporaryEventStandIn = "Beginning";
+            List<string> messageLines = ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), temporaryEventStandIn);
+            ChatboxManager.SetNewInfo(messageLines);
         }
 
         Vector2 ConvertToHexCoordinate(Vector2 myVec)
@@ -1834,10 +1882,11 @@ namespace SeniorProjectGame
 
             spriteBatch.Begin();
 
-            Chatbox.Draw(spriteBatch);
+            ChatboxManager.Draw(spriteBatch);
 
-            spriteBatch.DrawString(font, InputState.GetMouseIngamePosition().ToString(), new Vector2(0, font.LineSpacing), Color.White);
-            spriteBatch.DrawString(font, InputState.GetMouseScreenPosition().ToString(), new Vector2(0, 2 * font.LineSpacing), Color.White);
+            //spriteBatch.DrawString(font, InputState.GetMouseIngamePosition().ToString(), new Vector2(0, font.LineSpacing), Color.White);
+            //spriteBatch.DrawString(font, InputState.GetMouseScreenPosition().ToString(), new Vector2(0, 2 * font.LineSpacing), Color.White);
+
             if (boardComponent != null)
             {
                 //    double a = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)));
@@ -1867,7 +1916,9 @@ namespace SeniorProjectGame
                    //  spriteBatch.DrawString(font, movesLeft.ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
                 }
                 //  spriteBatch.DrawString(font, State.sumOfMoves.ToString(), new Vector2(0, 4 * font.LineSpacing), Color.White);
+
             }
+
             numberOfFrames++;
             string fps = string.Format("fps: {0}", framesPerSecond);
             spriteBatch.DrawString(font, fps, Vector2.Zero, Color.White);

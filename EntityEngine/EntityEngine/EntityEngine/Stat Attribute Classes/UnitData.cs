@@ -265,7 +265,7 @@ namespace EntityEngine.Stat_Attribute_Classes
         }
 
 
-        ////currentHealth, mana, and movement calculated by adding the attributed based on the characters role with the TODO: pls finish this sentence
+        ////currentHealth, mana, and movement calculated by adding the attributed based on the uninterpretedActors role with the TODO: pls finish this sentence
         //public int Health()
         //{
 

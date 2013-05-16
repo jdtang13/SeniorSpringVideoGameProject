@@ -47,7 +47,8 @@
     <Compile Include="Components\Sprites\AnimatedSpriteComponent.cs" />
     <Compile Include="Components\Sprites\Camera.cs" />
     <Compile Include="Components\Sprites\UnitSpriteComponent.cs" />
-    <Compile Include="Dialogue\Portrait.cs" />
+    <Compile Include="Dialogue\ChatBox.cs" />
+    <Compile Include="Dialogue\Actor.cs" />
     <Compile Include="Dialogue\PortraitPackage.cs" />
     <Compile Include="Components\Sprites\SpriteComponent.cs" />
     <Compile Include="Components\Sprites\SpriteSheetComponent.cs" />
@@ -66,7 +67,7 @@
     <Compile Include="Components\World Map\NodeState.cs" />
     <Compile Include="Components\World Map\WorldMapComponent.cs" />
     <Compile Include="Components\World Map\NodeComponent.cs" />
-    <Compile Include="Dialogue\Chatbox.cs" />
+    <Compile Include="Dialogue\ChatboxManager.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EntityManager.cs" />
     <Compile Include="Input\InputAction.cs" />
