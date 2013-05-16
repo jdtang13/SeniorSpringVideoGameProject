@@ -90,7 +90,7 @@ namespace EntityEngine.Dialogue
 
             messageStartingPosition = new Vector2(backdropPosition.X + leftMargin, backdropPosition.Y + topMargin);
 
-            maxCharactersPerLine = Convert.ToInt32((backdrop.Width - leftMargin - rightMargin) / font.MeasureString("W").X);
+            maxCharactersPerLine = Convert.ToInt32((backdrop.Width - leftMargin - rightMargin) / font.MeasureString("y").X);
 
             maxLines = Convert.ToInt32((backdrop.Height - topMargin - bottomMargin) / font.LineSpacing);
 

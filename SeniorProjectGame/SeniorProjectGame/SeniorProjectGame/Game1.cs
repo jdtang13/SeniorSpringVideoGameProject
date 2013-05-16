@@ -55,7 +55,7 @@ namespace SeniorProjectGame
 
         //DialogueStuffs
         Texture2D dialogueBackdropTexture, dialogueWideBackdropTexture;
-        Texture2D missingActorTexture;
+        Texture2D missingActorTexture, harryPortrait;
         Dictionary<string, PortraitPackage> portraitDictionary = new Dictionary<string, PortraitPackage>();
 
         //Sounds?
@@ -211,7 +211,7 @@ namespace SeniorProjectGame
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
             State.font = font;
 
-            string prefix = "C:\\Users\\Jonathan\\Dropbox\\Senior Project Material\\TxtFiles\\Development\\";
+            string prefix = "C:\\Users\\Oliver\\Dropbox\\Senior Project Material\\TxtFiles\\Development\\";
 
             ConvertTxtToBin(prefix+"Enemies.txt");
             ConvertTxtToBin(prefix+"Player_Roles.txt");
@@ -261,6 +261,7 @@ namespace SeniorProjectGame
             dialogueBackdropTexture = Content.Load<Texture2D>("Graphics\\Dialogue\\chatboxBackdrop");
             dialogueWideBackdropTexture = Content.Load<Texture2D>("Graphics\\Dialogue\\chatboxWideBackdrop");
             missingActorTexture = Content.Load<Texture2D>("Graphics\\Dialogue\\Actors\\missing");
+            harryPortrait = Content.Load<Texture2D>("Graphics\\Dialogue\\Actors\\Harry");
 
             PopulateTerrainDictionary();
 
@@ -338,7 +339,7 @@ namespace SeniorProjectGame
         void PopulatePortraitDictionary()
         {
             portraitDictionary.Add("Harry", new PortraitPackage(missingActorTexture));
-            //portraitDictionary["Harry"].AddEmotionTexture(Emotion.Neutral, new Texture2D[2] { hexBaseTexture, hexBaseTexture });
+            portraitDictionary["Harry"].AddEmotionTexture(Emotion.Neutral, new Texture2D[2] { harryPortrait, harryPortrait });
 
             portraitDictionary.Add("Liam", new PortraitPackage(missingActorTexture));
             portraitDictionary.Add("Jon", new PortraitPackage(missingActorTexture));
