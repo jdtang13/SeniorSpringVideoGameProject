@@ -60,6 +60,14 @@ namespace EntityEngine.Dialogue
         static int currentChatboxIndex = 0; static ChatBox currentChatbox;
 
         static string eventName;
+        public static string GetEvent()
+        {
+            return eventName;
+        }
+        public static void SetEvent(string myEvent)
+        {
+            eventName = myEvent;
+        }
 
         static float slowTypingSpeed = 100f; public static float fastTypingSpeed = 1f;
         static float currentTypingSpeed = slowTypingSpeed;

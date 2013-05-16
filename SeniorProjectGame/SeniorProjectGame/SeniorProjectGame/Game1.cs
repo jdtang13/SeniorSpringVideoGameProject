@@ -990,6 +990,17 @@ namespace SeniorProjectGame
                             ChatboxManager.Advance();
                         }
                     }
+                    else if (ChatboxManager.GetStatus() == ChatboxStatus.Finished)
+                    {
+                        if (ChatboxManager.GetEvent() == "Beginning")
+                        {
+                            State.screenState = State.ScreenState.SKIRMISH;
+                        }
+                        if (ChatboxManager.GetEvent() == "Victory" || ChatboxManager.GetEvent() == "Defeat")
+                        {
+                            State.screenState = State.ScreenState.WORLD_MAP;
+                        }
+                    }
 
 
                     break;
@@ -1454,7 +1465,8 @@ namespace SeniorProjectGame
             //You should be able to reorder your party
 
             State.screenState = State.ScreenState.DIALOGUE;
-            ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(),"Beginning"));
+            ChatboxManager.SetEvent("Beginning");
+            ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(),ChatboxManager.GetEvent()));
         }
 
         void EndLevel()
