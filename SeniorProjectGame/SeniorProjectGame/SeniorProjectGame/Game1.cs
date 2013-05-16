@@ -113,7 +113,7 @@ namespace SeniorProjectGame
         InputAction singleLeftClick, singleRightClick, singleMiddleClick;
         InputAction leftHold, spaceHold;
 
-        InputAction wClick, aClick, sClick, dClick, enterClick, escapeClick;
+        InputAction wClick, aClick, sClick, dClick, enterClick, escapeClick,qClick;
         InputAction singleWClick, singleAClick, singleSClick, singleDClick;
         float doubleClickTimer;
 
@@ -178,6 +178,7 @@ namespace SeniorProjectGame
             dClick = new InputAction(new Keys[] { Keys.D, Keys.Right }, false);
             sClick = new InputAction(new Keys[] { Keys.S, Keys.Down }, false);
             aClick = new InputAction(new Keys[] { Keys.A, Keys.Left }, false);
+            qClick = new InputAction(new Keys[] { Keys.Q }, false);
 
             singleWClick = new InputAction(new Keys[] { Keys.W, Keys.Up }, true);
             singleDClick = new InputAction(new Keys[] { Keys.D, Keys.Right }, true);
@@ -190,7 +191,6 @@ namespace SeniorProjectGame
 
             singleRightClick = new InputAction(MouseButton.right, false);
             singleMiddleClick = new InputAction(MouseButton.middle, true);
-
         }
 
         #endregion
@@ -683,7 +683,7 @@ namespace SeniorProjectGame
             List<string> hexMapLines = new List<string>();
             for (int line = 2; line < binLines.Count; line++)
             {
-                if (binLines[line] != "")
+                if (binLines[line] != "" && !binLines[line].Contains("//"))
                     hexMapLines.Add(binLines[line]);
             }
 
@@ -999,6 +999,10 @@ namespace SeniorProjectGame
                         if (ChatboxManager.GetEvent() == "Victory" || ChatboxManager.GetEvent() == "Defeat")
                         {
                             State.screenState = State.ScreenState.WORLD_MAP;
+                        }
+                        else
+                        {
+                            State.screenState = State.ScreenState.SKIRMISH;
                         }
                     }
 
@@ -1318,6 +1322,13 @@ namespace SeniorProjectGame
                         UpdateTurnState();
                     }
                     #endregion
+
+                    if (qClick.Evaluate())
+                    {
+                        ChatboxManager.SetEvent("Testing");
+                        ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(),ChatboxManager.GetEvent()));
+                        State.screenState = State.ScreenState.DIALOGUE;
+                    }
 
                     break;
                 #endregion

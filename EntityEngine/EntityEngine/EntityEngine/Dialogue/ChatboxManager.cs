@@ -351,8 +351,15 @@ namespace EntityEngine.Dialogue
             {
                 //THAT'S THE WHOLE DIALOGUE SESSION
                 //TODO: Somehow quit since we are doen with dialogue
-                status = ChatboxStatus.Finished;
+                
+
+                currentWritten = new string[maxLines];
+                actorArray = new Actor[4];
+                speakerName = "";
                 active = false;
+
+                currentChatboxIndex = 0;
+                status = ChatboxStatus.Finished;
             }
         }
 

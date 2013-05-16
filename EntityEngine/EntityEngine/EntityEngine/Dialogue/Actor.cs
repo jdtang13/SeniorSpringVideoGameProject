@@ -88,7 +88,7 @@ namespace EntityEngine.Dialogue
                     else
                     {
                         Vector2 offset = new Vector2(portraitPackage.GetTexture(emotion, 0).Width / 2, portraitPackage.GetTexture(emotion, 0).Height / 2);
-                        myBatch.Draw(portraitPackage.GetTexture(emotion, 0), position - offset, Color.White);
+                        myBatch.Draw(portraitPackage.GetTexture(emotion, 0), position - offset, Color.Gray);
                     }
                     break;
                 case 1:
@@ -100,7 +100,7 @@ namespace EntityEngine.Dialogue
                     else
                     {
                         Vector2 offset = new Vector2(portraitPackage.GetTexture(emotion, 0).Width / 2, portraitPackage.GetTexture(emotion, 0).Height / 2);
-                        myBatch.Draw(portraitPackage.GetTexture(emotion, 0), position - offset, Color.White);
+                        myBatch.Draw(portraitPackage.GetTexture(emotion, 0), position - offset, Color.Gray);
                     }
                     break;
                 case 2:
@@ -112,7 +112,7 @@ namespace EntityEngine.Dialogue
                     else
                     {
                         Vector2 offset = new Vector2(portraitPackage.GetTexture(emotion, 1).Width / 2, portraitPackage.GetTexture(emotion, 0).Height / 2);
-                        myBatch.Draw(portraitPackage.GetTexture(emotion, 1), position - offset, Color.White);
+                        myBatch.Draw(portraitPackage.GetTexture(emotion, 1), position - offset, Color.Gray);
                     }
                     break;
                 case 3:
@@ -124,7 +124,7 @@ namespace EntityEngine.Dialogue
                     else
                     {
                         Vector2 offset = new Vector2(portraitPackage.GetTexture(emotion, 1).Width / 2, portraitPackage.GetTexture(emotion, 0).Height / 2);
-                        myBatch.Draw(portraitPackage.GetTexture(emotion, 1), position - offset, Color.White);
+                        myBatch.Draw(portraitPackage.GetTexture(emotion, 1), position - offset, Color.Gray);
                     }
                     break;
                 default:
