@@ -90,6 +90,8 @@ namespace SeniorProjectGame
         }
         HexComponent ghostHex = null;
         List<HexComponent> pathQueue = new List<HexComponent>();
+        List<UnitComponent> enemiesYouSee = new List<UnitComponent>();
+        int clusterDectectionRadius = 4;
 
         bool moving = false;
         bool yourTurn = true;
@@ -857,7 +859,7 @@ namespace SeniorProjectGame
             {
                 this.Exit();
             }
-            if (State.selectionState == State.SelectionState.NoSelection 
+            if (State.selectionState == State.SelectionState.NoSelection
                 && (State.screenState == State.ScreenState.SKIRMISH || State.screenState == State.ScreenState.WORLD_MAP))
             {
                 if (wClick.Evaluate())
@@ -929,18 +931,18 @@ namespace SeniorProjectGame
                 case State.ScreenState.DIALOGUE:
 
                     Chatbox.Update(gameTime);
-                    
+
                     if (Chatbox.GetStatus() == ChatboxStatus.Idle)
                     {
-                        string events  = Chatbox.GetEvent().ToString();
+                        string events = Chatbox.GetEvent().ToString();
                         List<string> messageLines = ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), events);
                         Chatbox.SetNewInfo(messageLines);
                         //Produces every line
                     }
 
-                    else if(Chatbox.GetStatus() == ChatboxStatus.Writing)
+                    else if (Chatbox.GetStatus() == ChatboxStatus.Writing)
                     {
-                        if(singleLeftClick.Evaluate())
+                        if (singleLeftClick.Evaluate())
                         {
                             Chatbox.RushTyping();
                         }
@@ -952,7 +954,7 @@ namespace SeniorProjectGame
                             Chatbox.Advance();
                         }
                     }
-                    
+
 
                     break;
                 #endregion
@@ -962,6 +964,7 @@ namespace SeniorProjectGame
                     State.turnState = State.TurnState.AlliesTurn;
 
                     #region AlliesTurn
+                    UpdateEnemiesSeen(); //TODO: this is a hacky fix to a visual bug we have. by "refreshing" the sight, it gets rid of vision errors.
                     if (State.turnState == State.TurnState.AlliesTurn)
                     {
                         if (!moving)
@@ -1090,7 +1093,7 @@ namespace SeniorProjectGame
                                         int selectedEnemyIndex = 0;
 
                                         StartFight(State.originalHexClicked.GetUnit(),
-                                            enemiesAdjacentTo(boardComponent, State.originalHexClicked.getCoordPosition())[selectedEnemyIndex]);
+                                            enemiesAdjacentTo(boardComponent, State.originalHexClicked.GetCoordPosition())[selectedEnemyIndex]);
 
                                         // todo: end battle
                                         // EndCurrentFight();
@@ -1130,8 +1133,9 @@ namespace SeniorProjectGame
                                 pathQueue[0].SetInQueue(false);
                                 MoveUnit(State.originalHexClicked, pathQueue[0]);
                                 State.originalHexClicked = pathQueue[0];
-
                                 pathQueue.Remove(pathQueue[0]);
+                                CheckToStopForNewEnemies(State.originalHexClicked.GetUnit());
+
                                 if (pathQueue.Count == 0)
                                 {
                                     int skirmishMenuX = 300;
@@ -1147,12 +1151,12 @@ namespace SeniorProjectGame
                                     int skirmishMenuOptionWidth = 200;
                                     Color skirmishMenuColor = Color.DarkGray;
 
-                                    if (enemiesAdjacentTo(boardComponent, State.originalHexClicked.getCoordPosition()).Count > 0)
+                                    if (enemiesAdjacentTo(boardComponent, State.originalHexClicked.GetCoordPosition()).Count > 0)
                                     {
                                         options.Insert(0, "Attack"); //  have "attack" as an option if enemy nearby
                                     }
 
-                                    if (alliesAdjacentTo(boardComponent, State.originalHexClicked.getCoordPosition()).Count > 0)
+                                    if (alliesAdjacentTo(boardComponent, State.originalHexClicked.GetCoordPosition()).Count > 0)
                                     {
                                         options.Insert(0, "Heal"); //  have "attack" as an option if enemy nearby
                                     }
@@ -1281,7 +1285,7 @@ namespace SeniorProjectGame
                     //  the first layer is exactly the same as a normal menu, but the second layers
                     //  are actually menus associated with strings/index numbers for other options. in other
                     //  words it's like menus in menus.
-                    
+
                     UnitData attacker = State.currentAttacker.GetUnitData();
                     UnitData defender = State.currentDefender.GetUnitData();
 
@@ -1447,7 +1451,7 @@ namespace SeniorProjectGame
             State.currentDefender = defender;
 
             List<string> options = new List<string>(new string[] { "Attack", "Cast", "Use Item", "Guard", "Run" });
-            battleMenu = new NestedMenu(options, 200, 50, 
+            battleMenu = new NestedMenu(options, 200, 50,
                                     0, 400,
                                     Color.Gray, dot, font);
 
@@ -1642,7 +1646,7 @@ namespace SeniorProjectGame
             unit.SetHex(final);
             final.SetUnit(unit);
 
-            boardComponent.UpdateVisibilityAllies(); // TODO: Lag
+            boardComponent.UpdateVisibilityAllies();
             UpdateEnemiesSeen();
 
             original.RemoveUnit();
@@ -1704,7 +1708,7 @@ namespace SeniorProjectGame
 
             for (int r = 0; r <= unitData.GetSightRadius(); r++)
             {
-                List<HexComponent> currentRing = boardComponent.GetRing(unitComp.GetHex().getCoordPosition(), r);
+                List<HexComponent> currentRing = boardComponent.GetRing(unitComp.GetHex().GetCoordPosition(), r);
                 for (int i = 0; i < currentRing.Count; i++) //i is hex index within currentRing
                 {
                     HexComponent currentHex = currentRing[i];
@@ -1734,6 +1738,46 @@ namespace SeniorProjectGame
             }
 
             return visibleHexes;
+        }
+
+        public void CheckToStopForNewEnemies(UnitComponent unitMoving)
+        {
+            enemiesYouSee.Clear();
+            foreach (Entity enemy in boardComponent.nonAlliedUnitList)
+            {
+                UnitComponent unitComp = enemy.GetComponent("UnitComponent") as UnitComponent;
+                if (unitComp.GetHex().GetVisibility() == Visibility.Visible)
+                {
+                    enemiesYouSee.Add(unitComp);
+                }
+            }
+            foreach (UnitComponent enemy in enemiesYouSee)
+            {
+                List<HexComponent> clusterCheck = boardComponent.GetAllRings(enemy.GetHex().GetCoordPosition(), clusterDectectionRadius);
+                bool isNewEnemy = true;
+                foreach (UnitComponent enemyClusterCheck in enemiesYouSee)
+                {
+                    if (enemyClusterCheck != enemy)
+                    {
+                        if (clusterCheck.Contains(enemyClusterCheck.GetHex()))
+                        {
+                            isNewEnemy = false;
+                            break;
+                        }
+                    }
+                }
+                if (isNewEnemy)
+                {
+                    for (int i = pathQueue.Count() - 1; i >= 0; i--)
+                    {
+                        pathQueue[i].SetInQueue(false);
+                        pathQueue.RemoveAt(i);
+                        State.originalHexClicked.GetUnit().ChangeMovesLeft(1);
+                    }
+                    break;
+                }
+            }
+
         }
 
         public void UpdateAllSeenUnitList() // this function is used exclusively for enemies
@@ -1786,8 +1830,6 @@ namespace SeniorProjectGame
         {
             GraphicsDevice.Clear(Color.Black);
 
-            
-
             EntityManager.Draw(spriteBatch, graphics);
 
             spriteBatch.Begin();
@@ -1811,6 +1853,14 @@ namespace SeniorProjectGame
                 //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 8 * font.LineSpacing), Color.White);
                 //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 9 * font.LineSpacing), Color.White);
                 //    spriteBatch.DrawString(font, input.ToString(), new Vector2(0, 10 * font.LineSpacing), Color.White);
+                if (enemiesYouSee.Count() != 0)
+                {
+                    spriteBatch.DrawString(font, enemiesYouSee.Count().ToString(), new Vector2(0, 5 * font.LineSpacing), Color.White);
+                }
+                else
+                {
+                    spriteBatch.DrawString(font, 0.ToString(), new Vector2(0, 5 * font.LineSpacing), Color.White);
+                }
                 if (State.originalHexClicked != null)
                 {
                     int movesLeft = State.originalHexClicked.GetUnit().GetMovesLeft();
@@ -1824,7 +1874,8 @@ namespace SeniorProjectGame
 
             menu.Draw(spriteBatch);
 
-            switch(State.screenState) {
+            switch (State.screenState)
+            {
                 case (State.ScreenState.BATTLING):
                     //  draw battle scene
 
@@ -1832,12 +1883,12 @@ namespace SeniorProjectGame
                     (State.currentDefender._parent.GetDrawable("UnitSpriteComponent") as AnimatedSpriteComponent).Draw(spriteBatch, new Vector2(800, 200));
 
                     battleMenu.Draw(spriteBatch);
-                    
+
                     //  debug code
                     spriteBatch.DrawString(font, "current option selected: " + battleMenu.CurrentOption(), new Vector2(0, 4 * font.LineSpacing), Color.White);
-                    spriteBatch.DrawString(font, "Attacker HP: " + State.currentAttacker.GetUnitData().GetCurrentHealth(), new Vector2(0, 5*font.LineSpacing), Color.White);
+                    spriteBatch.DrawString(font, "Attacker HP: " + State.currentAttacker.GetUnitData().GetCurrentHealth(), new Vector2(0, 5 * font.LineSpacing), Color.White);
                     spriteBatch.DrawString(font, "Defender HP: " + State.currentDefender.GetUnitData().GetCurrentHealth(), new Vector2(0, 6 * font.LineSpacing), Color.White);
-                    
+
                     break;
                 case (State.ScreenState.SKIRMISH):
 

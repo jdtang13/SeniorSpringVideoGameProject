@@ -13,7 +13,7 @@ namespace EntityEngine.Components.TileComponents
     public class HexComponent : Component
     {
         Vector2 coordPosition;
-        public Vector2 getCoordPosition()
+        public Vector2 GetCoordPosition()
         {
             return coordPosition;
         }

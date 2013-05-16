@@ -213,7 +213,7 @@ namespace EntityEngine.Components.TileComponents
             foreach (KeyValuePair<Vector2, HexComponent> entry in hexDictionary)
             {
                 HexComponent hex = entry.Value;
-                Vector2 coords = hex.getCoordPosition();
+                Vector2 coords = hex.GetCoordPosition();
 
                 //Setting up everyones adjacent, if it's null, it doesnt exist
                 HexComponent n, ne, se, sw, s, nw;
@@ -357,7 +357,7 @@ namespace EntityEngine.Components.TileComponents
 
                 if (Vector2.Distance(mousePosition, centerSprite.GetCenterPosition()) < gridTexture.Height / 2f)
                 {
-                    mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).getCoordPosition();
+                    mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).GetCoordPosition();
                 }
                 else
                 {
@@ -367,7 +367,7 @@ namespace EntityEngine.Components.TileComponents
 
                         if (Vector2.Distance(mousePosition, sprite.GetCenterPosition()) < gridTexture.Height / 2f)
                         {
-                            mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).n.getCoordPosition();
+                            mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).n.GetCoordPosition();
                         }
                     }
                     if (GetHex(mouseRoundedHexCoordinate).ne != null)
@@ -376,7 +376,7 @@ namespace EntityEngine.Components.TileComponents
 
                         if (Vector2.Distance(mousePosition, sprite.GetCenterPosition()) < gridTexture.Height / 2f)
                         {
-                            mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).ne.getCoordPosition();
+                            mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).ne.GetCoordPosition();
                         }
                     }
                     if (GetHex(mouseRoundedHexCoordinate).se != null)
@@ -385,7 +385,7 @@ namespace EntityEngine.Components.TileComponents
 
                         if (Vector2.Distance(mousePosition, sprite.GetCenterPosition()) < gridTexture.Height / 2f)
                         {
-                            mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).se.getCoordPosition();
+                            mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).se.GetCoordPosition();
                         }
                     }
                     if (GetHex(mouseRoundedHexCoordinate).s != null)
@@ -394,7 +394,7 @@ namespace EntityEngine.Components.TileComponents
 
                         if (Vector2.Distance(mousePosition, sprite.GetCenterPosition()) < gridTexture.Height / 2f)
                         {
-                            mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).s.getCoordPosition();
+                            mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).s.GetCoordPosition();
                         }
                     }
                     if (GetHex(mouseRoundedHexCoordinate).sw != null)
@@ -403,7 +403,7 @@ namespace EntityEngine.Components.TileComponents
 
                         if (Vector2.Distance(mousePosition, sprite.GetCenterPosition()) < gridTexture.Height / 2f)
                         {
-                            mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).sw.getCoordPosition();
+                            mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).sw.GetCoordPosition();
                         }
                     }
                     if (GetHex(mouseRoundedHexCoordinate).nw != null)
@@ -412,7 +412,7 @@ namespace EntityEngine.Components.TileComponents
 
                         if (Vector2.Distance(mousePosition, sprite.GetCenterPosition()) < gridTexture.Height / 2f)
                         {
-                            mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).nw.getCoordPosition();
+                            mouseCurrentHex = GetHex(mouseRoundedHexCoordinate).nw.GetCoordPosition();
                         }
                     }
                 }
@@ -503,6 +503,11 @@ namespace EntityEngine.Components.TileComponents
         {
             if (fogOfWarToggle)
             {
+                for (int u = 0; u < oldVisible.Count; u++)
+                {
+                    oldVisible[u].SetVisibility(Visibility.Explored);
+                }
+
                 newVisible.Clear();
 
                 for (int p = 0; p < alliedUnitList.Count; p++)
@@ -516,7 +521,7 @@ namespace EntityEngine.Components.TileComponents
 
                     for (int r = 0; r <= unitData.GetSightRadius(); r++)
                     {
-                        List<HexComponent> currentRing = GetRing(unitComp.GetHex().getCoordPosition(), r);
+                        List<HexComponent> currentRing = GetRing(unitComp.GetHex().GetCoordPosition(), r);
                         for (int i = 0; i < currentRing.Count; i++) //i is hex index within currentRing
                         {
                             HexComponent currentHex = currentRing[i];
