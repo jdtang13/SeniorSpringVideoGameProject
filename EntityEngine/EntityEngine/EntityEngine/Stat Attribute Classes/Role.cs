@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EntityEngine.Stat_Attribute_Classes
 {
-    //attributes growths and caps for the roll of characters
+    //attributes growths and caps for the roll of uninterpretedActors
     public class Role : StatisticalEntity
     {
         public string weapon;

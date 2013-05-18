@@ -21,7 +21,7 @@ namespace EntityEngine
         public enum ScreenState
         {
             LOADING_FILES, MAIN_PAGE, SETTINGS_MENU, WORLD_MAP, MAP_EDITOR, SHOP, DIALOGUE,
-            SKIRMISH, BATTLING, BATTLE_FORECAST, BATTLE_RESOLUTION,
+            SKIRMISH, BATTLING, BATTLE_FORECAST, BATTLE_RESOLUTION, SKIRMISH_PREPARATION
             //SELECTING_UNIT_ON_SKIRMISH_MAP, SELECTING_OPTIONS_FOR_SKIRMISH_UNITS
         }
 
@@ -77,6 +77,8 @@ namespace EntityEngine
             State.currentAttacker = null;
             State.currentDefender = null;
 
+            State.battleMessage = "";
+
             State.attackerBattleStatus = BattleStatus.NoStatus;
             State.defenderBattleStatus = BattleStatus.NoStatus;
 
@@ -89,12 +91,16 @@ namespace EntityEngine
         public static BattleStatus attackerBattleStatus; //  can be states like "guarding", "healing", "cursed", etc
         public static BattleStatus defenderBattleStatus;
 
+        public static float doubleClickSpeed = 300f;
+
         public static int menuPosition = 0;
 
         public static BattleState battleState;
         public static ScreenState screenState;
         public static SelectionState selectionState;
         public static TurnState turnState;
+
+        public static string battleMessage;
 
         public static HexComponent originalHexClicked; //  used for selecting units
 
@@ -104,6 +110,7 @@ namespace EntityEngine
         public static SpriteFont font;
 
         //public Node currentNode;
+
         public static int dialoguePosition = 0;
         public static int dialogueChoicePosition = 0;
         public static string displayedDialogueMessage = "";
