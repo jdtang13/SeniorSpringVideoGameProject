@@ -90,8 +90,9 @@ namespace SeniorProjectGame
         }
         HexComponent ghostHex = null;
         List<HexComponent> pathQueue = new List<HexComponent>();
-        List<UnitComponent> enemiesYouSee = new List<UnitComponent>();
-        int clusterDectectionRadius = 4;
+        List<UnitComponent> oldEnemiesYouSee = new List<UnitComponent>();
+        List<UnitComponent> newEnemiesYouSee = new List<UnitComponent>();
+        int clusterDetectionRadius = 4;
 
         bool moving = false;
         bool yourTurn = true;
@@ -1694,30 +1695,37 @@ namespace SeniorProjectGame
 
         public void CheckToStopForNewEnemies(UnitComponent unitMoving)
         {
-            enemiesYouSee.Clear();
+            newEnemiesYouSee = new List<UnitComponent>(); ;
             foreach (Entity enemy in boardComponent.nonAlliedUnitList)
             {
                 UnitComponent unitComp = enemy.GetComponent("UnitComponent") as UnitComponent;
                 if (unitComp.GetHex().GetVisibility() == Visibility.Visible)
                 {
-                    enemiesYouSee.Add(unitComp);
+                    newEnemiesYouSee.Add(unitComp);
                 }
             }
-            foreach (UnitComponent enemy in enemiesYouSee)
+            if (newEnemiesYouSee.SequenceEqual(oldEnemiesYouSee)) // todo: there is a potential bug -- it is not clear how enemies are ordered, or if they
+                                                                  // have a natural ordering at all
             {
-                List<HexComponent> clusterCheck = boardComponent.GetAllRings(enemy.GetHex().GetCoordPosition(), clusterDectectionRadius);
+                return;
+            }
+            foreach (UnitComponent enemy in newEnemiesYouSee)
+            {
+                List<HexComponent> clusterCheck = boardComponent.GetAllRings(enemy.GetHex().GetCoordPosition(), clusterDetectionRadius);
                 bool isNewEnemy = true;
-                foreach (UnitComponent enemyClusterCheck in enemiesYouSee)
+                foreach (UnitComponent enemyClusterCheck in newEnemiesYouSee)
                 {
                     if (enemyClusterCheck != enemy)
                     {
                         if (clusterCheck.Contains(enemyClusterCheck.GetHex()))
                         {
                             isNewEnemy = false;
+                            oldEnemiesYouSee = newEnemiesYouSee;
                             break;
                         }
                     }
                 }
+
                 if (isNewEnemy)
                 {
                     for (int i = pathQueue.Count() - 1; i >= 0; i--)
@@ -1726,10 +1734,10 @@ namespace SeniorProjectGame
                         pathQueue.RemoveAt(i);
                         State.originalHexClicked.GetUnit().ChangeMovesLeft(1);
                     }
+                    oldEnemiesYouSee = newEnemiesYouSee;
                     break;
                 }
             }
-
         }
 
         public void UpdateAllSeenUnitList() // this function is used exclusively for enemies
@@ -1805,13 +1813,21 @@ namespace SeniorProjectGame
                 //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 8 * font.LineSpacing), Color.White);
                 //    spriteBatch.DrawString(font, Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5))).ToString(), new Vector2(0, 9 * font.LineSpacing), Color.White);
                 //    spriteBatch.DrawString(font, input.ToString(), new Vector2(0, 10 * font.LineSpacing), Color.White);
-                if (enemiesYouSee.Count() != 0)
+                if (oldEnemiesYouSee.Count() != 0)
                 {
-                    spriteBatch.DrawString(font, enemiesYouSee.Count().ToString(), new Vector2(0, 5 * font.LineSpacing), Color.White);
+                    spriteBatch.DrawString(font, "old " + oldEnemiesYouSee.Count().ToString(), new Vector2(0, 5 * font.LineSpacing), Color.White);
                 }
                 else
                 {
-                    spriteBatch.DrawString(font, 0.ToString(), new Vector2(0, 5 * font.LineSpacing), Color.White);
+                    spriteBatch.DrawString(font, "old " + 0.ToString(), new Vector2(0, 5 * font.LineSpacing), Color.White);
+                }
+                if (newEnemiesYouSee.Count() != 0)
+                {
+                    spriteBatch.DrawString(font, "new " + newEnemiesYouSee.Count().ToString(), new Vector2(0, 6 * font.LineSpacing), Color.White);
+                }
+                else
+                {
+                    spriteBatch.DrawString(font, "new " + 0.ToString(), new Vector2(0, 6 * font.LineSpacing), Color.White);
                 }
                 if (State.originalHexClicked != null)
                 {
