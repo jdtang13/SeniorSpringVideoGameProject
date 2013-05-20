@@ -18,6 +18,9 @@ using EntityEngine.Components.World_Map;
 using EntityEngine.Stat_Attribute_Classes;
 using EntityEngine.Dialogue;
 
+using SCG = System.Collections.Generic; //  commands needed for C5 library
+using C5;
+
 namespace SeniorProjectGame
 {
     public class Game1 : Microsoft.Xna.Framework.Game
@@ -1456,14 +1459,80 @@ namespace SeniorProjectGame
             }
         }
 
+        //  heuristic function that acts as a "rule of thumb" for
+        //  estimating path distance between two points.
+        public float HeuristicDistance(HexComponent start, HexComponent end)
+        {
+            float dist;
+            dist = (start.GetCoordPosition() - end.GetCoordPosition()).Length();
+            return dist;
+        }
+
+        //  this is the A* g-function. It is the actual distance of a path from a to b.
+        public int ActualPathDistance(HexComponent start, HexComponent end)
+        {
+            return 0;
+        }
+
         //  given a board, start, and destination, return a list
         //  of hexes that form an optimal path.
+        //  source: http://theory.stanford.edu/~amitp/GameProgramming/ImplementationNotes.html
         public List<HexComponent> PathToHex(BoardComponent board, HexComponent start, HexComponent destination)
         {
+            // PSEUDOCODE
+            /*PriorityQueue open = new PriorityQueue();
+            List<HexComponent> closed = new List<HexComponent>();
+
+            Dictionary<HexComponent, bool> openContains = new Dictionary<HexComponent, bool>();
+
+            open.Enqueue(start, 0);
+            openContains.Add(start, true);
+
+            HexComponent current;
+            while (open.Peek() != destination)
+            {
+                current = open.Dequeue() as HexComponent;
+                closed.Add(current);
+
+                foreach (HexComponent neighbor in board.GetAdjacentList(current))
+                {
+                    //  add one because a hex is one step away from its neighbor
+                    float cost = ActualPathDistance(start, current) + 1;
+
+                    if (openContains.ContainsKey(neighbor) && cost < ActualPathDistance(start, neighbor))
+                    {
+                        //  remove neighbor from open
+                        openContains.Remove(neighbor);
+                        open.Remove(neighbor);
+                    }
+                    if (closed.Contains(neighbor) && cost < ActualPathDistance(start, neighbor)) {
+                        closed.Remove(neighbor);
+                    }
+                    if (!open.Contains(neighbor) && !closed.Contains(neighbor))
+                    {
+                        g[neighbor] = cost;
+                        open.Add(neighbor, ActualPathDistance(start, neighbor) + HeuristicDistance(start, neighbor));
+                        neighbor.PathParent = current;
+                    }
+                }
+            }
+            
+            //  follow parent in a while loop to reconstruct the path
+
             List<HexComponent> path = new List<HexComponent>();
-            path.Add(start);
-            path.Add(destination);
-            return path;
+
+            HexComponent hex = destination;
+            while (hex.PathParent != null)
+            {
+                path.Add(hex);
+                hex = hex.PathParent;
+            }
+            path.Reverse();
+            */
+
+            //path.Add(start);
+            //path.Add(destination);
+            return null;
         }
 
         //  calculate a destination for an enemy or neutral unit
