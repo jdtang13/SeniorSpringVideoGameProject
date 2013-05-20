@@ -1468,25 +1468,21 @@ namespace SeniorProjectGame
             return dist;
         }
 
-        //  this is the A* g-function. It is the actual distance of a path from a to b.
-        public int ActualPathDistance(HexComponent start, HexComponent end)
-        {
-            return 0;
-        }
-
         //  given a board, start, and destination, return a list
         //  of hexes that form an optimal path.
         //  source: http://theory.stanford.edu/~amitp/GameProgramming/ImplementationNotes.html
         public List<HexComponent> PathToHex(BoardComponent board, HexComponent start, HexComponent destination)
         {
-            // PSEUDOCODE
-            /*PriorityQueue open = new PriorityQueue();
+            /*IntervalHeap<HexComponent> open = new IntervalHeap<HexComponent>();
             List<HexComponent> closed = new List<HexComponent>();
 
-            Dictionary<HexComponent, bool> openContains = new Dictionary<HexComponent, bool>();
+            //  g function in A*. it is the actual path distance from A to B (B is the key). contrast
+            //  this with the heuristic path distance.
+            Dictionary<HexComponent, float> g = new Dictionary<HexComponent, float>();
 
-            open.Enqueue(start, 0);
-            openContains.Add(start, true);
+            Dictionary<HexComponent, HexComponent> pathParent = new Dictionary<HexComponent, HexComponent>();
+
+            open.Add(start, 0);
 
             HexComponent current;
             while (open.Peek() != destination)
@@ -1497,22 +1493,29 @@ namespace SeniorProjectGame
                 foreach (HexComponent neighbor in board.GetAdjacentList(current))
                 {
                     //  add one because a hex is one step away from its neighbor
-                    float cost = ActualPathDistance(start, current) + 1;
 
-                    if (openContains.ContainsKey(neighbor) && cost < ActualPathDistance(start, neighbor))
+                    float gCurrentVal = 0;
+                    if (g.ContainsKey(current)) gCurrentVal = g[current];
+                    
+                    float cost = gCurrentVal + 1;
+
+                    float gNeighborVal = 0;
+                    if (g.ContainsKey(neighbor)) gNeighborVal = g[neighbor];
+
+                    if (open.Contains(neighbor) && cost < gNeighborVal)
                     {
                         //  remove neighbor from open
-                        openContains.Remove(neighbor);
                         open.Remove(neighbor);
                     }
-                    if (closed.Contains(neighbor) && cost < ActualPathDistance(start, neighbor)) {
+                    if (closed.Contains(neighbor) && cost < gNeighborVal)
+                    {
                         closed.Remove(neighbor);
                     }
                     if (!open.Contains(neighbor) && !closed.Contains(neighbor))
                     {
                         g[neighbor] = cost;
-                        open.Add(neighbor, ActualPathDistance(start, neighbor) + HeuristicDistance(start, neighbor));
-                        neighbor.PathParent = current;
+                        open.Add(neighbor, g[neighbor] + HeuristicDistance(start, neighbor));
+                        pathParent[neighbor] = current;
                     }
                 }
             }
@@ -1522,16 +1525,17 @@ namespace SeniorProjectGame
             List<HexComponent> path = new List<HexComponent>();
 
             HexComponent hex = destination;
-            while (hex.PathParent != null)
+            while (pathParent.ContainsKey(hex))
             {
                 path.Add(hex);
-                hex = hex.PathParent;
+                hex = pathParent[hex];
             }
             path.Reverse();
-            */
 
             //path.Add(start);
             //path.Add(destination);
+            return path;*/
+
             return null;
         }
 
