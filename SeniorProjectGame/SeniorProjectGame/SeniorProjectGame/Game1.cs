@@ -103,6 +103,7 @@ namespace SeniorProjectGame
         int clusterDetectionRadius = 4;
 
         bool moving = false;
+        bool enemiesMoving = false;
         bool yourTurn = true;
         float timePerMove;
 
@@ -877,7 +878,7 @@ namespace SeniorProjectGame
                 this.Exit();
             }
 
-            if (State.selectionState == State.SelectionState.NoSelection
+            if (State.selectionState != State.SelectionState.SelectingMenuOptions
                 && (State.screenState == State.ScreenState.SKIRMISH || State.screenState == State.ScreenState.WORLD_MAP))
             {
                 if (wClick.Evaluate())
@@ -1177,42 +1178,14 @@ namespace SeniorProjectGame
 
                                 if (pathQueue.Count == 0)
                                 {
-                                    int skirmishMenuX = 300;
-                                    int skirmishMenuY = 200;
+                                    elapsedTimeForMove = 0;
 
                                     State.originalHexClicked.GetUnit().SetSelected(false);
+                                    State.selectionState = State.SelectionState.NoSelection;
+                                    UpdateTurnState();
+                                    AvailableToMoveCheck();
 
                                     moving = false;
-
-                                    // show menu when the movement is complete
-                                    List<string> options = new List<string>(new string[] { "Items", "Wait" });
-                                    int skirmishMenuOptionHeight = 40;
-                                    int skirmishMenuOptionWidth = 200;
-                                    Color skirmishMenuColor = Color.DarkGray;
-
-                                    if (enemiesAdjacentTo(boardComponent, State.originalHexClicked.GetCoordPosition()).Count > 0)
-                                    {
-                                        options.Insert(0, "Attack"); //  have "attack" as an option if enemy nearby
-                                    }
-
-                                    if (alliesAdjacentTo(boardComponent, State.originalHexClicked.GetCoordPosition()).Count > 0)
-                                    {
-                                        options.Insert(0, "Heal"); //  have "attack" as an option if enemy nearby
-                                    }
-
-                                    // State.originalHexClicked = null;
-
-                                    // todo: pseudocode:
-                                    //if enemyUnitIsAdjacent, options.Add("Attack");
-                                    // if alliedUnitIsAdjacent && healStaffEquipped, options.Add(new string[] {"Heal", "Trade"});
-                                    // if convoyIsAdjacent, options.Add("Convoy");
-                                    // if neutralUnitIsAdjacent, options.Add("Negotiate");
-                                    // if lordSelected && standingOnObjective, options.Add("Seize");
-
-                                    menu = new Menu(options, skirmishMenuOptionWidth, skirmishMenuOptionHeight, skirmishMenuX, skirmishMenuY,
-                                        skirmishMenuColor, dot, font);
-
-                                    State.selectionState = State.SelectionState.SelectingMenuOptions;
                                 }
                             }
                         }
@@ -1248,12 +1221,46 @@ namespace SeniorProjectGame
 
                         else if (singleRightClick.Evaluate())
                         {
-                            //boardComponent.ToggleFogofWar(false);
-
-                            if (State.originalHexClicked != null)
+                            HexComponent hexComp = boardComponent.GetMouseHex();
+                            if (State.selectionState != State.SelectionState.SelectingMenuOptions)
                             {
-                                UnitData unitData = State.originalHexClicked.GetUnit().GetUnitData();
-                                unitData.SetSightRadius(10);
+                                if (hexComp.HasUnit())
+                                {
+                                    UnitComponent unitComp = hexComp.GetUnit();
+                                    if (boardComponent.alliedUnitList.Contains(unitComp._parent))
+                                    {
+                                        List<string> options = new List<string>(new string[] { "Items", "Wait" });
+                                        int skirmishMenuX = 300;
+                                        int skirmishMenuY = 200;
+                                        int skirmishMenuOptionHeight = 40;
+                                        int skirmishMenuOptionWidth = 200;
+                                        Color skirmishMenuColor = Color.DarkGray;
+
+                                        if (enemiesAdjacentTo(boardComponent, hexComp.GetCoordPosition()).Count > 0)
+                                        {
+                                            options.Insert(0, "Attack"); //  have "attack" as an option if enemy nearby
+                                        }
+
+                                        if (alliesAdjacentTo(boardComponent, hexComp.GetCoordPosition()).Count > 0)
+                                        {
+                                            options.Insert(0, "Heal"); //  have "attack" as an option if enemy nearby
+                                        }
+
+                                        // State.originalHexClicked = null;
+
+                                        // todo: pseudocode:
+                                        //if enemyUnitIsAdjacent, options.Add("Attack");
+                                        // if alliedUnitIsAdjacent && healStaffEquipped, options.Add(new string[] {"Heal", "Trade"});
+                                        // if convoyIsAdjacent, options.Add("Convoy");
+                                        // if neutralUnitIsAdjacent, options.Add("Negotiate");
+                                        // if lordSelected && standingOnObjective, options.Add("Seize");
+
+                                        menu = new Menu(options, skirmishMenuOptionWidth, skirmishMenuOptionHeight, skirmishMenuX, skirmishMenuY,
+                                            skirmishMenuColor, dot, font);
+
+                                        State.selectionState = State.SelectionState.SelectingMenuOptions;
+                                    }
+                                }
                             }
                         }
 
@@ -1264,7 +1271,6 @@ namespace SeniorProjectGame
 
                         if (State.selectionState == State.SelectionState.SelectingMenuOptions)
                         {
-
                             if (singleWClick.Evaluate())
                             {
                                 menu.SetSelectedOption((menu.Options().Count + menu.CurrentOptionIndex() - 1) % menu.Options().Count);
@@ -1293,16 +1299,51 @@ namespace SeniorProjectGame
                     {
                         foreach (Entity enemy in boardComponent.nonAlliedUnitList)
                         {
+                            UnitComponent unitComp = enemy.GetComponent("UnitComponent") as UnitComponent;
+
                             List<HexComponent> visibleHexes = GetVisibleHexes(enemy);
                             foreach (Entity ally in boardComponent.alliedUnitList)
                             {
-                                UnitComponent unitComp = ally.GetComponent("UnitComponent") as UnitComponent;
-                                if (visibleHexes.Contains(unitComp.GetHex()))
+                                UnitComponent allyComp = ally.GetComponent("UnitComponent") as UnitComponent;
+                                if (visibleHexes.Contains(allyComp.GetHex()))
                                 {
                                     downSound.Play();
                                     break;
                                 }
                             }
+
+                            HexComponent destinationHex = DestinationForUnit(unitComp, "default");
+                            List<HexComponent> pathToDestination = PathToHex(boardComponent, unitComp.GetHex(), destinationHex);
+                            enemiesMoving = true;
+
+                            //if (enemiesMoving)
+                            //{
+                            //    elapsedTimeForMove += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                            //    //animated movement
+                            //    UnitComponent enemyComp = enemy.GetComponent("UnitComponent") as UnitComponent;
+                            //    HexComponent enemyHex = enemyComp.GetHex();
+                            //    UnitSpriteComponent sprite = enemy.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent;
+                            //    SpriteComponent originalHexSprite = enemy.GetDrawable("SpriteComponent") as SpriteComponent;
+                            //    SpriteComponent finalHexSprite = pathToDestination[0]._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+
+                            //    float percentTraveled = elapsedTimeForMove / timePerMove;
+                            //    sprite.SetPosition(originalHexSprite.GetCenterPosition() + (-originalHexSprite.GetCenterPosition() + finalHexSprite.GetCenterPosition()) * percentTraveled);
+
+                            //    if (elapsedTimeForMove > timePerMove)
+                            //    {
+                            //        elapsedTimeForMove = elapsedTimeForMove - timePerMove;
+
+                            //        pathToDestination[0].SetInQueue(false);
+                            //        MoveUnit(enemyHex, pathToDestination[0]);
+                            //        enemyHex = pathToDestination[0];
+                            //        pathToDestination.Remove(pathToDestination[0]);
+                            //    }
+                            //    if (pathToDestination.Count() == 0)
+                            //    {
+                            //        enemiesMoving = false;
+                            //    }
+                            //}
                         }
                         ResetTurnsLeft();
                         UpdateTurnState();
@@ -1475,7 +1516,7 @@ namespace SeniorProjectGame
         //  e.g. "berserk" might be overly aggressive, "passive" might never attack anything.
         public HexComponent DestinationForUnit(UnitComponent unit, string strategy)
         {
-            return boardComponent.GetHex(new Vector2(0, 0));
+            return boardComponent.GetHex(new Vector2(3, 8));
         }
 
         //  calculate an optimal action for a unit to perform when its done moving.
@@ -1798,7 +1839,7 @@ namespace SeniorProjectGame
 
         public void CheckToStopForNewEnemies(UnitComponent unitMoving)
         {
-            newEnemiesYouSee = new List<UnitComponent>(); ;
+            newEnemiesYouSee = new List<UnitComponent>();
             foreach (Entity enemy in boardComponent.nonAlliedUnitList)
             {
                 UnitComponent unitComp = enemy.GetComponent("UnitComponent") as UnitComponent;
@@ -1807,29 +1848,31 @@ namespace SeniorProjectGame
                     newEnemiesYouSee.Add(unitComp);
                 }
             }
-            if (newEnemiesYouSee.SequenceEqual(oldEnemiesYouSee)) // todo: there is a potential bug -- it is not clear how enemies are ordered, or if they
-                                                                  // have a natural ordering at all
-            {
-                return;
-            }
+            bool doStopQueue = false;
             foreach (UnitComponent enemy in newEnemiesYouSee)
             {
-                List<HexComponent> clusterCheck = boardComponent.GetAllRings(enemy.GetHex().GetCoordPosition(), clusterDetectionRadius);
-                bool isNewEnemy = true;
-                foreach (UnitComponent enemyClusterCheck in newEnemiesYouSee)
+                if (oldEnemiesYouSee.Contains(enemy) == false)
                 {
-                    if (enemyClusterCheck != enemy)
+                    //a previously unknown enemy is found
+                    doStopQueue = true;
+                    List<HexComponent> clusterHexList = boardComponent.GetAllRings(enemy.GetHex().GetCoordPosition(), clusterDetectionRadius);
+                    foreach (UnitComponent visibleEnemy in newEnemiesYouSee)
                     {
-                        if (clusterCheck.Contains(enemyClusterCheck.GetHex()))
+                        if (visibleEnemy != enemy)
                         {
-                            isNewEnemy = false;
-                            oldEnemiesYouSee = newEnemiesYouSee;
-                            break;
+                            if (clusterHexList.Contains(visibleEnemy.GetHex()))
+                            {
+                                if (oldEnemiesYouSee.Contains(visibleEnemy))
+                                {
+                                    //an OLD, known enemy is visible in surrounding cluster
+                                    doStopQueue = false;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
-
-                if (isNewEnemy)
+                if (doStopQueue)
                 {
                     for (int i = pathQueue.Count() - 1; i >= 0; i--)
                     {
@@ -1837,10 +1880,10 @@ namespace SeniorProjectGame
                         pathQueue.RemoveAt(i);
                         State.originalHexClicked.GetUnit().ChangeMovesLeft(1);
                     }
-                    oldEnemiesYouSee = newEnemiesYouSee;
                     break;
                 }
             }
+            oldEnemiesYouSee = newEnemiesYouSee;
         }
 
         public void UpdateAllSeenUnitList() // this function is used exclusively for enemies
@@ -1904,6 +1947,7 @@ namespace SeniorProjectGame
 
             if (boardComponent != null)
             {
+                spriteBatch.DrawString(font, "Current Hex Coord " + boardComponent.GetMouseHex().GetCoordPosition().ToString(), new Vector2(0, font.LineSpacing), Color.White);
                 //    double a = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)));
                 //    double b = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(5, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5)));
                 //    double c = Vector2.Distance(boardComponent.GetHexPosition(boardComponent.GetHex(6, 5)), boardComponent.GetHexPosition(boardComponent.GetHex(8, 5)));
@@ -1937,6 +1981,10 @@ namespace SeniorProjectGame
                 {
                     int movesLeft = State.originalHexClicked.GetUnit().GetMovesLeft();
                    //  spriteBatch.DrawString(font, movesLeft.ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
+                }
+                if (elapsedTimeForMove != null)
+                {
+                    spriteBatch.DrawString(font, elapsedTimeForMove.ToString(), new Vector2(0, 7 * font.LineSpacing), Color.White);
                 }
                 //  spriteBatch.DrawString(font, State.sumOfMoves.ToString(), new Vector2(0, 4 * font.LineSpacing), Color.White);
 
