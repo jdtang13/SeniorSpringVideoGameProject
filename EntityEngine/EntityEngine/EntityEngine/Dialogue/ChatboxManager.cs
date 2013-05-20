@@ -53,6 +53,18 @@ namespace EntityEngine.Dialogue
         static string[] messageLines; static char[] messageCharacters;
 
         static Dictionary<string, PortraitPackage> portraitDictionary;
+        public static PortraitPackage GetPortraitPackage(string myName)
+        {
+            if(portraitDictionary.ContainsKey(myName))
+            {
+                return portraitDictionary[myName];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         static Vector2[] actorPositions = new Vector2[4];
         static Actor[] actorArray = new Actor[4];
 
@@ -64,7 +76,7 @@ namespace EntityEngine.Dialogue
         {
             return eventName;
         }
-        public static void SetEvent(string myEvent)
+        public static void SetEventName(string myEvent)
         {
             eventName = myEvent;
         }

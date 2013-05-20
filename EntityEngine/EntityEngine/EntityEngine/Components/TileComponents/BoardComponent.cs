@@ -8,6 +8,7 @@ using EntityEngine.Components.Sprites;
 using Microsoft.Xna.Framework.Graphics;
 using EntityEngine.Input;
 using EntityEngine.Stat_Attribute_Classes;
+using EntityEngine.Dialogue;
 
 namespace EntityEngine.Components.TileComponents
 {
@@ -27,12 +28,12 @@ namespace EntityEngine.Components.TileComponents
         Texture2D gridTexture;
         SpriteFont gridFont;
 
-        Dictionary<Vector2, string> eventList = new Dictionary<Vector2, string>();
-        public void AddEventatCoordinate(string myNewEvent, Vector2 myCoord)
+        Dictionary<Vector2, EventFunction> eventList = new Dictionary<Vector2, EventFunction>();
+        public void AddEventatCoordinate( Vector2 myCoord, EventFunction myFunction)
         {
-            eventList.Add(myCoord, myNewEvent);
+            eventList.Add(myCoord, myFunction);
         }
-        public Dictionary<Vector2,string> GetEvents()
+        public Dictionary<Vector2,EventFunction> GetEvents()
         {
             return eventList;
         }

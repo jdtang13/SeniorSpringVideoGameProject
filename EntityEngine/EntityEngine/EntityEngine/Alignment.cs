@@ -7,6 +7,6 @@ namespace EntityEngine.Stat_Attribute_Classes
 {
     public enum Alignment
     {
-        PLAYER, ENEMY, NEUTRAL
+        Player, Enemy, Neutral
     }
 }

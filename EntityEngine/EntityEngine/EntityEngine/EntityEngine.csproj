@@ -49,6 +49,7 @@
     <Compile Include="Components\Sprites\UnitSpriteComponent.cs" />
     <Compile Include="Dialogue\ChatBox.cs" />
     <Compile Include="Dialogue\Actor.cs" />
+    <Compile Include="Dialogue\EventFunction.cs" />
     <Compile Include="Dialogue\PortraitPackage.cs" />
     <Compile Include="Components\Sprites\SpriteComponent.cs" />
     <Compile Include="Components\Sprites\SpriteSheetComponent.cs" />

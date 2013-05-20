@@ -44,12 +44,12 @@ namespace EntityEngine.Components.Sprites
 
                 Color unitColor = new Color(140, 140, 255); // light blue
 
-                if (u.GetAlignment() == Alignment.ENEMY)
+                if (u.GetAlignment() == Alignment.Enemy)
                 {
                     //  draw the AnimatedSpriteComponent section of the sprite
                     unitColor = new Color(255, 140, 140); // light red
                 }
-                else if (u.GetAlignment() == Alignment.NEUTRAL)
+                else if (u.GetAlignment() == Alignment.Neutral)
                 {
                     unitColor = new Color(140, 255, 140); // light green
                 }
@@ -69,7 +69,7 @@ namespace EntityEngine.Components.Sprites
                 int healthBarHeightOffset = +3;
 
                 Color drawColor = allyHealthColor;
-                if (u.GetAlignment() == Alignment.ENEMY)
+                if (u.GetAlignment() == Alignment.Enemy)
                 {
                     drawColor = enemyHealthColor;
                 }

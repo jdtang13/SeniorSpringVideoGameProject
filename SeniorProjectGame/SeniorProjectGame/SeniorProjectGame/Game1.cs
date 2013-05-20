@@ -108,6 +108,9 @@ namespace SeniorProjectGame
         List<HexComponent> oldVisible;
         List<HexComponent> newVisible;
 
+        //Events
+        Dictionary<string, EventFunction> eventDictionary = new Dictionary<string, EventFunction>();
+
         //Player Vars
         Dictionary<String, Role> classes = new Dictionary<String, Role>();
         List<UnitData> partyUnitData = new List<UnitData>();
@@ -220,6 +223,11 @@ namespace SeniorProjectGame
 
             ConvertTxtToBin(prefix + "Testing_Grounds.txt");
             ConvertTxtToBin(prefix + "Testing_Grounds_Enemies.txt");
+
+            ConvertTxtToBin(prefix + "Playtest_Map.txt");
+            ConvertTxtToBin(prefix + "Playtest_Map_Enemies.txt");
+            ConvertTxtToBin(prefix + "Playtest_Map_Dialogue.txt");
+
 
             ConvertTxtToBin(prefix + "Tutorial_Level.txt");
             ConvertTxtToBin(prefix + "Tutorial_Level_Enemies.txt");
@@ -345,6 +353,11 @@ namespace SeniorProjectGame
             portraitDictionary.Add("Jon", new PortraitPackage(missingActorTexture));
             portraitDictionary.Add("Nosa", new PortraitPackage(missingActorTexture));
 
+            portraitDictionary.Add("Klement", new PortraitPackage(missingActorTexture));
+            portraitDictionary.Add("Jesper", new PortraitPackage(missingActorTexture));
+            portraitDictionary.Add("Old Man", new PortraitPackage(missingActorTexture));
+            portraitDictionary.Add("Kaijin", new PortraitPackage(missingActorTexture));
+            
         }
 
         void ConvertTxtToBin(string myFilePath)
@@ -630,7 +643,7 @@ namespace SeniorProjectGame
                     Entity partyMemberEntity = new Entity(EntityManager.GetHighestLayer() + 1, State.ScreenState.SKIRMISH);
 
                     UnitData unitData = new UnitData(
-                                        name, role, Alignment.PLAYER, level,
+                                        name, role, Alignment.Player, level,
                                         str, mag, dex, agi, def, res, spd,
                                         strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
                                         strCap, magCap, dexCap, agiCap, defCap, resCap, spdCap,
@@ -702,7 +715,7 @@ namespace SeniorProjectGame
                 {
                     if (line[x] != "*")
                     {
-                        if (line[x] == "O")
+                        if (line[x] == "Z")
                         {
                             //Add allied spawn
                             tempBoardComponent.AddAlliedSpawnPoint(ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
@@ -722,8 +735,8 @@ namespace SeniorProjectGame
                         }
                         else if (line[x].Contains("E"))
                         {
-                            //OH NO WE FOUND AN EVENT'
-                            tempBoardComponent.AddEventatCoordinate(line[x],ConvertToHexCoordinate(new Vector2(x, y)));
+                            //OH NO WE FOUND AN EVENT
+                            tempBoardComponent.AddEventatCoordinate(ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))), new EventFunction(line[x]));
 
                         }
                         else
@@ -761,8 +774,9 @@ namespace SeniorProjectGame
                     int unitSpawn = Convert.ToInt32(nameLine[1]);
                     string name = nameLine[2];
                     Role role = classes[nameLine[3]];
-                    int level = Convert.ToInt32(nameLine[4]);
-                    string graphicName = nameLine[5];
+                    Alignment alignment = (Alignment)Enum.Parse(typeof(Alignment), nameLine[4]);
+                    int level = Convert.ToInt32(nameLine[5]);
+                    string graphicName = nameLine[6];
 
                     int str = Convert.ToInt32(statLine[0]);
                     int mag = Convert.ToInt32(statLine[1]);
@@ -803,7 +817,7 @@ namespace SeniorProjectGame
                     hex.SetUnit(blob.GetComponent("UnitComponent") as UnitComponent);
 
                     hex.GetUnit().SetUnitData(new UnitData(
-                                        name, role, Alignment.ENEMY, level,
+                                        name, role, Alignment.Enemy, level,
                                         str, mag, dex, agi, def, res, spd,
                                         strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
                                         strCap, magCap, dexCap, agiCap, defCap, resCap, spdCap,
@@ -1147,6 +1161,7 @@ namespace SeniorProjectGame
                                     default:
                                         break;
                                 }
+                               
                             }
                         }
 
@@ -1179,17 +1194,24 @@ namespace SeniorProjectGame
                                 pathQueue[0].SetInQueue(false);
                                 MoveUnit(State.originalHexClicked, pathQueue[0]);
                                 State.originalHexClicked = pathQueue[0];
+
+                                //if (CheckForEventsAtCoordinate(pathQueue[0].GetCoordPosition()) != null)
+                                //{
+                                //    ChatboxManager.SetEventName(CheckForEventsAtCoordinate(pathQueue[0].GetCoordPosition()).eventName);
+                                //    ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), ChatboxManager.GetEvent()));
+                                //    State.screenState = State.ScreenState.DIALOGUE;
+
+                                //    CheckForEventsAtCoordinate(pathQueue[0].GetCoordPosition()).Run();
+
+                                //}
+
                                 pathQueue.Remove(pathQueue[0]);
                                 CheckToStopForNewEnemies(State.originalHexClicked.GetUnit());
 
                                 //Woah, we are checking to see if you triggered an event
 
-                                if (CheckForEvents(pathQueue[0].GetCoordPosition()) != "")
-                                {
-                                    ChatboxManager.SetEvent(CheckForEvents(pathQueue[0].GetCoordPosition()));
-                                    ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), ChatboxManager.GetEvent()));
-                                    State.screenState = State.ScreenState.DIALOGUE;
-                                }
+
+
 
                                 if (pathQueue.Count == 0)
                                 {
@@ -1328,7 +1350,7 @@ namespace SeniorProjectGame
 
                     if (qClick.Evaluate())
                     {
-                        ChatboxManager.SetEvent("Testing");
+                        ChatboxManager.SetEventName("Testing");
                         ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), ChatboxManager.GetEvent()));
                         State.screenState = State.ScreenState.DIALOGUE;
                     }
@@ -1360,7 +1382,7 @@ namespace SeniorProjectGame
                     }
 
                     //  player battle turn
-                    if (attacker.GetAlignment() == Alignment.PLAYER)
+                    if (attacker.GetAlignment() == Alignment.Player)
                     {
 
                         if (singleWClick.Evaluate())
@@ -1436,16 +1458,19 @@ namespace SeniorProjectGame
             }
             base.Update(gameTime);
         }
-        public string CheckForEvents(Vector2 myPosition)
+        public EventFunction CheckForEventsAtCoordinate(Vector2 myPosition)
         {
-            foreach (KeyValuePair<Vector2, string> entry in boardComponent.GetEvents())
+            if (boardComponent.GetEvents().Count != 0)
             {
-                if (entry.Key == myPosition)
+                foreach (KeyValuePair<Vector2, EventFunction> entry in boardComponent.GetEvents())
                 {
-                    return entry.Value;
+                    if (entry.Key == myPosition)
+                    {
+                        return entry.Value;
+                    }
                 }
             }
-            return "";
+            return null;
         }
 
         public void UpdateEnemiesSeen()
@@ -1608,7 +1633,7 @@ namespace SeniorProjectGame
             foreach (UnitComponent u in units)
             {
                 UnitData data = u.GetUnitData();
-                if (data.GetAlignment() == Alignment.ENEMY)
+                if (data.GetAlignment() == Alignment.Enemy)
                 {
                     enemies.Add(u);
                 }
@@ -1626,7 +1651,7 @@ namespace SeniorProjectGame
             foreach (UnitComponent u in units)
             {
                 UnitData data = u.GetUnitData();
-                if (data.GetAlignment() == Alignment.PLAYER)
+                if (data.GetAlignment() == Alignment.Player)
                 {
                     allies.Add(u);
                 }
@@ -1668,7 +1693,7 @@ namespace SeniorProjectGame
             //You should be able to reorder your party
 
             State.screenState = State.ScreenState.DIALOGUE;
-            ChatboxManager.SetEvent("Beginning");
+            ChatboxManager.SetEventName("Beginning");
             ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), ChatboxManager.GetEvent()));
         }
 

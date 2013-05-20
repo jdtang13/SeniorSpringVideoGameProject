@@ -112,7 +112,7 @@ namespace EntityEngine.Components.TileComponents
             visibility = myVis;
             UnitSpriteComponent sprite = _parent.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent;
 
-            if (unitData.GetAlignment() == Alignment.PLAYER)
+            if (unitData.GetAlignment() == Alignment.Player)
             {
                 sprite.SetColor(Color.White);
 
