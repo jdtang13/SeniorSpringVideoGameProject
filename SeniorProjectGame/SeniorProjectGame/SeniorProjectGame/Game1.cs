@@ -116,7 +116,7 @@ namespace SeniorProjectGame
         InputAction singleLeftClick, singleRightClick, singleMiddleClick;
         InputAction leftHold, spaceHold;
 
-        InputAction wClick, aClick, sClick, dClick, enterClick, escapeClick,qClick;
+        InputAction wClick, aClick, sClick, dClick, enterClick, escapeClick, qClick;
         InputAction singleWClick, singleAClick, singleSClick, singleDClick;
         float doubleClickTimer;
 
@@ -213,29 +213,29 @@ namespace SeniorProjectGame
 
             string prefix = "C:\\Users\\Oliver\\Dropbox\\Senior Project Material\\TxtFiles\\Development\\";
 
-            ConvertTxtToBin(prefix+"Enemies.txt");
-            ConvertTxtToBin(prefix+"Player_Roles.txt");
-            ConvertTxtToBin(prefix+"Party_Members.txt");
-            ConvertTxtToBin(prefix+"WorldMap.txt");
+            ConvertTxtToBin(prefix + "Enemies.txt");
+            ConvertTxtToBin(prefix + "Player_Roles.txt");
+            ConvertTxtToBin(prefix + "Party_Members.txt");
+            ConvertTxtToBin(prefix + "WorldMap.txt");
 
-            ConvertTxtToBin(prefix+"Testing_Grounds.txt");
-            ConvertTxtToBin(prefix+"Testing_Grounds_Enemies.txt");
+            ConvertTxtToBin(prefix + "Testing_Grounds.txt");
+            ConvertTxtToBin(prefix + "Testing_Grounds_Enemies.txt");
 
-            ConvertTxtToBin(prefix+"Tutorial_Level.txt");
-            ConvertTxtToBin(prefix+"Tutorial_Level_Enemies.txt");
+            ConvertTxtToBin(prefix + "Tutorial_Level.txt");
+            ConvertTxtToBin(prefix + "Tutorial_Level_Enemies.txt");
 
-            ConvertTxtToBin(prefix+"Ambushed.txt");
-            ConvertTxtToBin(prefix+"Ambushed_Enemies.txt");
+            ConvertTxtToBin(prefix + "Ambushed.txt");
+            ConvertTxtToBin(prefix + "Ambushed_Enemies.txt");
 
-            ConvertTxtToBin(prefix+"Pavilion.txt");
-            ConvertTxtToBin(prefix+"Pavilion_Enemies.txt");
+            ConvertTxtToBin(prefix + "Pavilion.txt");
+            ConvertTxtToBin(prefix + "Pavilion_Enemies.txt");
 
             //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level.txt");
             //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level_Enemies.txt");
 
-            ConvertTxtToBin(prefix+"Lab_Yard.txt");
-            ConvertTxtToBin(prefix+"Lab_Yard_Enemies.txt");
-            ConvertTxtToBin(prefix+"Lab_Yard_Dialogue.txt");
+            ConvertTxtToBin(prefix + "Lab_Yard.txt");
+            ConvertTxtToBin(prefix + "Lab_Yard_Enemies.txt");
+            ConvertTxtToBin(prefix + "Lab_Yard_Dialogue.txt");
 
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\chatboxFont");
 
@@ -720,10 +720,17 @@ namespace SeniorProjectGame
 
                             Camera.MoveTo(hexSprite.centerScreenPosition);
                         }
+                        else if (line[x].Contains("E"))
+                        {
+                            //OH NO WE FOUND AN EVENT'
+                            tempBoardComponent.AddEventatCoordinate(line[x],ConvertToHexCoordinate(new Vector2(x, y)));
+
+                        }
                         else
                         {
                             tempBoardComponent.AddEnemySpawnPoint(Convert.ToInt32(line[x]), ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
                         }
+
                     }
                 }
             }
@@ -1175,6 +1182,15 @@ namespace SeniorProjectGame
                                 pathQueue.Remove(pathQueue[0]);
                                 CheckToStopForNewEnemies(State.originalHexClicked.GetUnit());
 
+                                //Woah, we are checking to see if you triggered an event
+
+                                if (CheckForEvents(pathQueue[0].GetCoordPosition()) != "")
+                                {
+                                    ChatboxManager.SetEvent(CheckForEvents(pathQueue[0].GetCoordPosition()));
+                                    ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), ChatboxManager.GetEvent()));
+                                    State.screenState = State.ScreenState.DIALOGUE;
+                                }
+
                                 if (pathQueue.Count == 0)
                                 {
                                     int skirmishMenuX = 300;
@@ -1313,7 +1329,7 @@ namespace SeniorProjectGame
                     if (qClick.Evaluate())
                     {
                         ChatboxManager.SetEvent("Testing");
-                        ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(),ChatboxManager.GetEvent()));
+                        ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), ChatboxManager.GetEvent()));
                         State.screenState = State.ScreenState.DIALOGUE;
                     }
 
@@ -1420,6 +1436,17 @@ namespace SeniorProjectGame
             }
             base.Update(gameTime);
         }
+        public string CheckForEvents(Vector2 myPosition)
+        {
+            foreach (KeyValuePair<Vector2, string> entry in boardComponent.GetEvents())
+            {
+                if (entry.Key == myPosition)
+                {
+                    return entry.Value;
+                }
+            }
+            return "";
+        }
 
         public void UpdateEnemiesSeen()
         {
@@ -1523,7 +1550,7 @@ namespace SeniorProjectGame
                 int oldLevel = State.currentDefender.GetUnitData().GetCurrentLevel();
 
                 State.currentDefender.GetUnitData().GainExp(State.currentAttacker.GetUnitData().ExpBounty());
-                
+
                 int newLevel = State.currentDefender.GetUnitData().GetCurrentLevel();
                 if (newLevel - oldLevel > 0)
                 {
@@ -1642,7 +1669,7 @@ namespace SeniorProjectGame
 
             State.screenState = State.ScreenState.DIALOGUE;
             ChatboxManager.SetEvent("Beginning");
-            ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(),ChatboxManager.GetEvent()));
+            ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), ChatboxManager.GetEvent()));
         }
 
         void EndLevel()
@@ -1921,7 +1948,7 @@ namespace SeniorProjectGame
                 if (State.originalHexClicked != null)
                 {
                     int movesLeft = State.originalHexClicked.GetUnit().GetMovesLeft();
-                   //  spriteBatch.DrawString(font, movesLeft.ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
+                    //  spriteBatch.DrawString(font, movesLeft.ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
                 }
                 //  spriteBatch.DrawString(font, State.sumOfMoves.ToString(), new Vector2(0, 4 * font.LineSpacing), Color.White);
 

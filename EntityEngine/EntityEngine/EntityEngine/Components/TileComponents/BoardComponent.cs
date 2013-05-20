@@ -27,6 +27,16 @@ namespace EntityEngine.Components.TileComponents
         Texture2D gridTexture;
         SpriteFont gridFont;
 
+        Dictionary<Vector2, string> eventList = new Dictionary<Vector2, string>();
+        public void AddEventatCoordinate(string myNewEvent, Vector2 myCoord)
+        {
+            eventList.Add(myCoord, myNewEvent);
+        }
+        public Dictionary<Vector2,string> GetEvents()
+        {
+            return eventList;
+        }
+
         Vector2 mouseCurrentHex;
         List<HexComponent> adjacentList = new List<HexComponent>();
 
