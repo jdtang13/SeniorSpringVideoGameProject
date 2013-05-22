@@ -362,7 +362,7 @@ namespace SeniorProjectGame
             portraitDictionary.Add("Jesper", new PortraitPackage(missingActorTexture));
             portraitDictionary.Add("Old Man", new PortraitPackage(missingActorTexture));
             portraitDictionary.Add("Kaijin", new PortraitPackage(missingActorTexture));
-            
+
         }
 
         void ConvertTxtToBin(string myFilePath)
@@ -697,7 +697,7 @@ namespace SeniorProjectGame
             {
                 for (int y = 0 + ((int)dimensions.Y * layer); y < dimensions.Y + ((int)dimensions.Y * layer); y++)
                 {
-                    
+
                     string[] line = hexMapLines[y].Split(' ');
 
                     for (int x = 0; x < line.Length; x++)
@@ -812,25 +812,30 @@ namespace SeniorProjectGame
                     int sightRange = Convert.ToInt32(movementLine[1]);
                     int attackRange = Convert.ToInt32(movementLine[2]);
 
-                    Vector2 hexLocation = boardComponent.GetEnemySpawnPointForType(unitSpawn, rand);
-                    HexComponent hex = boardComponent.GetHex(hexLocation);
-                    SpriteComponent hexSprite = hex._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                    Entity blob = new Entity(EntityManager.GetHighestLayer() + 1, State.ScreenState.SKIRMISH);
-                    blob.AddComponent(new UnitSpriteComponent(true, hexSprite.GetPosition(), unitTextureDictionary[graphicName]));
-                    blob.AddComponent(new UnitComponent(hex, false));
+                    //For every spawn point associated with 1, 2, 3 make the right amount of enemies
+                    for (int createdEnemies = 0; createdEnemies <= boardComponent.enemySpawnPoints[unitSpawn].Count; createdEnemies++)
+                    {
+                        Vector2 hexLocation = boardComponent.GetEnemySpawnPointForType(unitSpawn);
+                        HexComponent hex = boardComponent.GetHex(hexLocation);
+                        SpriteComponent hexSprite = hex._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                    hex.SetUnit(blob.GetComponent("UnitComponent") as UnitComponent);
+                        Entity blob = new Entity(EntityManager.GetHighestLayer() + 1, State.ScreenState.SKIRMISH);
+                        blob.AddComponent(new UnitSpriteComponent(true, hexSprite.GetPosition(), unitTextureDictionary[graphicName]));
+                        blob.AddComponent(new UnitComponent(hex, false));
 
-                    hex.GetUnit().SetUnitData(new UnitData(
-                                        name, role, Alignment.Enemy, level,
-                                        str, mag, dex, agi, def, res, spd,
-                                        strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
-                                        strCap, magCap, dexCap, agiCap, defCap, resCap, spdCap,
-                                        movement, sightRange, attackRange));
-                    EntityManager.AddEntity(blob);
-                    boardComponent.nonAlliedUnitList.Add(blob);
-                    boardComponent.totalUnitList.Add(blob);
+                        hex.SetUnit(blob.GetComponent("UnitComponent") as UnitComponent);
+
+                        hex.GetUnit().SetUnitData(new UnitData(
+                                            name, role, Alignment.Enemy, level,
+                                            str, mag, dex, agi, def, res, spd,
+                                            strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
+                                            strCap, magCap, dexCap, agiCap, defCap, resCap, spdCap,
+                                            movement, sightRange, attackRange));
+                        EntityManager.AddEntity(blob);
+                        boardComponent.nonAlliedUnitList.Add(blob);
+                        boardComponent.totalUnitList.Add(blob);
+                    }
                 }
             }
         }
@@ -1167,7 +1172,7 @@ namespace SeniorProjectGame
                                     default:
                                         break;
                                 }
-                               
+
                             }
                         }
 
@@ -1208,7 +1213,7 @@ namespace SeniorProjectGame
                                     State.screenState = State.ScreenState.DIALOGUE;
 
                                     CheckForEventsAtCoordinate(pathQueue[0].GetCoordPosition()).Run();
-                                    
+
 
                                 }
 

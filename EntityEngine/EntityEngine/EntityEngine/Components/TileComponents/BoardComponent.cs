@@ -62,17 +62,16 @@ namespace EntityEngine.Components.TileComponents
         }
 
 
-        Dictionary<int, List<Vector2>> enemySpawnPoints = new Dictionary<int, List<Vector2>>();
-        public Vector2 GetEnemySpawnPointForType(int myUnitNumber, Random myRand)
-        {
-            List<Vector2> listOfAvailableSpawnsForUnitType = enemySpawnPoints[myUnitNumber];
-            int randomlySelectedSpawn = myRand.Next(0, listOfAvailableSpawnsForUnitType.Count);
+        public Dictionary<int, List<Vector2>> enemySpawnPoints = new Dictionary<int, List<Vector2>>();
 
-            Vector2 spawnPoint = listOfAvailableSpawnsForUnitType[randomlySelectedSpawn];
-            listOfAvailableSpawnsForUnitType.RemoveAt(randomlySelectedSpawn);
+        public Vector2 GetEnemySpawnPointForType(int myUnitNumber)
+        {
+            Vector2 spawnPoint = enemySpawnPoints[myUnitNumber][0];
+            enemySpawnPoints[myUnitNumber].Remove(enemySpawnPoints[myUnitNumber][0]);
 
             return spawnPoint;
         }
+
         public void AddEnemySpawnPoint(int myUnitNumber, Vector2 myVector2)
         {
             if (!enemySpawnPoints.ContainsKey(myUnitNumber))
