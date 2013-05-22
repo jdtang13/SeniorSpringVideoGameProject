@@ -252,31 +252,5 @@ namespace EntityEngine.Components.TileComponents
             sprite.position = hexSprite.position;
 
         }
-
-        //public void PathInput()
-        //{
-        //    List <HexComponent> pathCue = new List<HexComponent>();
-        //    while shift is held down
-        //    {
-        //        ghostHex = startingHex
-        //        if (GetHex(mouseCurrentHex) is not in pathCue && is next to ghostHex)
-        //        {
-        //            add hex to list
-        //            ghostHex = mouseCurrentHex
-        //        }
-        //        if (GetHex(mouseCurrentHex) is in pathCue)
-        //        {
-        //            remove hex from cue and all others added after it
-        //            ghostHex = hex last in cue
-        //        }
-        //    }
-
-        //    for (loop through pathCue)
-        //    {
-        //        move unit to hex in cue
-        //        updateallyvisibility
-        //        wait miliseconds
-        //    }
-        //}
     }
 }
