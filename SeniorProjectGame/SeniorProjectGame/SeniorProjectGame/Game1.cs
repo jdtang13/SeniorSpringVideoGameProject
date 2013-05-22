@@ -107,6 +107,12 @@ namespace SeniorProjectGame
         bool yourTurn = true;
         float timePerMove;
 
+        List<HexComponent> pathToDestination = null;
+        HexComponent enemyHex;
+
+        string debugString;
+        string debugString1;
+
         List<HexComponent> oldVisible;
         List<HexComponent> newVisible;
 
@@ -118,7 +124,7 @@ namespace SeniorProjectGame
         InputAction singleLeftClick, singleRightClick, singleMiddleClick;
         InputAction leftHold, spaceHold;
 
-        InputAction wClick, aClick, sClick, dClick, enterClick, escapeClick,qClick;
+        InputAction wClick, aClick, sClick, dClick, enterClick, escapeClick, qClick;
         InputAction singleWClick, singleAClick, singleSClick, singleDClick;
         float doubleClickTimer;
 
@@ -215,22 +221,22 @@ namespace SeniorProjectGame
 
             string prefix = "C:\\Users\\Lionel\\Desktop\\";
 
-            ConvertTxtToBin(prefix+"Enemies.txt");
-            ConvertTxtToBin(prefix+"Player_Roles.txt");
-            ConvertTxtToBin(prefix+"Party_Members.txt");
-            ConvertTxtToBin(prefix+"WorldMap.txt");
+            ConvertTxtToBin(prefix + "Enemies.txt");
+            ConvertTxtToBin(prefix + "Player_Roles.txt");
+            ConvertTxtToBin(prefix + "Party_Members.txt");
+            ConvertTxtToBin(prefix + "WorldMap.txt");
 
-            ConvertTxtToBin(prefix+"Testing_Grounds.txt");
-            ConvertTxtToBin(prefix+"Testing_Grounds_Enemies.txt");
+            ConvertTxtToBin(prefix + "Testing_Grounds.txt");
+            ConvertTxtToBin(prefix + "Testing_Grounds_Enemies.txt");
 
-            ConvertTxtToBin(prefix+"Tutorial_Level.txt");
-            ConvertTxtToBin(prefix+"Tutorial_Level_Enemies.txt");
+            ConvertTxtToBin(prefix + "Tutorial_Level.txt");
+            ConvertTxtToBin(prefix + "Tutorial_Level_Enemies.txt");
 
-            ConvertTxtToBin(prefix+"Ambushed.txt");
-            ConvertTxtToBin(prefix+"Ambushed_Enemies.txt");
+            ConvertTxtToBin(prefix + "Ambushed.txt");
+            ConvertTxtToBin(prefix + "Ambushed_Enemies.txt");
 
-            ConvertTxtToBin(prefix+"Pavilion.txt");
-            ConvertTxtToBin(prefix+"Pavilion_Enemies.txt");
+            ConvertTxtToBin(prefix + "Pavilion.txt");
+            ConvertTxtToBin(prefix + "Pavilion_Enemies.txt");
 
             //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level.txt");
             //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level_Enemies.txt");
@@ -1001,7 +1007,8 @@ namespace SeniorProjectGame
 
                 #region Skirmish
                 case State.ScreenState.SKIRMISH:
-                    State.turnState = State.TurnState.AlliesTurn;
+                    if (State.turnState == null)
+                        State.turnState = State.TurnState.AlliesTurn;
 
                     #region AlliesTurn
                     UpdateEnemiesSeen(); //TODO: this is a hacky fix to a visual bug we have. by "refreshing" the sight, it gets rid of vision errors.
@@ -1155,7 +1162,7 @@ namespace SeniorProjectGame
                             {
                                 timePerMove = 360;
                             }
-                            elapsedTimeForMove += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                            State.elapsedTimeForMove += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
                             //animated movement
                             UnitComponent unit = State.originalHexClicked.GetUnit();
@@ -1163,12 +1170,12 @@ namespace SeniorProjectGame
                             SpriteComponent originalHexSprite = State.originalHexClicked._parent.GetDrawable("SpriteComponent") as SpriteComponent;
                             SpriteComponent finalHexSprite = pathQueue[0]._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                            float percentTraveled = elapsedTimeForMove / timePerMove;
+                            float percentTraveled = State.elapsedTimeForMove / timePerMove;
                             sprite.SetPosition(originalHexSprite.GetCenterPosition() + (-originalHexSprite.GetCenterPosition() + finalHexSprite.GetCenterPosition()) * percentTraveled);
 
-                            if (elapsedTimeForMove > timePerMove)
+                            if (State.elapsedTimeForMove > timePerMove)
                             {
-                                elapsedTimeForMove = elapsedTimeForMove - timePerMove;
+                                State.elapsedTimeForMove = State.elapsedTimeForMove - timePerMove;
 
                                 pathQueue[0].SetInQueue(false);
                                 MoveUnit(State.originalHexClicked, pathQueue[0]);
@@ -1178,7 +1185,7 @@ namespace SeniorProjectGame
 
                                 if (pathQueue.Count == 0)
                                 {
-                                    elapsedTimeForMove = 0;
+                                    State.elapsedTimeForMove = 0;
 
                                     State.originalHexClicked.GetUnit().SetSelected(false);
                                     State.selectionState = State.SelectionState.NoSelection;
@@ -1297,64 +1304,100 @@ namespace SeniorProjectGame
                     #region EnemiesTurn
                     if (State.turnState == State.TurnState.EnemiesTurn)
                     {
-                        foreach (Entity enemy in boardComponent.nonAlliedUnitList)
+                        Entity enemy = null;
+                        if (State.enemyMoveIndex < boardComponent.nonAlliedUnitList.Count())
                         {
-                            UnitComponent unitComp = enemy.GetComponent("UnitComponent") as UnitComponent;
-
-                            List<HexComponent> visibleHexes = GetVisibleHexes(enemy);
-                            foreach (Entity ally in boardComponent.alliedUnitList)
-                            {
-                                UnitComponent allyComp = ally.GetComponent("UnitComponent") as UnitComponent;
-                                if (visibleHexes.Contains(allyComp.GetHex()))
-                                {
-                                    downSound.Play();
-                                    break;
-                                }
-                            }
-
-                            HexComponent destinationHex = DestinationForUnit(unitComp, "default");
-                            List<HexComponent> pathToDestination = PathToHex(boardComponent, unitComp.GetHex(), destinationHex);
-                            enemiesMoving = true;
-
-                            //if (enemiesMoving)
-                            //{
-                            //    elapsedTimeForMove += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                            //    //animated movement
-                            //    UnitComponent enemyComp = enemy.GetComponent("UnitComponent") as UnitComponent;
-                            //    HexComponent enemyHex = enemyComp.GetHex();
-                            //    UnitSpriteComponent sprite = enemy.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent;
-                            //    SpriteComponent originalHexSprite = enemy.GetDrawable("SpriteComponent") as SpriteComponent;
-                            //    SpriteComponent finalHexSprite = pathToDestination[0]._parent.GetDrawable("SpriteComponent") as SpriteComponent;
-
-                            //    float percentTraveled = elapsedTimeForMove / timePerMove;
-                            //    sprite.SetPosition(originalHexSprite.GetCenterPosition() + (-originalHexSprite.GetCenterPosition() + finalHexSprite.GetCenterPosition()) * percentTraveled);
-
-                            //    if (elapsedTimeForMove > timePerMove)
-                            //    {
-                            //        elapsedTimeForMove = elapsedTimeForMove - timePerMove;
-
-                            //        pathToDestination[0].SetInQueue(false);
-                            //        MoveUnit(enemyHex, pathToDestination[0]);
-                            //        enemyHex = pathToDestination[0];
-                            //        pathToDestination.Remove(pathToDestination[0]);
-                            //    }
-                            //    if (pathToDestination.Count() == 0)
-                            //    {
-                            //        enemiesMoving = false;
-                            //    }
-                            //}
+                            enemy = boardComponent.nonAlliedUnitList[State.enemyMoveIndex];
                         }
-                        ResetTurnsLeft();
-                        UpdateTurnState();
-                        AvailableToMoveCheck();
+                        else 
+                        {
+                            State.enemyMoveIndex = 0;
+                            ResetTurnsLeft();
+                            UpdateTurnState();
+                            AvailableToMoveCheck();
+
+                            State.firstTimeEnemyTurn = true;
+                            return;
+                        }
+                        UnitComponent unitComp = enemy.GetComponent("UnitComponent") as UnitComponent;
+
+                        List<HexComponent> visibleHexes = GetVisibleHexes(enemy);
+                        //foreach (Entity ally in boardComponent.alliedUnitList)
+                        //{
+                        //    UnitComponent allyComp = ally.GetComponent("UnitComponent") as UnitComponent;
+                        //    if (visibleHexes.Contains(allyComp.GetHex()))
+                        //    {
+                        //        downSound.Play();
+                        //        break;
+                        //    }
+                        //}
+
+                        HexComponent destinationHex = DestinationForUnit(unitComp, "default");
+
+                        UnitComponent enemyComp = enemy.GetComponent("UnitComponent") as UnitComponent;
+
+                        if (State.firstTimeEnemyTurn)
+                        {
+                            pathToDestination = PathToHex(boardComponent, unitComp.GetHex(), destinationHex);
+                            UpdateDebugList(pathToDestination);
+                            enemyHex = enemyComp.GetHex();
+                        }
+
+                        enemiesMoving = (State.enemyMoveIndex < boardComponent.nonAlliedUnitList.Count());
+
+                        if (enemiesMoving)
+                        {
+                            timePerMove = 360;
+
+                            State.elapsedTimeForMove += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                            //animated movement
+                            
+                            UnitSpriteComponent sprite = enemy.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent;
+                            //UnitSpriteComponent originalHexSprite = enemyHex.GetUnit()._parent.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent;
+                            SpriteComponent finalHexSprite = pathToDestination[0]._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+
+                            Vector2 originalPosition = enemyHex.GetCenterPosition();
+                            Vector2 finalPosition = finalHexSprite.GetCenterPosition();
+
+                            float percentTraveled = State.elapsedTimeForMove / timePerMove;
+                            sprite.SetPosition(originalPosition + (finalPosition - originalPosition) * percentTraveled);
+
+                            if (State.elapsedTimeForMove > timePerMove)
+                            {
+                                State.elapsedTimeForMove = State.elapsedTimeForMove - timePerMove;
+
+                                //pathToDestination[0].SetInQueue(false);
+                                MoveUnit(enemyHex, pathToDestination[0]);
+                                enemyHex = pathToDestination[0];
+                                debugString = enemyHex.GetCoordPosition().ToString();
+                                pathToDestination.RemoveAt(0);
+                                UpdateDebugList(pathToDestination);
+                            }
+                            if (pathToDestination.Count() == 0)
+                            {
+                                State.elapsedTimeForMove = 0;
+                                State.enemyMoveIndex++;
+                                State.firstTimeEnemyTurn = true;
+                                //enemiesMoving = false;
+                            }
+                        }
+                        //else
+                        //{
+                        //    State.enemyMoveIndex = 0;
+                        //    ResetTurnsLeft();
+                        //    UpdateTurnState();
+                        //    AvailableToMoveCheck();
+                        //}
+
+                        State.firstTimeEnemyTurn = false;
                     }
                     #endregion
 
                     if (qClick.Evaluate())
                     {
                         ChatboxManager.SetEvent("Testing");
-                        ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(),ChatboxManager.GetEvent()));
+                        ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), ChatboxManager.GetEvent()));
                         State.screenState = State.ScreenState.DIALOGUE;
                     }
 
@@ -1462,6 +1505,15 @@ namespace SeniorProjectGame
             base.Update(gameTime);
         }
 
+        public void UpdateDebugList(List<HexComponent> list)
+        {
+            debugString1 = "";
+            foreach (HexComponent hex in list)
+            {
+                debugString1 += hex.GetCoordPosition().ToString();
+            }
+        }
+
         public void UpdateEnemiesSeen()
         {
             foreach (Entity enemy in boardComponent.nonAlliedUnitList)
@@ -1503,7 +1555,11 @@ namespace SeniorProjectGame
         public List<HexComponent> PathToHex(BoardComponent board, HexComponent start, HexComponent destination)
         {
             List<HexComponent> path = new List<HexComponent>();
-            path.Add(start);
+            //path.Add(start);
+            path.Add(boardComponent.GetHex(7,8));
+            path.Add(boardComponent.GetHex(6,8));
+            path.Add(boardComponent.GetHex(5,8));
+            path.Add(boardComponent.GetHex(4,8));
             path.Add(destination);
             return path;
         }
@@ -1564,7 +1620,7 @@ namespace SeniorProjectGame
                 int oldLevel = State.currentDefender.GetUnitData().GetCurrentLevel();
 
                 State.currentDefender.GetUnitData().GainExp(State.currentAttacker.GetUnitData().ExpBounty());
-                
+
                 int newLevel = State.currentDefender.GetUnitData().GetCurrentLevel();
                 if (newLevel - oldLevel > 0)
                 {
@@ -1980,11 +2036,17 @@ namespace SeniorProjectGame
                 if (State.originalHexClicked != null)
                 {
                     int movesLeft = State.originalHexClicked.GetUnit().GetMovesLeft();
-                   //  spriteBatch.DrawString(font, movesLeft.ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
+                    //  spriteBatch.DrawString(font, movesLeft.ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
                 }
-                if (elapsedTimeForMove != null)
+                spriteBatch.DrawString(font, State.elapsedTimeForMove.ToString(), new Vector2(0, 7 * font.LineSpacing), Color.White);
+                spriteBatch.DrawString(font, State.turnState.ToString(), new Vector2(0, 8 * font.LineSpacing), Color.White);
+                if (debugString != null)
                 {
-                    spriteBatch.DrawString(font, elapsedTimeForMove.ToString(), new Vector2(0, 7 * font.LineSpacing), Color.White);
+                    spriteBatch.DrawString(font, debugString, new Vector2(0, 9 * font.LineSpacing), Color.White);
+                }
+                if (debugString1 != null)
+                {
+                    spriteBatch.DrawString(font, debugString1, new Vector2(0, 10 * font.LineSpacing), Color.White);
                 }
                 //  spriteBatch.DrawString(font, State.sumOfMoves.ToString(), new Vector2(0, 4 * font.LineSpacing), Color.White);
 
