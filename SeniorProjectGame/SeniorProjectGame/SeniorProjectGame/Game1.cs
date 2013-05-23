@@ -23,6 +23,39 @@ using C5;
 
 namespace SeniorProjectGame
 {
+    //  object that is indexed in a priority queue, with a certain priority
+    struct Prio<D> : IComparable<Prio<D>> where D : class
+    {
+        public readonly D data;
+        private float priority;
+        public Prio(D data, float priority)
+        {
+            this.data = data; this.priority = priority;
+        }
+        public int CompareTo(Prio<D> that)
+        {
+            return this.priority.CompareTo(that.priority);
+        }
+        public bool Equals(Prio<D> that)
+        {
+            return this.priority == that.priority;
+        }
+        public D Data()
+        {
+            return this.data;
+        }
+
+        public static Prio<D> operator +(Prio<D> prio, float delta)
+        {
+            return new Prio<D>(prio.data, prio.priority + delta);
+        }
+        public static Prio<D> operator -(Prio<D> prio, float delta)
+        {
+            return new Prio<D>(prio.data, prio.priority - delta);
+        }
+        
+    }
+
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         #region Variables
@@ -119,7 +152,7 @@ namespace SeniorProjectGame
         InputAction singleLeftClick, singleRightClick, singleMiddleClick;
         InputAction leftHold, spaceHold;
 
-        InputAction wClick, aClick, sClick, dClick, enterClick, escapeClick,qClick;
+        InputAction wClick, aClick, sClick, dClick, enterClick, escapeClick, qClick;
         InputAction singleWClick, singleAClick, singleSClick, singleDClick;
         float doubleClickTimer;
 
@@ -216,29 +249,29 @@ namespace SeniorProjectGame
 
             string prefix = "C:\\Users\\Jonathan\\Dropbox\\Senior Project Material\\TxtFiles\\Development\\";
 
-            ConvertTxtToBin(prefix+"Enemies.txt");
-            ConvertTxtToBin(prefix+"Player_Roles.txt");
-            ConvertTxtToBin(prefix+"Party_Members.txt");
-            ConvertTxtToBin(prefix+"WorldMap.txt");
+            ConvertTxtToBin(prefix + "Enemies.txt");
+            ConvertTxtToBin(prefix + "Player_Roles.txt");
+            ConvertTxtToBin(prefix + "Party_Members.txt");
+            ConvertTxtToBin(prefix + "WorldMap.txt");
 
-            ConvertTxtToBin(prefix+"Testing_Grounds.txt");
-            ConvertTxtToBin(prefix+"Testing_Grounds_Enemies.txt");
+            ConvertTxtToBin(prefix + "Testing_Grounds.txt");
+            ConvertTxtToBin(prefix + "Testing_Grounds_Enemies.txt");
 
-            ConvertTxtToBin(prefix+"Tutorial_Level.txt");
-            ConvertTxtToBin(prefix+"Tutorial_Level_Enemies.txt");
+            ConvertTxtToBin(prefix + "Tutorial_Level.txt");
+            ConvertTxtToBin(prefix + "Tutorial_Level_Enemies.txt");
 
-            ConvertTxtToBin(prefix+"Ambushed.txt");
-            ConvertTxtToBin(prefix+"Ambushed_Enemies.txt");
+            ConvertTxtToBin(prefix + "Ambushed.txt");
+            ConvertTxtToBin(prefix + "Ambushed_Enemies.txt");
 
-            ConvertTxtToBin(prefix+"Pavilion.txt");
-            ConvertTxtToBin(prefix+"Pavilion_Enemies.txt");
+            ConvertTxtToBin(prefix + "Pavilion.txt");
+            ConvertTxtToBin(prefix + "Pavilion_Enemies.txt");
 
             //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level.txt");
             //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level_Enemies.txt");
 
-            ConvertTxtToBin(prefix+"Lab_Yard.txt");
-            ConvertTxtToBin(prefix+"Lab_Yard_Enemies.txt");
-            ConvertTxtToBin(prefix+"Lab_Yard_Dialogue.txt");
+            ConvertTxtToBin(prefix + "Lab_Yard.txt");
+            ConvertTxtToBin(prefix + "Lab_Yard_Enemies.txt");
+            ConvertTxtToBin(prefix + "Lab_Yard_Dialogue.txt");
 
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\chatboxFont");
 
@@ -1315,7 +1348,7 @@ namespace SeniorProjectGame
                     if (qClick.Evaluate())
                     {
                         ChatboxManager.SetEvent("Testing");
-                        ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(),ChatboxManager.GetEvent()));
+                        ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), ChatboxManager.GetEvent()));
                         State.screenState = State.ScreenState.DIALOGUE;
                     }
 
@@ -1473,7 +1506,11 @@ namespace SeniorProjectGame
         //  source: http://theory.stanford.edu/~amitp/GameProgramming/ImplementationNotes.html
         public List<HexComponent> PathToHex(BoardComponent board, HexComponent start, HexComponent destination)
         {
-            /*IntervalHeap<HexComponent> open = new IntervalHeap<HexComponent>();
+            // for documentation, check page 178 on http://www.itu.dk/research/c5/latest/ITU-TR-2006-76.pdf
+
+            IPriorityQueue<Prio<HexComponent>> open = new IntervalHeap<Prio<HexComponent>>();
+            Dictionary<HexComponent, IPriorityQueueHandle<Prio<HexComponent>>> handles = new Dictionary<HexComponent, IPriorityQueueHandle<Prio<HexComponent>>>();
+
             List<HexComponent> closed = new List<HexComponent>();
 
             //  g function in A*. it is the actual path distance from A to B (B is the key). contrast
@@ -1482,12 +1519,15 @@ namespace SeniorProjectGame
 
             Dictionary<HexComponent, HexComponent> pathParent = new Dictionary<HexComponent, HexComponent>();
 
-            open.Add(start, 0);
+            //open.Add(start, 0);
+            IPriorityQueueHandle<Prio<HexComponent>> h = handles[start];
+            open.Add(ref h, new Prio<HexComponent>(start, 0));
+                  //  the number you put next to it is equal to the priority. start has priority 0.
 
             HexComponent current;
-            while (open.Peek() != destination)
+            while (open.FindMin().Data() != destination)
             {
-                current = open.Dequeue() as HexComponent;
+                current = open.DeleteMin().Data() as HexComponent;
                 closed.Add(current);
 
                 foreach (HexComponent neighbor in board.GetAdjacentList(current))
@@ -1496,30 +1536,38 @@ namespace SeniorProjectGame
 
                     float gCurrentVal = 0;
                     if (g.ContainsKey(current)) gCurrentVal = g[current];
-                    
+
                     float cost = gCurrentVal + 1;
+                    if (neighbor.ContainsImpassable()) cost += float.PositiveInfinity; 
+                        //  if a hex is impassable (e.g., a tree) then it has infinite movecost
 
                     float gNeighborVal = 0;
                     if (g.ContainsKey(neighbor)) gNeighborVal = g[neighbor];
 
-                    if (open.Contains(neighbor) && cost < gNeighborVal)
+                    //  check to see if open contains neighbor
+                    //if (open.Any(p => (p.Data() == neighbor)) && cost < gNeighborVal)
+                    Prio<HexComponent> tmp;
+                    if (open.Find(handles[neighbor], out tmp) && cost < gNeighborVal)
                     {
                         //  remove neighbor from open
-                        open.Remove(neighbor);
+                        open.Delete(handles[neighbor]);
                     }
                     if (closed.Contains(neighbor) && cost < gNeighborVal)
                     {
                         closed.Remove(neighbor);
                     }
-                    if (!open.Contains(neighbor) && !closed.Contains(neighbor))
+                    if (!open.Find(handles[neighbor], out tmp) && !closed.Contains(neighbor))
                     {
                         g[neighbor] = cost;
-                        open.Add(neighbor, g[neighbor] + HeuristicDistance(start, neighbor));
+
+                        h = handles[neighbor];
+                        open.Add(ref h, new Prio<HexComponent>(neighbor, g[neighbor] + HeuristicDistance(start, neighbor)));
+
                         pathParent[neighbor] = current;
                     }
                 }
             }
-            
+
             //  follow parent in a while loop to reconstruct the path
 
             List<HexComponent> path = new List<HexComponent>();
@@ -1534,9 +1582,7 @@ namespace SeniorProjectGame
 
             //path.Add(start);
             //path.Add(destination);
-            return path;*/
-
-            return null;
+            return path;
         }
 
         //  calculate a destination for an enemy or neutral unit
@@ -1547,7 +1593,38 @@ namespace SeniorProjectGame
         //  e.g. "berserk" might be overly aggressive, "passive" might never attack anything.
         public HexComponent DestinationForUnit(UnitComponent unit, string strategy)
         {
-            return boardComponent.GetHex(new Vector2(0, 0));
+            float[] c = new float[7]; //  constants that correspond to AI values.
+
+            if (strategy == "default") {
+                c = new float [] { 10, 20, 5, 10, 5, 3, 10 };
+            }
+
+            List<UnitComponent> seenUnits = unit.seenUnitList;
+
+            float maxScore = -1;
+            UnitComponent maxUnit = null;
+
+            List<float> seenUnitsScores = new List<float>();
+            foreach (UnitComponent u in seenUnits)
+            {
+                float score = 0;
+
+                // todo: implement pseudocode
+                /*score = (c[0] / (currentHealth * (def + res))) + c[1] * (CanThisUnitCanFightBack?) + 
+                    (c[2] / DamageThisUnitWouldDealToYou) + c[3]*(RandomNumber) + (c[4] / DistanceThisEnemyIsFromYou)
+                    + c[5] / (DoesThisUnitHaveAHealingItem?) + c[6] * (IsThisUnitASupport?)
+                */
+
+                if (score > maxScore)
+                {
+                    maxScore = score;
+                    maxUnit = u;
+                }
+
+                seenUnitsScores.Add(score);
+            }
+
+            return maxUnit.GetHex();
         }
 
         //  calculate an optimal action for a unit to perform when its done moving.
@@ -1595,7 +1672,7 @@ namespace SeniorProjectGame
                 int oldLevel = State.currentDefender.GetUnitData().GetCurrentLevel();
 
                 State.currentDefender.GetUnitData().GainExp(State.currentAttacker.GetUnitData().ExpBounty());
-                
+
                 int newLevel = State.currentDefender.GetUnitData().GetCurrentLevel();
                 if (newLevel - oldLevel > 0)
                 {
@@ -1714,7 +1791,7 @@ namespace SeniorProjectGame
 
             State.screenState = State.ScreenState.DIALOGUE;
             ChatboxManager.SetEvent("Beginning");
-            ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(),ChatboxManager.GetEvent()));
+            ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), ChatboxManager.GetEvent()));
         }
 
         void EndLevel()
@@ -1993,7 +2070,7 @@ namespace SeniorProjectGame
                 if (State.originalHexClicked != null)
                 {
                     int movesLeft = State.originalHexClicked.GetUnit().GetMovesLeft();
-                   //  spriteBatch.DrawString(font, movesLeft.ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
+                    //  spriteBatch.DrawString(font, movesLeft.ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
                 }
                 //  spriteBatch.DrawString(font, State.sumOfMoves.ToString(), new Vector2(0, 4 * font.LineSpacing), Color.White);
 
