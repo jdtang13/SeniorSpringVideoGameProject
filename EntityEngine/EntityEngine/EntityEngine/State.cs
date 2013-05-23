@@ -82,6 +82,11 @@ namespace EntityEngine
             State.attackerBattleStatus = BattleStatus.NoStatus;
             State.defenderBattleStatus = BattleStatus.NoStatus;
 
+            State.enemyMoveIndex = 0;
+            State.firstTimeEnemyTurn = true;
+
+            State.elapsedTimeForMove = 0;
+
             State.font = null;
         }
 
@@ -127,6 +132,12 @@ namespace EntityEngine
         public static int lastTimeDialogueChecked; // TODO
 
         public static int sumOfMoves = 0; //debugging
+
+        public static int enemyMoveIndex = 0;
+
+        public static float elapsedTimeForMove = 0;
+
+        public static bool firstTimeEnemyTurn = true;
 
         //public static List<Unit> units;
     }
