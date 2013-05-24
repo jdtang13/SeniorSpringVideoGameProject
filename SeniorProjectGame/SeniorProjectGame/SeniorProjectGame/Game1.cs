@@ -392,9 +392,12 @@ namespace SeniorProjectGame
         }
         List<string> ReadBin(string myID)
         {
-            if (File.Exists("Content//" + myID + ".bin"))
+            //string[] files = Directory.GetFiles(Content.RootDirectory + "\\Binary");
+            
+            //C:\Users\Oliver\Documents\GitHub\SeniorSpringVideoGameProject\SeniorProjectGame\SeniorProjectGame\SeniorProjectGameContent\Binary\Alchemist's_Laboratory.bin
+            if (File.Exists(Content.RootDirectory +"\\" + myID + ".bin"))
             {
-                FileStream binFile = new FileStream("Content/" + myID + ".bin", System.IO.FileMode.Open);
+                FileStream binFile = new FileStream(Content.RootDirectory + "//" + myID + ".bin", System.IO.FileMode.Open);
                 using (BinaryReader binReader = new BinaryReader(binFile))
                 {
                     List<string> lines = new List<string>();
