@@ -70,12 +70,14 @@ namespace SeniorProjectGame
         List<Entity> partyMemberButtonList = new List<Entity>(); //Select to highlight, doublclick for more information
         Entity partyMemberAcceptButton, partyMemberUpButton, partyMemberDownButton;
 
+        Texture2D partyMemberButtonTexture; //TODO: Make this graphic
+
         //Party Member Editting Screen
         Entity editedPartyMember;
 
         Entity memberBackButton;
-        Entity[,] memberInventoryButtons;//This persons equiped weapons
-        Entity[,] communityInventoryButtons; //Community Invetory
+        Entity[] memberInventoryButtons = new Entity[5];//This persons equiped weapons
+        Entity[,] communityInventoryButtons = new Entity[20,20]; //Community Invetory
 
         //Hex Vars
         Entity worldMapEntity; WorldMapComponent worldMapComponent;
@@ -138,11 +140,6 @@ namespace SeniorProjectGame
         InputAction wClick, aClick, sClick, dClick, enterClick, escapeClick, qClick;
         InputAction singleWClick, singleAClick, singleSClick, singleDClick;
         float doubleClickTimer;
-
-        ////Menu Vars
-        //List<Entity> orderButtonEntityList = new List<Entity>();
-        //Entity attackOrderEntity, moveOrderEntity, noOrderEntity, spellOrderEntity;
-        //Texture2D attackOrderTexture, moveOrderTexture, noOrderTexture, spellOrderTexture;
 
         //FPS Vars
         float framesPerSecond = 60;
@@ -217,6 +214,17 @@ namespace SeniorProjectGame
 
             singleRightClick = new InputAction(MouseButton.right, false);
             singleMiddleClick = new InputAction(MouseButton.middle, true);
+        }
+
+        void InitializeSkirmishPreparationEntities()
+        {
+            partyMemberAcceptButton = new Entity(5, State.ScreenState.SKIRMISH_PREPARATION);
+
+            partyMemberDownButton = new Entity(5, State.ScreenState.SKIRMISH_PREPARATION);
+            partyMemberUpButton = new Entity(5, State.ScreenState.SKIRMISH_PREPARATION);
+
+            memberBackButton = new Entity(5, State.ScreenState.PARTY_MEMBER_EDITING);
+
         }
 
         #endregion
@@ -687,6 +695,15 @@ namespace SeniorProjectGame
             }
             boardComponent.UpdateVisibilityAllies();
         }
+        void AddPartyMember(Entity myPartyMember)
+        {
+            partyMemberList.Add(myPartyMember);
+
+            Entity button = new Entity(5, State.ScreenState.SKIRMISH_PREPARATION);
+            button.AddComponent(new SpriteComponent(true, Vector2.Zero, partyMemberButtonTexture));
+            button.AddComponent(new ClickableComponent(Vector2.Zero, partyMemberButtonTexture.Width, partyMemberButtonTexture.Height));
+            partyMemberButtonList.Add(button);
+        }
 
         Entity ProcessHexMapBin(string myID)
         {
@@ -1092,9 +1109,9 @@ namespace SeniorProjectGame
                     {
                         if (ChatboxManager.GetEvent() == "Beginning")
                         {
-                            State.screenState = State.ScreenState.SKIRMISH;
+                            State.screenState = State.ScreenState.SKIRMISH_PREPARATION;
                         }
-                        if (ChatboxManager.GetEvent() == "Victory" || ChatboxManager.GetEvent() == "Defeat")
+                        else if (ChatboxManager.GetEvent() == "Victory" || ChatboxManager.GetEvent() == "Defeat")
                         {
                             State.screenState = State.ScreenState.WORLD_MAP;
                         }
@@ -1588,6 +1605,7 @@ namespace SeniorProjectGame
             }
             base.Update(gameTime);
         }
+
         public EventFunction CheckForEventsAtCoordinate(Vector2 myPosition)
         {
             if (boardComponent.GetEvents().Count != 0)
