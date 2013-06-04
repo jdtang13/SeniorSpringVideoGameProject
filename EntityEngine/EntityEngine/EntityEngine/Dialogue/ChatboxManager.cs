@@ -55,7 +55,7 @@ namespace EntityEngine.Dialogue
         static Dictionary<string, PortraitPackage> portraitDictionary;
         public static PortraitPackage GetPortraitPackage(string myName)
         {
-            if(portraitDictionary.ContainsKey(myName))
+            if (portraitDictionary.ContainsKey(myName))
             {
                 return portraitDictionary[myName];
             }
@@ -106,12 +106,12 @@ namespace EntityEngine.Dialogue
 
             maxLines = Convert.ToInt32((backdrop.Height - topMargin - bottomMargin) / font.LineSpacing);
 
-            int buffer = backdrop.Width / 5;
+            int buffer = backdrop.Width / 4;
 
-            actorPositions[0] = new Vector2(backdropPosition.X , backdropPosition.Y);
-            actorPositions[1] = new Vector2(backdropPosition.X + buffer, backdropPosition.Y);
-            actorPositions[2] = new Vector2(backdropPosition.X + backdrop.Width - buffer, backdropPosition.Y);
-            actorPositions[3] = new Vector2(backdropPosition.X + backdrop.Width , backdropPosition.Y);
+            actorPositions[0] = new Vector2(backdropPosition.X + buffer/2f, backdropPosition.Y);
+            actorPositions[1] = new Vector2(backdropPosition.X + buffer * 1.5f, backdropPosition.Y);
+            actorPositions[2] = new Vector2(backdropPosition.X + backdrop.Width - buffer*1.5f, backdropPosition.Y);
+            actorPositions[3] = new Vector2(backdropPosition.X + backdrop.Width - buffer/2f, backdropPosition.Y);
         }
 
         //The function is given new messages from the Game1 class as a new event is raised
@@ -363,7 +363,7 @@ namespace EntityEngine.Dialogue
             {
                 //THAT'S THE WHOLE DIALOGUE SESSION
                 //TODO: Somehow quit since we are doen with dialogue
-                
+
 
                 currentWritten = new string[maxLines];
                 actorArray = new Actor[4];

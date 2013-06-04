@@ -39,7 +39,8 @@ namespace SeniorProjectGame
         NestedMenu battleMenu = new NestedMenu(false);
 
         //Textures and other content
-        //HexmapStuffs
+
+        //Hexmap Textures
 
         Texture2D worldMapTexture, nodeTexture, pointerTexture;
         Texture2D hexBaseTexture, dirtTexture, grassTexture, gravelTexture, sandTexture, woodTexture,
@@ -47,22 +48,34 @@ namespace SeniorProjectGame
         Texture2D treeTexture, wallTexture, bushTexture, tableTexture, carpetTexture, throneTexture, tentTexture;
         Texture2D markerTexture, questionTexture;
 
-        //UnitStuffs
+        //Unit Textures
         Dictionary<string, Texture2DFramed> unitTextureDictionary = new Dictionary<string, Texture2DFramed>();
 
         Texture2DFramed unitFramedTexture, axemanFramedTexture, battlemageFramedTexture, bowmanFramedTexture, crossbowmanFramedTexture,
             flailmanFramedTexture, halberdierFramedTexture, knightFramedTexture, mageAssassinFramedTexture, manAtArmsFramedTexture,
             pikemanFramedTexture, riflemanFramedTexture, spearmanFramedTexture, swordsmanFramedTexture, wizardFramedTexture, slimeFramedTexture;
 
-        //DialogueStuffs
+        //Dialogue Textures
         Texture2D dialogueBackdropTexture, dialogueWideBackdropTexture;
         Texture2D missingActorTexture, harryPortrait;
         Dictionary<string, PortraitPackage> portraitDictionary = new Dictionary<string, PortraitPackage>();
 
-        //Sounds?
+        //Sounds
         SoundEffect selectSound, downSound;
 
         SpriteFont font;
+
+        //Party Member Stuff
+        List<Entity> partyMemberList = new List<Entity>();
+        List<Entity> partyMemberButtonList = new List<Entity>(); //Select to highlight, doublclick for more information
+        Entity partyMemberAcceptButton, partyMemberUpButton, partyMemberDownButton;
+
+        //Party Member Editting Screen
+        Entity editedPartyMember;
+
+        Entity memberBackButton;
+        Entity[,] memberInventoryButtons;//This persons equiped weapons
+        Entity[,] communityInventoryButtons; //Community Invetory
 
         //Hex Vars
         Entity worldMapEntity; WorldMapComponent worldMapComponent;
@@ -393,9 +406,9 @@ namespace SeniorProjectGame
         List<string> ReadBin(string myID)
         {
             //string[] files = Directory.GetFiles(Content.RootDirectory + "\\Binary");
-            
+
             //C:\Users\Oliver\Documents\GitHub\SeniorSpringVideoGameProject\SeniorProjectGame\SeniorProjectGame\SeniorProjectGameContent\Binary\Alchemist's_Laboratory.bin
-            if (File.Exists(Content.RootDirectory +"\\" + myID + ".bin"))
+            if (File.Exists(Content.RootDirectory + "\\" + myID + ".bin"))
             {
                 FileStream binFile = new FileStream(Content.RootDirectory + "//" + myID + ".bin", System.IO.FileMode.Open);
                 using (BinaryReader binReader = new BinaryReader(binFile))
@@ -650,7 +663,7 @@ namespace SeniorProjectGame
 
                     Entity partyMemberEntity = new Entity(EntityManager.GetHighestLayer() + 1, State.ScreenState.SKIRMISH);
 
-                    UnitData unitData = new UnitData(
+                    UnitData tempUnitData = new UnitData(
                                         name, role, Alignment.Player, level,
                                         str, mag, dex, agi, def, res, spd,
                                         strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
@@ -663,11 +676,13 @@ namespace SeniorProjectGame
                     partyMemberEntity.AddComponent(new UnitSpriteComponent(true, hexSprite.GetCenterPosition(), unitTextureDictionary[graphicName]));
 
                     partyMemberEntity.AddComponent(new UnitComponent(boardComponent.GetHex(coordinate), true));
-                    (partyMemberEntity.GetComponent("UnitComponent") as UnitComponent).SetUnitData(unitData);
+                    (partyMemberEntity.GetComponent("UnitComponent") as UnitComponent).SetUnitData(tempUnitData);
 
                     EntityManager.AddEntity(partyMemberEntity);
                     boardComponent.GetHex(coordinate).SetUnit(partyMemberEntity.GetComponent("UnitComponent") as UnitComponent);
+
                     boardComponent.alliedUnitList.Add(partyMemberEntity);
+                    partyMemberList.Add(partyMemberEntity);
                 }
             }
             boardComponent.UpdateVisibilityAllies();
@@ -978,6 +993,66 @@ namespace SeniorProjectGame
                 #region Shop
                 case State.ScreenState.SHOP:
                     break;
+                #endregion
+
+                #region Skirmish_Prep
+                case State.ScreenState.SKIRMISH_PREPARATION:
+
+                    if (singleLeftClick.Evaluate())
+                    {
+                        ClickableComponent acceptClick = partyMemberAcceptButton.GetComponent("ClickableComponent") as ClickableComponent;
+                        if (acceptClick.isColliding(new Vector2(InputState.GetMouseIngamePosition().X, InputState.GetMouseIngamePosition().Y)))
+                        {
+                            selectSound.Play();
+                            //TODO: Load the info!
+                            State.screenState = State.ScreenState.SKIRMISH;
+                        }
+                        for (int p = 0; p < partyMemberButtonList.Count; p++)
+                        {
+                            //Cycle through every party member button to see if you are clicking
+                            ClickableComponent click = partyMemberButtonList[p].GetComponent("ClickableComponent") as ClickableComponent;
+                            if (click.isColliding(new Vector2(InputState.GetMouseIngamePosition().X, InputState.GetMouseIngamePosition().Y)))
+                            {
+                                /*
+                                if(doubleClick)
+                                {
+                                   //Go into the party memebers invertory screen
+                                   State.screenState = State.ScreenState.PARTY_MEMBER_EDITING;
+                                }
+                                */
+                                selectSound.Play();
+                                //Take care that when you reorder the buttons you also reorder the party member list
+                                editedPartyMember = partyMemberList[p];
+                            }
+                        }
+                        //TODO: Handle reoderign buttons
+
+                        //TODO: Handle scrolling over party members
+                    }
+
+                    break;
+                #endregion
+
+                #region Party_Member_Editing
+
+                case State.ScreenState.PARTY_MEMBER_EDITING:
+
+                    if (singleLeftClick.Evaluate())
+                    {
+                        //TODO: Handle for holding inventory and equiping it
+
+                        ClickableComponent backButtonClick = memberBackButton.GetComponent("ClickableComponent") as ClickableComponent;
+                        if (backButtonClick.isColliding(new Vector2(InputState.GetMouseIngamePosition().X, InputState.GetMouseIngamePosition().Y)))
+                        {
+                            selectSound.Play();
+                            //TODO: Save all player information!
+                            //TODO: Load the info!
+                            State.screenState = State.ScreenState.SKIRMISH_PREPARATION;
+                        }
+                    }
+
+                    break;
+
                 #endregion
 
                 #region Dialogue
@@ -1735,22 +1810,23 @@ namespace SeniorProjectGame
         public void StartNode()
         {
             //Load the state of the party before every level and save the party at end of every
+            if (worldMapComponent.GetCurrentNodeID() != null)
+            {
+                boardEntity = ProcessHexMapBin(worldMapComponent.GetCurrentNodeID());
+                boardComponent = boardEntity.GetComponent("BoardComponent") as BoardComponent;
 
-            boardEntity = ProcessHexMapBin(worldMapComponent.GetCurrentNodeID());
-            boardComponent = boardEntity.GetComponent("BoardComponent") as BoardComponent;
+                ProcessHexMapEnemyBin(worldMapComponent.GetCurrentNodeID());
+                ProcessPartyMembersBin();
 
-            ProcessHexMapEnemyBin(worldMapComponent.GetCurrentNodeID());
-            ProcessPartyMembersBin();
+                //TODO: HAVE AN ACTIVE PARTY MEMBERS LIST
+                //TODO: PULL YOUR ACTIVE PARTY MEMBERS instead of creating this nondescript
+                //If there aren't enough spaces for them the highest in your queue will go
+                //You should be able to reorder your party
 
-            //TODO: HAVE AN ACTIVE PARTY MEMBERS LIST
-            //TODO: PULL YOUR ACTIVE PARTY MEMBERS instead of creating this nondescript
-            //If there aren't enough spaces for them the highest in your queue will go
-            //You should be able to reorder your party
-
-            State.screenState = State.ScreenState.DIALOGUE;
-            ChatboxManager.SetEventName("Beginning");
-            ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), ChatboxManager.GetEvent()));
-
+                State.screenState = State.ScreenState.DIALOGUE;
+                ChatboxManager.SetEventName("Beginning");
+                ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), ChatboxManager.GetEvent()));
+            }
         }
 
         void EndLevel()
@@ -2065,6 +2141,14 @@ namespace SeniorProjectGame
 
             switch (State.screenState)
             {
+                case State.ScreenState.WORLD_MAP:
+
+                    if (worldMapComponent.GetCurrentNodeID() != null)
+                    {
+                        spriteBatch.DrawString(font, worldMapComponent.GetCurrentNodeID(), new Vector2(0, 300), Color.White);
+                    }
+                    break;
+
                 case (State.ScreenState.BATTLING):
                     //  draw battle scene
 

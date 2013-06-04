@@ -99,7 +99,15 @@ namespace EntityEngine.Components.World_Map
         //Uses the currently selected node
         public string GetCurrentNodeID()
         {
-            return selectedNode.GetID();
+            if (selectedNode != null)
+            {
+                return selectedNode.GetID();
+            }
+            else
+            {
+                return null;
+            }
         }
+
     }
 }
