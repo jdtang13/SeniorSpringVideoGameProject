@@ -118,6 +118,9 @@ namespace SeniorProjectGame
         List<UnitComponent> newEnemiesYouSee = new List<UnitComponent>();
         int clusterDetectionRadius = 4;
 
+        Vector2 skirmishCameraPosition;//We have to save this variable when the map is loaded that it may be used only after
+        //the dialogue and the prepartation is finished. Only then will the camera not be at 0,0.
+
         bool moving = false;
         bool enemiesMoving = false;
         bool yourTurn = true;
@@ -237,22 +240,25 @@ namespace SeniorProjectGame
             //Accept Button Creation
             //This button advances you to skirmish with the loadout
             partyMemberAcceptButton = new Entity(5, State.ScreenState.SKIRMISH_PREPARATION);
-            partyMemberAcceptButton.AddComponent(new SpriteComponent(true, new Vector2(600 - acceptButtonTexture.Width / 2, 600 - acceptButtonTexture.Height / 2), acceptButtonTexture));
-            partyMemberAcceptButton.AddComponent(new ClickableComponent(new Vector2(600), acceptButtonTexture.Width, acceptButtonTexture.Height));
+            Vector2 acceptPosition = new Vector2(400, 300);
+            partyMemberAcceptButton.AddComponent(new SpriteComponent(true, acceptPosition, acceptButtonTexture));
+            partyMemberAcceptButton.AddComponent(new ClickableComponent(acceptPosition, acceptButtonTexture.Width, acceptButtonTexture.Height));
             partyMemberButtonList.Add(partyMemberAcceptButton);
             EntityManager.AddEntity(partyMemberAcceptButton);
 
             //Scroll Up Button Creation
             partyMemberUpButton = new Entity(5, State.ScreenState.SKIRMISH_PREPARATION);
-            partyMemberUpButton.AddComponent(new SpriteComponent(true, new Vector2(0 - partyMemberUpButtonTexture.Width / 2, 0 - partyMemberUpButtonTexture.Height / 2), partyMemberUpButtonTexture));
-            partyMemberUpButton.AddComponent(new ClickableComponent(new Vector2(0, 0), partyMemberUpButtonTexture.Width, partyMemberUpButtonTexture.Height));
+            Vector2 upPosition = new Vector2(550, -200);
+            partyMemberUpButton.AddComponent(new SpriteComponent(true,upPosition, partyMemberUpButtonTexture));
+            partyMemberUpButton.AddComponent(new ClickableComponent(upPosition, partyMemberUpButtonTexture.Width, partyMemberUpButtonTexture.Height));
             partyMemberButtonList.Add(partyMemberUpButton);
             EntityManager.AddEntity(partyMemberUpButton);
 
             //Scroll Down Button Creation
             partyMemberDownButton = new Entity(5, State.ScreenState.SKIRMISH_PREPARATION);
-            partyMemberDownButton.AddComponent(new SpriteComponent(true, new Vector2(200 - partyMemberDownButtonTexture.Width / 2, 200 - partyMemberDownButtonTexture.Height / 2), partyMemberDownButtonTexture));
-            partyMemberDownButton.AddComponent(new ClickableComponent(new Vector2(200, 200), partyMemberDownButtonTexture.Width, partyMemberDownButtonTexture.Height));
+            Vector2 downPosition = new Vector2(550, 100);
+            partyMemberDownButton.AddComponent(new SpriteComponent(true, downPosition, partyMemberDownButtonTexture));
+            partyMemberDownButton.AddComponent(new ClickableComponent(downPosition, partyMemberDownButtonTexture.Width, partyMemberDownButtonTexture.Height));
             partyMemberButtonList.Add(partyMemberDownButton);
             EntityManager.AddEntity(partyMemberDownButton);
 
@@ -806,7 +812,7 @@ namespace SeniorProjectGame
                             HexComponent hex = tempBoardComponent.GetHex(ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
                             SpriteComponent hexSprite = hex._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                            Camera.MoveTo(hexSprite.centerScreenPosition);
+                            skirmishCameraPosition = hexSprite.centerScreenPosition;
                         }
                         else if (line[x].Contains("E"))
                         {
@@ -1056,6 +1062,7 @@ namespace SeniorProjectGame
                         {
                             selectSound.Play();
                             //TODO: Load the info!
+                            Camera.MoveTo(skirmishCameraPosition);
                             State.screenState = State.ScreenState.SKIRMISH;
                         }
                         for (int p = 0; p < partyMemberButtonList.Count; p++)
@@ -1877,6 +1884,7 @@ namespace SeniorProjectGame
                 State.screenState = State.ScreenState.DIALOGUE;
                 ChatboxManager.SetEventName("Beginning");
                 ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), ChatboxManager.GetEvent()));
+                //Camera.MoveTo(Vector2.Zero);
             }
         }
 
