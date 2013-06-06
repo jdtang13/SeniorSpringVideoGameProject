@@ -70,7 +70,7 @@ namespace SeniorProjectGame
         List<Entity> partyMemberButtonList = new List<Entity>(); //Select to highlight, doublclick for more information
         Entity partyMemberAcceptButton, partyMemberUpButton, partyMemberDownButton;
 
-        Texture2D partyMemberButtonTexture; //TODO: Make this graphic
+        Texture2D partyMemberButtonTexture, acceptButtonTexture; //TODO: Make this graphic
 
         //Party Member Editting Screen
         Entity editedPartyMember;
@@ -180,6 +180,7 @@ namespace SeniorProjectGame
             ProcessEnemyBestiaryBin();
 
             InitializeInput();
+            InitializeSkirmishPreparationEntities();
 
             //  dot is a generic white pixel texture used for generating colored rectangles
             State.dot = new Texture2D(graphics.GraphicsDevice, 1, 1);
@@ -218,7 +219,25 @@ namespace SeniorProjectGame
 
         void InitializeSkirmishPreparationEntities()
         {
+            ////Party Member Stuff
+            //List<Entity> partyMemberList = new List<Entity>();
+            //List<Entity> partyMemberButtonList = new List<Entity>(); //Select to highlight, doublclick for more information
+            //Entity partyMemberAcceptButton, partyMemberUpButton, partyMemberDownButton;
+
+            //Texture2D partyMemberButtonTexture; //TODO: Make this graphic
+
+            ////Party Member Editting Screen
+            //Entity editedPartyMember;
+
+            //Entity memberBackButton;
+            //Entity[] memberInventoryButtons = new Entity[5];//This persons equiped weapons
+            //Entity[,] communityInventoryButtons = new Entity[20, 20]; //Community Invetory
+
             partyMemberAcceptButton = new Entity(5, State.ScreenState.SKIRMISH_PREPARATION);
+            partyMemberAcceptButton.AddComponent(new SpriteComponent(true, new Vector2(300), acceptButtonTexture));
+            partyMemberAcceptButton.AddComponent(new ClickableComponent(new Vector2(300), acceptButtonTexture.Width, acceptButtonTexture.Height));
+            partyMemberButtonList.Add(partyMemberAcceptButton);
+            EntityManager.AddEntity(partyMemberAcceptButton);
 
             partyMemberDownButton = new Entity(5, State.ScreenState.SKIRMISH_PREPARATION);
             partyMemberUpButton = new Entity(5, State.ScreenState.SKIRMISH_PREPARATION);
@@ -296,6 +315,9 @@ namespace SeniorProjectGame
             dialogueWideBackdropTexture = Content.Load<Texture2D>("Graphics\\Dialogue\\chatboxWideBackdrop");
             missingActorTexture = Content.Load<Texture2D>("Graphics\\Dialogue\\Actors\\missing");
             harryPortrait = Content.Load<Texture2D>("Graphics\\Dialogue\\Actors\\Harry");
+
+            acceptButtonTexture = Content.Load<Texture2D>("Graphics\\Menu\\acceptButton");
+            partyMemberButtonTexture = Content.Load<Texture2D>("Graphics\\Menu\\acceptButton");
 
             PopulateTerrainDictionary();
 
@@ -690,7 +712,7 @@ namespace SeniorProjectGame
                     boardComponent.GetHex(coordinate).SetUnit(partyMemberEntity.GetComponent("UnitComponent") as UnitComponent);
 
                     boardComponent.alliedUnitList.Add(partyMemberEntity);
-                    partyMemberList.Add(partyMemberEntity);
+                    AddPartyMember(partyMemberEntity);
                 }
             }
             boardComponent.UpdateVisibilityAllies();
@@ -1837,7 +1859,6 @@ namespace SeniorProjectGame
                 ProcessPartyMembersBin();
 
                 //TODO: HAVE AN ACTIVE PARTY MEMBERS LIST
-                //TODO: PULL YOUR ACTIVE PARTY MEMBERS instead of creating this nondescript
                 //If there aren't enough spaces for them the highest in your queue will go
                 //You should be able to reorder your party
 
@@ -2101,6 +2122,8 @@ namespace SeniorProjectGame
 
             spriteBatch.Begin();
 
+            
+
             ChatboxManager.Draw(spriteBatch);
 
             //spriteBatch.DrawString(font, InputState.GetMouseIngamePosition().ToString(), new Vector2(0, font.LineSpacing), Color.White);
@@ -2185,7 +2208,7 @@ namespace SeniorProjectGame
 
                     break;
             }
-
+            spriteBatch.DrawString(font, State.screenState.ToString(), new Vector2(0, 550), Color.White);
             spriteBatch.End();
 
             base.Draw(gameTime);
