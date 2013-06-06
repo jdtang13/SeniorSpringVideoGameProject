@@ -54,3 +54,6 @@ Content\Audio\Sounds\select.xnb
 Content\Audio\Sounds\Powerup27.xnb
 Content\Audio\Sounds\down.xnb
 Content\Graphics\Menu\acceptButton.xnb
+Content\Graphics\Menu\partyMemberBackdrop.xnb
+Content\Graphics\Menu\partyMemberScrollDown.xnb
+Content\Graphics\Menu\partyMemberScrollUp.xnb

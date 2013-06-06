@@ -70,14 +70,14 @@ namespace SeniorProjectGame
         List<Entity> partyMemberButtonList = new List<Entity>(); //Select to highlight, doublclick for more information
         Entity partyMemberAcceptButton, partyMemberUpButton, partyMemberDownButton;
 
-        Texture2D partyMemberButtonTexture, acceptButtonTexture; //TODO: Make this graphic
+        Texture2D partyMemberButtonTexture, acceptButtonTexture, partyMemberUpButtonTexture, partyMemberDownButtonTexture; //TODO: Make this graphic
 
         //Party Member Editting Screen
         Entity editedPartyMember;
 
         Entity memberBackButton;
         Entity[] memberInventoryButtons = new Entity[5];//This persons equiped weapons
-        Entity[,] communityInventoryButtons = new Entity[20,20]; //Community Invetory
+        Entity[,] communityInventoryButtons = new Entity[20, 20]; //Community Invetory
 
         //Hex Vars
         Entity worldMapEntity; WorldMapComponent worldMapComponent;
@@ -233,14 +233,28 @@ namespace SeniorProjectGame
             //Entity[] memberInventoryButtons = new Entity[5];//This persons equiped weapons
             //Entity[,] communityInventoryButtons = new Entity[20, 20]; //Community Invetory
 
+
+            //Accept Button Creation
+            //This button advances you to skirmish with the loadout
             partyMemberAcceptButton = new Entity(5, State.ScreenState.SKIRMISH_PREPARATION);
-            partyMemberAcceptButton.AddComponent(new SpriteComponent(true, new Vector2(300), acceptButtonTexture));
-            partyMemberAcceptButton.AddComponent(new ClickableComponent(new Vector2(300), acceptButtonTexture.Width, acceptButtonTexture.Height));
+            partyMemberAcceptButton.AddComponent(new SpriteComponent(true, new Vector2(600 - acceptButtonTexture.Width / 2, 600 - acceptButtonTexture.Height / 2), acceptButtonTexture));
+            partyMemberAcceptButton.AddComponent(new ClickableComponent(new Vector2(600), acceptButtonTexture.Width, acceptButtonTexture.Height));
             partyMemberButtonList.Add(partyMemberAcceptButton);
             EntityManager.AddEntity(partyMemberAcceptButton);
 
-            partyMemberDownButton = new Entity(5, State.ScreenState.SKIRMISH_PREPARATION);
+            //Scroll Up Button Creation
             partyMemberUpButton = new Entity(5, State.ScreenState.SKIRMISH_PREPARATION);
+            partyMemberUpButton.AddComponent(new SpriteComponent(true, new Vector2(0 - partyMemberUpButtonTexture.Width / 2, 0 - partyMemberUpButtonTexture.Height / 2), partyMemberUpButtonTexture));
+            partyMemberUpButton.AddComponent(new ClickableComponent(new Vector2(0, 0), partyMemberUpButtonTexture.Width, partyMemberUpButtonTexture.Height));
+            partyMemberButtonList.Add(partyMemberUpButton);
+            EntityManager.AddEntity(partyMemberUpButton);
+
+            //Scroll Down Button Creation
+            partyMemberDownButton = new Entity(5, State.ScreenState.SKIRMISH_PREPARATION);
+            partyMemberDownButton.AddComponent(new SpriteComponent(true, new Vector2(200 - partyMemberDownButtonTexture.Width / 2, 200 - partyMemberDownButtonTexture.Height / 2), partyMemberDownButtonTexture));
+            partyMemberDownButton.AddComponent(new ClickableComponent(new Vector2(200, 200), partyMemberDownButtonTexture.Width, partyMemberDownButtonTexture.Height));
+            partyMemberButtonList.Add(partyMemberDownButton);
+            EntityManager.AddEntity(partyMemberDownButton);
 
             memberBackButton = new Entity(5, State.ScreenState.PARTY_MEMBER_EDITING);
 
@@ -264,31 +278,26 @@ namespace SeniorProjectGame
             ConvertTxtToBin(prefix + "Party_Members.txt");
             ConvertTxtToBin(prefix + "WorldMap.txt");
 
-
-            ConvertTxtToBin(prefix + "Testing_Grounds.txt");
-            ConvertTxtToBin(prefix + "Testing_Grounds_Enemies.txt");
-
             ConvertTxtToBin(prefix + "Playtest_Map.txt");
             ConvertTxtToBin(prefix + "Playtest_Map_Enemies.txt");
             ConvertTxtToBin(prefix + "Playtest_Map_Dialogue.txt");
-
-
-            ConvertTxtToBin(prefix + "Tutorial_Level.txt");
-            ConvertTxtToBin(prefix + "Tutorial_Level_Enemies.txt");
-
-            ConvertTxtToBin(prefix + "Ambushed.txt");
-            ConvertTxtToBin(prefix + "Ambushed_Enemies.txt");
-
-            ConvertTxtToBin(prefix + "Pavilion.txt");
-            ConvertTxtToBin(prefix + "Pavilion_Enemies.txt");
-
-            //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level.txt");
-            //            ConvertTxtToBin("C:\\Users\\Oliver\\Desktop\\Txts\\Tutorial_Level_Enemies.txt");
 
             ConvertTxtToBin(prefix + "Lab_Yard.txt");
             ConvertTxtToBin(prefix + "Lab_Yard_Enemies.txt");
             ConvertTxtToBin(prefix + "Lab_Yard_Dialogue.txt");
 
+
+            //ConvertTxtToBin(prefix + "Testing_Grounds.txt");
+            //ConvertTxtToBin(prefix + "Testing_Grounds_Enemies.txt");
+
+            //ConvertTxtToBin(prefix + "Tutorial_Level.txt");
+            //ConvertTxtToBin(prefix + "Tutorial_Level_Enemies.txt");
+
+            //ConvertTxtToBin(prefix + "Ambushed.txt");
+            //ConvertTxtToBin(prefix + "Ambushed_Enemies.txt");
+
+            //ConvertTxtToBin(prefix + "Pavilion.txt");
+            //ConvertTxtToBin(prefix + "Pavilion_Enemies.txt");
 
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\chatboxFont");
 
@@ -317,7 +326,9 @@ namespace SeniorProjectGame
             harryPortrait = Content.Load<Texture2D>("Graphics\\Dialogue\\Actors\\Harry");
 
             acceptButtonTexture = Content.Load<Texture2D>("Graphics\\Menu\\acceptButton");
-            partyMemberButtonTexture = Content.Load<Texture2D>("Graphics\\Menu\\acceptButton");
+            partyMemberButtonTexture = Content.Load<Texture2D>("Graphics\\Menu\\partyMemberBackdrop");
+            partyMemberUpButtonTexture = Content.Load<Texture2D>("Graphics\\Menu\\partyMemberScrollUp");
+            partyMemberDownButtonTexture = Content.Load<Texture2D>("Graphics\\Menu\\partyMemberScrollDown");
 
             PopulateTerrainDictionary();
 
@@ -725,6 +736,7 @@ namespace SeniorProjectGame
             button.AddComponent(new SpriteComponent(true, Vector2.Zero, partyMemberButtonTexture));
             button.AddComponent(new ClickableComponent(Vector2.Zero, partyMemberButtonTexture.Width, partyMemberButtonTexture.Height));
             partyMemberButtonList.Add(button);
+            EntityManager.AddEntity(button);
         }
 
         Entity ProcessHexMapBin(string myID)
@@ -952,7 +964,12 @@ namespace SeniorProjectGame
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
+            if (escapeClick.Evaluate())
+            {
+                this.Exit();
+            }
 
+            //Calculating the FPS, doesn't go above 60
             elapsedTimeForFps += gameTime.ElapsedGameTime;
             if (elapsedTimeForFps > TimeSpan.FromSeconds(1))
             {
@@ -961,13 +978,8 @@ namespace SeniorProjectGame
                 numberOfFrames = 0;
             }
 
-            if (escapeClick.Evaluate())
-            {
-                this.Exit();
-            }
-
             if (State.selectionState != State.SelectionState.SelectingMenuOptions
-                && (State.screenState == State.ScreenState.SKIRMISH || State.screenState == State.ScreenState.WORLD_MAP))
+                && (State.screenState == State.ScreenState.SKIRMISH || State.screenState == State.ScreenState.WORLD_MAP))//|| State.screenState == State.ScreenState.SKIRMISH_PREPARATION))
             {
                 if (wClick.Evaluate())
                 {
@@ -1621,7 +1633,7 @@ namespace SeniorProjectGame
 
                 #region Default
                 default:
-                    //This should nevr happen
+                    //This should never happen
                     break;
                 #endregion
             }
@@ -2122,7 +2134,7 @@ namespace SeniorProjectGame
 
             spriteBatch.Begin();
 
-            
+
 
             ChatboxManager.Draw(spriteBatch);
 
@@ -2209,6 +2221,10 @@ namespace SeniorProjectGame
                     break;
             }
             spriteBatch.DrawString(font, State.screenState.ToString(), new Vector2(0, 550), Color.White);
+            spriteBatch.DrawString(font, "Ingame: " + InputState.GetMouseIngamePosition().ToString(), new Vector2(0, 570), Color.White);
+            spriteBatch.DrawString(font, "Camera: " + Camera.Pos.ToString(), new Vector2(0, 590), Color.White);
+            spriteBatch.DrawString(font, "Screen: " + InputState.GetMouseScreenPosition().ToString(), new Vector2(0, 610), Color.White);
+
             spriteBatch.End();
 
             base.Draw(gameTime);
