@@ -68,8 +68,9 @@ namespace SeniorProjectGame
         //Party Member Stuff
         List<Entity> partyMemberList = new List<Entity>();
         List<Entity> partyMemberButtonList = new List<Entity>(); //Select to highlight, doublclick for more information
-        Entity partyMemberAcceptButton, partyMemberUpButton, partyMemberDownButton;
+        Entity[,] currentlyViewedPartyButtons; Vector2[,] currentlyViewedPartyButtonPositions;
 
+        Entity partyMemberAcceptButton, partyMemberUpButton, partyMemberDownButton;
         Texture2D partyMemberButtonTexture, acceptButtonTexture, partyMemberUpButtonTexture, partyMemberDownButtonTexture; //TODO: Make this graphic
 
         //Party Member Editting Screen
@@ -78,6 +79,8 @@ namespace SeniorProjectGame
         Entity memberBackButton;
         Entity[] memberInventoryButtons = new Entity[5];//This persons equiped weapons
         Entity[,] communityInventoryButtons = new Entity[20, 20]; //Community Invetory
+
+        Texture2D backButtonTexture;
 
         //Hex Vars
         Entity worldMapEntity; WorldMapComponent worldMapComponent;
@@ -183,7 +186,7 @@ namespace SeniorProjectGame
             ProcessEnemyBestiaryBin();
 
             InitializeInput();
-            InitializeSkirmishPreparationEntities();
+            //InitializeSkirmishPreparationEntities();
 
             //  dot is a generic white pixel texture used for generating colored rectangles
             State.dot = new Texture2D(graphics.GraphicsDevice, 1, 1);
@@ -236,9 +239,12 @@ namespace SeniorProjectGame
             //Entity[] memberInventoryButtons = new Entity[5];//This persons equiped weapons
             //Entity[,] communityInventoryButtons = new Entity[20, 20]; //Community Invetory
 
-
+            //Party Editting Screen
             //Accept Button Creation
             //This button advances you to skirmish with the loadout
+
+
+
             partyMemberAcceptButton = new Entity(5, State.ScreenState.SKIRMISH_PREPARATION);
             Vector2 acceptPosition = new Vector2(400, 300);
             partyMemberAcceptButton.AddComponent(new SpriteComponent(true, acceptPosition, acceptButtonTexture));
@@ -262,8 +268,32 @@ namespace SeniorProjectGame
             partyMemberButtonList.Add(partyMemberDownButton);
             EntityManager.AddEntity(partyMemberDownButton);
 
-            memberBackButton = new Entity(5, State.ScreenState.PARTY_MEMBER_EDITING);
+            Vector2 spaceForPartyMembers = new Vector2(State.screenWidth - 300, State.screenHeight - 500);
+            currentlyViewedPartyButtons = new Entity[Convert.ToInt32(spaceForPartyMembers.X / partyMemberButtonTexture.Width), 
+                                                               Convert.ToInt32(spaceForPartyMembers.Y / partyMemberButtonTexture.Height)];
+            currentlyViewedPartyButtonPositions = new Vector2[Convert.ToInt32(spaceForPartyMembers.X / partyMemberButtonTexture.Width),
+                                                               Convert.ToInt32(spaceForPartyMembers.Y / partyMemberButtonTexture.Height)];
 
+            int xBuffer = Convert.ToInt32(spaceForPartyMembers.X / currentlyViewedPartyButtons.GetLength(0));
+            int yBuffer = Convert.ToInt32(spaceForPartyMembers.Y / currentlyViewedPartyButtons.GetLength(1));
+            for (int y = 0; y < currentlyViewedPartyButtonPositions.GetLength(0); y++)
+            {
+                for (int x = 0; x < currentlyViewedPartyButtonPositions.GetLength(1); x++)
+                {
+                    Vector2 position = new Vector2(-spaceForPartyMembers.X / 2 + x * xBuffer + x * partyMemberButtonTexture.Width,
+                                                    -spaceForPartyMembers.Y / 2 + y * yBuffer + y * partyMemberButtonTexture.Height);
+                    currentlyViewedPartyButtonPositions[x, y] = position;
+                }
+            }
+
+            //Party Member Editting Buttons
+            //Retursn you to party editting screen
+            memberBackButton = new Entity(5, State.ScreenState.PARTY_MEMBER_EDITING);
+            Vector2 backPosition = new Vector2(400, 300);
+            memberBackButton.AddComponent(new SpriteComponent(true, backPosition, backButtonTexture));
+            memberBackButton.AddComponent(new ClickableComponent(backPosition, backButtonTexture.Width, backButtonTexture.Height));
+            partyMemberButtonList.Add(memberBackButton);
+            EntityManager.AddEntity(memberBackButton);
         }
 
         #endregion
@@ -740,6 +770,11 @@ namespace SeniorProjectGame
 
             Entity button = new Entity(5, State.ScreenState.SKIRMISH_PREPARATION);
             button.AddComponent(new SpriteComponent(true, Vector2.Zero, partyMemberButtonTexture));
+
+            UnitComponent unit = myPartyMember.GetComponent("UnitComponent") as UnitComponent;
+            UnitData data = unit.GetUnitData();
+            button.AddComponent(new TextSpriteComponent(false,data.GetName(),Color.White,Vector2.Zero,font));
+
             button.AddComponent(new ClickableComponent(Vector2.Zero, partyMemberButtonTexture.Width, partyMemberButtonTexture.Height));
             partyMemberButtonList.Add(button);
             EntityManager.AddEntity(button);
