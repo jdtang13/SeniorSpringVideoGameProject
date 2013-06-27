@@ -53,7 +53,7 @@ namespace SeniorProjectGame
         {
             return new Prio<D>(prio.data, prio.priority - delta);
         }
-        
+
     }
 
     public class Game1 : Microsoft.Xna.Framework.Game
@@ -216,6 +216,10 @@ namespace SeniorProjectGame
 
             State.Initialize();
 
+            Entity victoryText = new Entity(0, State.ScreenState.SKIRMISH_RESOLUTION);
+            victoryText.AddComponent(new TextSpriteComponent(true, "You've won!", Color.White, new Vector2(300, 300), font));
+            EntityManager.AddEntity(victoryText);
+
             base.Initialize();
         }
 
@@ -255,7 +259,7 @@ namespace SeniorProjectGame
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
             State.font = font;
 
-            string prefix = "C:\\Users\\Jonathan\\Dropbox\\Senior Project Material\\TxtFiles\\Development\\";
+            string prefix = "C:\\Users\\TheNextGuy\\Dropbox\\Senior Project Material\\TxtFiles\\Development\\";
 
             ConvertTxtToBin(prefix + "Enemies.txt");
             ConvertTxtToBin(prefix + "Player_Roles.txt");
@@ -745,27 +749,38 @@ namespace SeniorProjectGame
                 {
                     if (line[x] != "*")
                     {
-                        if (line[x] == "O")
+                        if (!line[x].Contains('E'))
                         {
-                            //Add allied spawn
-                            tempBoardComponent.AddAlliedSpawnPoint(ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
-                        }
+                            if (line[x] == "Z")
+                            {
+                                //Add allied spawn
+                                tempBoardComponent.AddAlliedSpawnPoint(ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
+                            }
 
-                        else if (line[x] == "V")
-                        {
-                            //Victory condition
-                        }
-                        else if (line[x] == "C")
-                        {
-                            //Camera location
-                            HexComponent hex = tempBoardComponent.GetHex(ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
-                            SpriteComponent hexSprite = hex._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+                            else if (line[x] == "V")
+                            {
+                                //Victory Point
+                                State.screenState = State.ScreenState.DIALOGUE;
+                                ChatboxManager.SetEvent("Beginning");
+                                ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), ChatboxManager.GetEvent()));
+                            }
+                            else if (line[x] == "C")
+                            {
+                                //Camera location
+                                HexComponent hex = tempBoardComponent.GetHex(ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
+                                SpriteComponent hexSprite = hex._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                            Camera.MoveTo(hexSprite.centerScreenPosition);
+                                Camera.MoveTo(hexSprite.centerScreenPosition);
+                            }
+                            else
+                            {
+                                //Enemy Spawn
+                                tempBoardComponent.AddEnemySpawnPoint(Convert.ToInt32(line[x]), ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
+                            }
                         }
-                        else
+                        else 
                         {
-                            tempBoardComponent.AddEnemySpawnPoint(Convert.ToInt32(line[x]), ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
+                            //We found an event
                         }
                     }
                 }
@@ -797,8 +812,9 @@ namespace SeniorProjectGame
                     int unitSpawn = Convert.ToInt32(nameLine[1]);
                     string name = nameLine[2];
                     Role role = classes[nameLine[3]];
-                    int level = Convert.ToInt32(nameLine[4]);
-                    string graphicName = nameLine[5];
+                    Alignment align = (Alignment)Enum.Parse(typeof(Alignment), nameLine[4], true); 
+                    int level = Convert.ToInt32(nameLine[5]);
+                    string graphicName = nameLine[6];
 
                     int str = Convert.ToInt32(statLine[0]);
                     int mag = Convert.ToInt32(statLine[1]);
@@ -839,7 +855,7 @@ namespace SeniorProjectGame
                     hex.SetUnit(blob.GetComponent("UnitComponent") as UnitComponent);
 
                     hex.GetUnit().SetUnitData(new UnitData(
-                                        name, role, Alignment.ENEMY, level,
+                                        name, role, align, level,
                                         str, mag, dex, agi, def, res, spd,
                                         strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
                                         strCap, magCap, dexCap, agiCap, defCap, resCap, spdCap,
@@ -866,7 +882,6 @@ namespace SeniorProjectGame
 
             List<string> dialogueLines = new List<string>();
 
-
             for (int lineIndex = 0; lineIndex < relevantLines.Count; lineIndex++)
             {
                 if (relevantLines[lineIndex].Contains("-") && relevantLines[lineIndex].Contains(myEventName))
@@ -888,12 +903,15 @@ namespace SeniorProjectGame
             return dialogueLines;
         }
 
-
         #endregion
 
         #region Saving_Content_and_File_Processing
 
         void SavePartyMembersBin()
+        {
+
+        }
+        void SaveWorldMapBin()
         {
 
         }
@@ -1027,10 +1045,15 @@ namespace SeniorProjectGame
                         {
                             State.screenState = State.ScreenState.SKIRMISH;
                         }
-                        if (ChatboxManager.GetEvent() == "Victory" || ChatboxManager.GetEvent() == "Defeat")
+                        if (ChatboxManager.GetEvent() == "Defeat")
                         {
                             State.screenState = State.ScreenState.WORLD_MAP;
                         }
+                        else if (ChatboxManager.GetEvent() == "Victory")
+                        {
+                            State.screenState = State.ScreenState.SKIRMISH_RESOLUTION;
+                        }
+
                         else
                         {
                             State.screenState = State.ScreenState.SKIRMISH;
@@ -1345,7 +1368,7 @@ namespace SeniorProjectGame
                         {
                             enemy = boardComponent.nonAlliedUnitList[State.enemyMoveIndex];
                         }
-                        else 
+                        else
                         {
                             State.enemyMoveIndex = 0;
                             ResetTurnsLeft();
@@ -1388,7 +1411,7 @@ namespace SeniorProjectGame
                             State.elapsedTimeForMove += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
                             //animated movement
-                            
+
                             UnitSpriteComponent sprite = enemy.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent;
                             //UnitSpriteComponent originalHexSprite = enemyHex.GetUnit()._parent.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent;
                             SpriteComponent finalHexSprite = pathToDestination[0]._parent.GetDrawable("SpriteComponent") as SpriteComponent;
@@ -1438,6 +1461,23 @@ namespace SeniorProjectGame
                     }
 
                     break;
+                #endregion
+
+                #region Skirmish_Resolution
+
+                case State.ScreenState.SKIRMISH_RESOLUTION:
+
+                    if (singleLeftClick.Evaluate())
+                    {
+                        SavePartyMembersBin();
+                        SaveWorldMapBin();
+                        ProcessWorldMapBin();
+
+                        State.screenState = State.ScreenState.WORLD_MAP;
+                    }
+
+                    break;
+
                 #endregion
 
                 #region Battle
@@ -1616,7 +1656,7 @@ namespace SeniorProjectGame
             //open.Add(start, 0);
             IPriorityQueueHandle<Prio<HexComponent>> h = handles[start];
             open.Add(ref h, new Prio<HexComponent>(start, 0));
-                  //  the number you put next to it is equal to the priority. start has priority 0.
+            //  the number you put next to it is equal to the priority. start has priority 0.
 
             HexComponent current;
             while (open.FindMin().Data() != destination)
@@ -1632,8 +1672,8 @@ namespace SeniorProjectGame
                     if (g.ContainsKey(current)) gCurrentVal = g[current];
 
                     float cost = gCurrentVal + 1;
-                    if (neighbor.ContainsImpassable()) cost += float.PositiveInfinity; 
-                        //  if a hex is impassable (e.g., a tree) then it has infinite movecost
+                    if (neighbor.ContainsImpassable()) cost += float.PositiveInfinity;
+                    //  if a hex is impassable (e.g., a tree) then it has infinite movecost
 
                     float gNeighborVal = 0;
                     if (g.ContainsKey(neighbor)) gNeighborVal = g[neighbor];
@@ -1689,8 +1729,9 @@ namespace SeniorProjectGame
         {
             float[] c = new float[7]; //  constants that correspond to AI values.
 
-            if (strategy == "default") {
-                c = new float [] { 10, 20, 5, 10, 5, 3, 10 };
+            if (strategy == "default")
+            {
+                c = new float[] { 10, 20, 5, 10, 5, 3, 10 };
             }
 
             List<UnitComponent> seenUnits = unit.seenUnitList;

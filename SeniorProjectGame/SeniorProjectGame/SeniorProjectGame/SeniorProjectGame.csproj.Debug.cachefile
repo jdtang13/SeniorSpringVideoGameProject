@@ -1,5 +1,6 @@
 Content\Graphics\Fonts\font.xnb
 Content\Graphics\Fonts\Debug.xnb
+Content\Graphics\Fonts\chatboxFont.xnb
 Content\Graphics\TileTextures\Bases\hexDirt.xnb
 Content\Graphics\TileTextures\Bases\hexGrass.xnb
 Content\Graphics\TileTextures\Bases\hexBase.xnb
@@ -43,12 +44,11 @@ Content\Graphics\TileTextures\Decorations\bush.xnb
 Content\Graphics\Backgrounds\island.xnb
 Content\Graphics\TileTextures\Decorations\wooden Walls.xnb
 Content\Graphics\TileTextures\Bases\bush.xnb
+Content\Graphics\Dialogue\chatboxBackdrop.xnb
+Content\Graphics\Dialogue\chatboxWideBackdrop.xnb
+Content\Graphics\Dialogue\Actors\missing.xnb
 Content\Audio\Sounds\selects.xnb
 Content\Audio\Sounds\selectss.xnb
 Content\Audio\Sounds\select.xnb
 Content\Audio\Sounds\Powerup27.xnb
 Content\Audio\Sounds\down.xnb
-Content\Graphics\Fonts\chatboxFont.xnb
-Content\Graphics\Dialogue\chatboxBackdrop.xnb
-Content\Graphics\Dialogue\chatboxWideBackdrop.xnb
-Content\Graphics\Dialogue\Actors\missing.xnb
