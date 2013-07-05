@@ -21,7 +21,11 @@ namespace EntityEngine
         public enum ScreenState
         {
             LOADING_FILES, MAIN_PAGE, SETTINGS_MENU, WORLD_MAP, MAP_EDITOR, SHOP, DIALOGUE,
+<<<<<<< HEAD
             SKIRMISH, BATTLING, BATTLE_FORECAST, BATTLE_RESOLUTION, SKIRMISH_PREPARATION, PARTY_MEMBER_EDITING
+=======
+            SKIRMISH, BATTLING, BATTLE_FORECAST, BATTLE_RESOLUTION, SKIRMISH_PREPARATION, SKIRMISH_RESOLUTION
+>>>>>>> origin/master
             //SELECTING_UNIT_ON_SKIRMISH_MAP, SELECTING_OPTIONS_FOR_SKIRMISH_UNITS
         }
 
@@ -82,6 +86,11 @@ namespace EntityEngine
             State.attackerBattleStatus = BattleStatus.NoStatus;
             State.defenderBattleStatus = BattleStatus.NoStatus;
 
+            State.enemyMoveIndex = 0;
+            State.firstTimeEnemyTurn = true;
+
+            State.elapsedTimeForMove = 0;
+
             State.font = null;
         }
 
@@ -127,6 +136,12 @@ namespace EntityEngine
         public static int lastTimeDialogueChecked; // TODO
 
         public static int sumOfMoves = 0; //debugging
+
+        public static int enemyMoveIndex = 0;
+
+        public static float elapsedTimeForMove = 0;
+
+        public static bool firstTimeEnemyTurn = true;
 
         //public static List<Unit> units;
     }

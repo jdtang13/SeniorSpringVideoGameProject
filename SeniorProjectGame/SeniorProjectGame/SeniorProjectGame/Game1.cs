@@ -19,8 +19,44 @@ using EntityEngine.Stat_Attribute_Classes;
 using EntityEngine.Dialogue;
 using System.Text.RegularExpressions;
 
+using SCG = System.Collections.Generic; //  commands needed for C5 library
+using C5;
+
 namespace SeniorProjectGame
 {
+    //  object that is indexed in a priority queue, with a certain priority
+    struct Prio<D> : IComparable<Prio<D>> where D : class
+    {
+        public readonly D data;
+        private float priority;
+        public Prio(D data, float priority)
+        {
+            this.data = data; this.priority = priority;
+        }
+        public int CompareTo(Prio<D> that)
+        {
+            return this.priority.CompareTo(that.priority);
+        }
+        public bool Equals(Prio<D> that)
+        {
+            return this.priority == that.priority;
+        }
+        public D Data()
+        {
+            return this.data;
+        }
+
+        public static Prio<D> operator +(Prio<D> prio, float delta)
+        {
+            return new Prio<D>(prio.data, prio.priority + delta);
+        }
+        public static Prio<D> operator -(Prio<D> prio, float delta)
+        {
+            return new Prio<D>(prio.data, prio.priority - delta);
+        }
+
+    }
+
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         #region Variables
@@ -129,6 +165,12 @@ namespace SeniorProjectGame
         bool yourTurn = true;
         float timePerMove;
 
+        List<HexComponent> pathToDestination = null;
+        HexComponent enemyHex;
+
+        string debugString;
+        string debugString1;
+
         List<HexComponent> oldVisible;
         List<HexComponent> newVisible;
 
@@ -194,6 +236,10 @@ namespace SeniorProjectGame
             dot = State.dot;
 
             State.Initialize();
+
+            Entity victoryText = new Entity(0, State.ScreenState.SKIRMISH_RESOLUTION);
+            victoryText.AddComponent(new TextSpriteComponent(true, "You've won!", Color.White, new Vector2(300, 300), font));
+            EntityManager.AddEntity(victoryText);
 
             base.Initialize();
         }
@@ -307,13 +353,18 @@ namespace SeniorProjectGame
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\Debug");
             State.font = font;
 
+<<<<<<< HEAD
             string prefix = "C:\\Users\\Oliver\\Dropbox\\Senior Project Material\\TxtFiles\\Development\\";
+=======
+            string prefix = "C:\\Users\\TheNextGuy\\Dropbox\\Senior Project Material\\TxtFiles\\Development\\";
+>>>>>>> origin/master
 
             ConvertTxtToBin(prefix + "Enemies.txt");
             ConvertTxtToBin(prefix + "Player_Roles.txt");
             ConvertTxtToBin(prefix + "Party_Members.txt");
             ConvertTxtToBin(prefix + "WorldMap.txt");
 
+<<<<<<< HEAD
             ConvertTxtToBin(prefix + "Playtest_Map.txt");
             ConvertTxtToBin(prefix + "Playtest_Map_Enemies.txt");
             ConvertTxtToBin(prefix + "Playtest_Map_Dialogue.txt");
@@ -325,15 +376,34 @@ namespace SeniorProjectGame
 
             //ConvertTxtToBin(prefix + "Testing_Grounds.txt");
             //ConvertTxtToBin(prefix + "Testing_Grounds_Enemies.txt");
+=======
+            ConvertTxtToBin(prefix + "Testing_Grounds.txt");
+            ConvertTxtToBin(prefix + "Testing_Grounds_Enemies.txt");
+
+            ConvertTxtToBin(prefix + "Tutorial_Level.txt");
+            ConvertTxtToBin(prefix + "Tutorial_Level_Enemies.txt");
+
+            ConvertTxtToBin(prefix + "Ambushed.txt");
+            ConvertTxtToBin(prefix + "Ambushed_Enemies.txt");
+
+            ConvertTxtToBin(prefix + "Pavilion.txt");
+            ConvertTxtToBin(prefix + "Pavilion_Enemies.txt");
+>>>>>>> origin/master
 
             //ConvertTxtToBin(prefix + "Tutorial_Level.txt");
             //ConvertTxtToBin(prefix + "Tutorial_Level_Enemies.txt");
 
+<<<<<<< HEAD
             //ConvertTxtToBin(prefix + "Ambushed.txt");
             //ConvertTxtToBin(prefix + "Ambushed_Enemies.txt");
 
             //ConvertTxtToBin(prefix + "Pavilion.txt");
             //ConvertTxtToBin(prefix + "Pavilion_Enemies.txt");
+=======
+            ConvertTxtToBin(prefix + "Lab_Yard.txt");
+            ConvertTxtToBin(prefix + "Lab_Yard_Enemies.txt");
+            ConvertTxtToBin(prefix + "Lab_Yard_Dialogue.txt");
+>>>>>>> origin/master
 
             font = Content.Load<SpriteFont>("Graphics\\Fonts\\chatboxFont");
 
@@ -831,22 +901,32 @@ namespace SeniorProjectGame
                 {
                     if (line[x] != "*")
                     {
+<<<<<<< HEAD
                         if (line[x] == "Z")
+=======
+                        if (!line[x].Contains('E'))
+>>>>>>> origin/master
                         {
-                            //Add allied spawn
-                            tempBoardComponent.AddAlliedSpawnPoint(ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
-                        }
+                            if (line[x] == "Z")
+                            {
+                                //Add allied spawn
+                                tempBoardComponent.AddAlliedSpawnPoint(ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
+                            }
 
-                        else if (line[x] == "V")
-                        {
-                            //Victory condition
-                        }
-                        else if (line[x] == "C")
-                        {
-                            //Camera location
-                            HexComponent hex = tempBoardComponent.GetHex(ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
-                            SpriteComponent hexSprite = hex._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+                            else if (line[x] == "V")
+                            {
+                                //Victory Point
+                                State.screenState = State.ScreenState.DIALOGUE;
+                                ChatboxManager.SetEvent("Beginning");
+                                ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), ChatboxManager.GetEvent()));
+                            }
+                            else if (line[x] == "C")
+                            {
+                                //Camera location
+                                HexComponent hex = tempBoardComponent.GetHex(ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
+                                SpriteComponent hexSprite = hex._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
+<<<<<<< HEAD
                             skirmishCameraPosition = hexSprite.centerScreenPosition;
                         }
                         else if (line[x].Contains("E"))
@@ -854,10 +934,19 @@ namespace SeniorProjectGame
                             //OH NO WE FOUND AN EVENT
                             tempBoardComponent.AddEventatCoordinate(ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))), new EventFunction(line[x]));
 
+=======
+                                Camera.MoveTo(hexSprite.centerScreenPosition);
+                            }
+                            else
+                            {
+                                //Enemy Spawn
+                                tempBoardComponent.AddEnemySpawnPoint(Convert.ToInt32(line[x]), ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
+                            }
+>>>>>>> origin/master
                         }
-                        else
+                        else 
                         {
-                            tempBoardComponent.AddEnemySpawnPoint(Convert.ToInt32(line[x]), ConvertToHexCoordinate(new Vector2(x, y - ((int)dimensions.Y * layers))));
+                            //We found an event
                         }
 
                     }
@@ -890,7 +979,11 @@ namespace SeniorProjectGame
                     int unitSpawn = Convert.ToInt32(nameLine[1]);
                     string name = nameLine[2];
                     Role role = classes[nameLine[3]];
+<<<<<<< HEAD
                     Alignment alignment = (Alignment)Enum.Parse(typeof(Alignment), nameLine[4]);
+=======
+                    Alignment align = (Alignment)Enum.Parse(typeof(Alignment), nameLine[4], true); 
+>>>>>>> origin/master
                     int level = Convert.ToInt32(nameLine[5]);
                     string graphicName = nameLine[6];
 
@@ -923,6 +1016,7 @@ namespace SeniorProjectGame
                     int attackRange = Convert.ToInt32(movementLine[2]);
 
 
+<<<<<<< HEAD
                     //For every spawn point associated with 1, 2, 3 make the right amount of enemies
                     for (int createdEnemies = 0; createdEnemies <= boardComponent.enemySpawnPoints[unitSpawn].Count; createdEnemies++)
                     {
@@ -946,6 +1040,19 @@ namespace SeniorProjectGame
                         boardComponent.nonAlliedUnitList.Add(blob);
                         boardComponent.totalUnitList.Add(blob);
                     }
+=======
+                    hex.SetUnit(blob.GetComponent("UnitComponent") as UnitComponent);
+
+                    hex.GetUnit().SetUnitData(new UnitData(
+                                        name, role, align, level,
+                                        str, mag, dex, agi, def, res, spd,
+                                        strGrowth, magGrowth, dexGrowth, agiGrowth, defGrowth, resGrowth, spdGrowth,
+                                        strCap, magCap, dexCap, agiCap, defCap, resCap, spdCap,
+                                        movement, sightRange, attackRange));
+                    EntityManager.AddEntity(blob);
+                    boardComponent.nonAlliedUnitList.Add(blob);
+                    boardComponent.totalUnitList.Add(blob);
+>>>>>>> origin/master
                 }
             }
         }
@@ -964,7 +1071,6 @@ namespace SeniorProjectGame
             }
 
             List<string> dialogueLines = new List<string>();
-
 
             for (int lineIndex = 0; lineIndex < relevantLines.Count; lineIndex++)
             {
@@ -987,12 +1093,15 @@ namespace SeniorProjectGame
             return dialogueLines;
         }
 
-
         #endregion
 
         #region Saving_Content_and_File_Processing
 
         void SavePartyMembersBin()
+        {
+
+        }
+        void SaveWorldMapBin()
         {
 
         }
@@ -1187,10 +1296,19 @@ namespace SeniorProjectGame
                         {
                             State.screenState = State.ScreenState.SKIRMISH_PREPARATION;
                         }
+<<<<<<< HEAD
                         else if (ChatboxManager.GetEvent() == "Victory" || ChatboxManager.GetEvent() == "Defeat")
+=======
+                        if (ChatboxManager.GetEvent() == "Defeat")
+>>>>>>> origin/master
                         {
                             State.screenState = State.ScreenState.WORLD_MAP;
                         }
+                        else if (ChatboxManager.GetEvent() == "Victory")
+                        {
+                            State.screenState = State.ScreenState.SKIRMISH_RESOLUTION;
+                        }
+
                         else
                         {
                             State.screenState = State.ScreenState.SKIRMISH;
@@ -1203,7 +1321,8 @@ namespace SeniorProjectGame
 
                 #region Skirmish
                 case State.ScreenState.SKIRMISH:
-                    State.turnState = State.TurnState.AlliesTurn;
+                    if (State.turnState == null)
+                        State.turnState = State.TurnState.AlliesTurn;
 
                     #region AlliesTurn
                     UpdateEnemiesSeen(); //TODO: this is a hacky fix to a visual bug we have. by "refreshing" the sight, it gets rid of vision errors.
@@ -1358,7 +1477,7 @@ namespace SeniorProjectGame
                             {
                                 timePerMove = 360;
                             }
-                            elapsedTimeForMove += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                            State.elapsedTimeForMove += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
                             //animated movement
                             UnitComponent unit = State.originalHexClicked.GetUnit();
@@ -1366,12 +1485,12 @@ namespace SeniorProjectGame
                             SpriteComponent originalHexSprite = State.originalHexClicked._parent.GetDrawable("SpriteComponent") as SpriteComponent;
                             SpriteComponent finalHexSprite = pathQueue[0]._parent.GetDrawable("SpriteComponent") as SpriteComponent;
 
-                            float percentTraveled = elapsedTimeForMove / timePerMove;
+                            float percentTraveled = State.elapsedTimeForMove / timePerMove;
                             sprite.SetPosition(originalHexSprite.GetCenterPosition() + (-originalHexSprite.GetCenterPosition() + finalHexSprite.GetCenterPosition()) * percentTraveled);
 
-                            if (elapsedTimeForMove > timePerMove)
+                            if (State.elapsedTimeForMove > timePerMove)
                             {
-                                elapsedTimeForMove = elapsedTimeForMove - timePerMove;
+                                State.elapsedTimeForMove = State.elapsedTimeForMove - timePerMove;
 
                                 pathQueue[0].SetInQueue(false);
                                 MoveUnit(State.originalHexClicked, pathQueue[0]);
@@ -1398,7 +1517,7 @@ namespace SeniorProjectGame
 
                                 if (pathQueue.Count == 0)
                                 {
-                                    elapsedTimeForMove = 0;
+                                    State.elapsedTimeForMove = 0;
 
                                     State.originalHexClicked.GetUnit().SetSelected(false);
                                     State.selectionState = State.SelectionState.NoSelection;
@@ -1517,68 +1636,125 @@ namespace SeniorProjectGame
                     #region EnemiesTurn
                     if (State.turnState == State.TurnState.EnemiesTurn)
                     {
-                        foreach (Entity enemy in boardComponent.nonAlliedUnitList)
+                        Entity enemy = null;
+                        if (State.enemyMoveIndex < boardComponent.nonAlliedUnitList.Count())
                         {
-                            UnitComponent unitComp = enemy.GetComponent("UnitComponent") as UnitComponent;
-
-                            List<HexComponent> visibleHexes = GetVisibleHexes(enemy);
-                            foreach (Entity ally in boardComponent.alliedUnitList)
-                            {
-                                UnitComponent allyComp = ally.GetComponent("UnitComponent") as UnitComponent;
-                                if (visibleHexes.Contains(allyComp.GetHex()))
-                                {
-                                    downSound.Play();
-                                    break;
-                                }
-                            }
-
-                            HexComponent destinationHex = DestinationForUnit(unitComp, "default");
-                            List<HexComponent> pathToDestination = PathToHex(boardComponent, unitComp.GetHex(), destinationHex);
-                            enemiesMoving = true;
-
-                            //if (enemiesMoving)
-                            //{
-                            //    elapsedTimeForMove += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                            //    //animated movement
-                            //    UnitComponent enemyComp = enemy.GetComponent("UnitComponent") as UnitComponent;
-                            //    HexComponent enemyHex = enemyComp.GetHex();
-                            //    UnitSpriteComponent sprite = enemy.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent;
-                            //    SpriteComponent originalHexSprite = enemy.GetDrawable("SpriteComponent") as SpriteComponent;
-                            //    SpriteComponent finalHexSprite = pathToDestination[0]._parent.GetDrawable("SpriteComponent") as SpriteComponent;
-
-                            //    float percentTraveled = elapsedTimeForMove / timePerMove;
-                            //    sprite.SetPosition(originalHexSprite.GetCenterPosition() + (-originalHexSprite.GetCenterPosition() + finalHexSprite.GetCenterPosition()) * percentTraveled);
-
-                            //    if (elapsedTimeForMove > timePerMove)
-                            //    {
-                            //        elapsedTimeForMove = elapsedTimeForMove - timePerMove;
-
-                            //        pathToDestination[0].SetInQueue(false);
-                            //        MoveUnit(enemyHex, pathToDestination[0]);
-                            //        enemyHex = pathToDestination[0];
-                            //        pathToDestination.Remove(pathToDestination[0]);
-                            //    }
-                            //    if (pathToDestination.Count() == 0)
-                            //    {
-                            //        enemiesMoving = false;
-                            //    }
-                            //}
+                            enemy = boardComponent.nonAlliedUnitList[State.enemyMoveIndex];
                         }
-                        ResetTurnsLeft();
-                        UpdateTurnState();
-                        AvailableToMoveCheck();
+                        else
+                        {
+                            State.enemyMoveIndex = 0;
+                            ResetTurnsLeft();
+                            UpdateTurnState();
+                            AvailableToMoveCheck();
+
+                            State.firstTimeEnemyTurn = true;
+                            return;
+                        }
+                        UnitComponent unitComp = enemy.GetComponent("UnitComponent") as UnitComponent;
+
+                        List<HexComponent> visibleHexes = GetVisibleHexes(enemy);
+                        //foreach (Entity ally in boardComponent.alliedUnitList)
+                        //{
+                        //    UnitComponent allyComp = ally.GetComponent("UnitComponent") as UnitComponent;
+                        //    if (visibleHexes.Contains(allyComp.GetHex()))
+                        //    {
+                        //        downSound.Play();
+                        //        break;
+                        //    }
+                        //}
+
+                        HexComponent destinationHex = DestinationForUnit(unitComp, "default");
+
+                        UnitComponent enemyComp = enemy.GetComponent("UnitComponent") as UnitComponent;
+
+                        if (State.firstTimeEnemyTurn)
+                        {
+                            pathToDestination = PathToHex(boardComponent, unitComp.GetHex(), destinationHex);
+                            UpdateDebugList(pathToDestination);
+                            enemyHex = enemyComp.GetHex();
+                        }
+
+                        enemiesMoving = (State.enemyMoveIndex < boardComponent.nonAlliedUnitList.Count());
+
+                        if (enemiesMoving)
+                        {
+                            timePerMove = 360;
+
+                            State.elapsedTimeForMove += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                            //animated movement
+
+                            UnitSpriteComponent sprite = enemy.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent;
+                            //UnitSpriteComponent originalHexSprite = enemyHex.GetUnit()._parent.GetDrawable("UnitSpriteComponent") as UnitSpriteComponent;
+                            SpriteComponent finalHexSprite = pathToDestination[0]._parent.GetDrawable("SpriteComponent") as SpriteComponent;
+
+                            Vector2 originalPosition = enemyHex.GetCenterPosition();
+                            Vector2 finalPosition = finalHexSprite.GetCenterPosition();
+
+                            float percentTraveled = State.elapsedTimeForMove / timePerMove;
+                            sprite.SetPosition(originalPosition + (finalPosition - originalPosition) * percentTraveled);
+
+                            if (State.elapsedTimeForMove > timePerMove)
+                            {
+                                State.elapsedTimeForMove = State.elapsedTimeForMove - timePerMove;
+
+                                //pathToDestination[0].SetInQueue(false);
+                                MoveUnit(enemyHex, pathToDestination[0]);
+                                enemyHex = pathToDestination[0];
+                                debugString = enemyHex.GetCoordPosition().ToString();
+                                pathToDestination.RemoveAt(0);
+                                UpdateDebugList(pathToDestination);
+                            }
+                            if (pathToDestination.Count() == 0)
+                            {
+                                State.elapsedTimeForMove = 0;
+                                State.enemyMoveIndex++;
+                                State.firstTimeEnemyTurn = true;
+                                //enemiesMoving = false;
+                            }
+                        }
+                        //else
+                        //{
+                        //    State.enemyMoveIndex = 0;
+                        //    ResetTurnsLeft();
+                        //    UpdateTurnState();
+                        //    AvailableToMoveCheck();
+                        //}
+
+                        State.firstTimeEnemyTurn = false;
                     }
                     #endregion
 
                     if (qClick.Evaluate())
                     {
+<<<<<<< HEAD
                         ChatboxManager.SetEventName("Testing");
+=======
+                        ChatboxManager.SetEvent("Testing");
+>>>>>>> origin/master
                         ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), ChatboxManager.GetEvent()));
                         State.screenState = State.ScreenState.DIALOGUE;
                     }
 
                     break;
+                #endregion
+
+                #region Skirmish_Resolution
+
+                case State.ScreenState.SKIRMISH_RESOLUTION:
+
+                    if (singleLeftClick.Evaluate())
+                    {
+                        SavePartyMembersBin();
+                        SaveWorldMapBin();
+                        ProcessWorldMapBin();
+
+                        State.screenState = State.ScreenState.WORLD_MAP;
+                    }
+
+                    break;
+
                 #endregion
 
                 #region Battle
@@ -1682,6 +1858,7 @@ namespace SeniorProjectGame
             base.Update(gameTime);
         }
 
+<<<<<<< HEAD
         public EventFunction CheckForEventsAtCoordinate(Vector2 myPosition)
         {
             if (boardComponent.GetEvents().Count != 0)
@@ -1695,6 +1872,15 @@ namespace SeniorProjectGame
                 }
             }
             return null;
+=======
+        public void UpdateDebugList(List<HexComponent> list)
+        {
+            debugString1 = "";
+            foreach (HexComponent hex in list)
+            {
+                debugString1 += hex.GetCoordPosition().ToString();
+            }
+>>>>>>> origin/master
         }
 
         public void UpdateEnemiesSeen()
@@ -1733,13 +1919,96 @@ namespace SeniorProjectGame
             }
         }
 
+        //  heuristic function that acts as a "rule of thumb" for
+        //  estimating path distance between two points.
+        public float HeuristicDistance(HexComponent start, HexComponent end)
+        {
+            float dist;
+            dist = (start.GetCoordPosition() - end.GetCoordPosition()).Length();
+            return dist;
+        }
+
         //  given a board, start, and destination, return a list
         //  of hexes that form an optimal path.
+        //  source: http://theory.stanford.edu/~amitp/GameProgramming/ImplementationNotes.html
         public List<HexComponent> PathToHex(BoardComponent board, HexComponent start, HexComponent destination)
         {
+            // for documentation, check page 178 on http://www.itu.dk/research/c5/latest/ITU-TR-2006-76.pdf
+
+            IPriorityQueue<Prio<HexComponent>> open = new IntervalHeap<Prio<HexComponent>>();
+            Dictionary<HexComponent, IPriorityQueueHandle<Prio<HexComponent>>> handles = new Dictionary<HexComponent, IPriorityQueueHandle<Prio<HexComponent>>>();
+
+            List<HexComponent> closed = new List<HexComponent>();
+
+            //  g function in A*. it is the actual path distance from A to B (B is the key). contrast
+            //  this with the heuristic path distance.
+            Dictionary<HexComponent, float> g = new Dictionary<HexComponent, float>();
+
+            Dictionary<HexComponent, HexComponent> pathParent = new Dictionary<HexComponent, HexComponent>();
+
+            //open.Add(start, 0);
+            IPriorityQueueHandle<Prio<HexComponent>> h = handles[start];
+            open.Add(ref h, new Prio<HexComponent>(start, 0));
+            //  the number you put next to it is equal to the priority. start has priority 0.
+
+            HexComponent current;
+            while (open.FindMin().Data() != destination)
+            {
+                current = open.DeleteMin().Data() as HexComponent;
+                closed.Add(current);
+
+                foreach (HexComponent neighbor in board.GetAdjacentList(current))
+                {
+                    //  add one because a hex is one step away from its neighbor
+
+                    float gCurrentVal = 0;
+                    if (g.ContainsKey(current)) gCurrentVal = g[current];
+
+                    float cost = gCurrentVal + 1;
+                    if (neighbor.ContainsImpassable()) cost += float.PositiveInfinity;
+                    //  if a hex is impassable (e.g., a tree) then it has infinite movecost
+
+                    float gNeighborVal = 0;
+                    if (g.ContainsKey(neighbor)) gNeighborVal = g[neighbor];
+
+                    //  check to see if open contains neighbor
+                    //if (open.Any(p => (p.Data() == neighbor)) && cost < gNeighborVal)
+                    Prio<HexComponent> tmp;
+                    if (open.Find(handles[neighbor], out tmp) && cost < gNeighborVal)
+                    {
+                        //  remove neighbor from open
+                        open.Delete(handles[neighbor]);
+                    }
+                    if (closed.Contains(neighbor) && cost < gNeighborVal)
+                    {
+                        closed.Remove(neighbor);
+                    }
+                    if (!open.Find(handles[neighbor], out tmp) && !closed.Contains(neighbor))
+                    {
+                        g[neighbor] = cost;
+
+                        h = handles[neighbor];
+                        open.Add(ref h, new Prio<HexComponent>(neighbor, g[neighbor] + HeuristicDistance(start, neighbor)));
+
+                        pathParent[neighbor] = current;
+                    }
+                }
+            }
+
+            //  follow parent in a while loop to reconstruct the path
+
             List<HexComponent> path = new List<HexComponent>();
-            path.Add(start);
-            path.Add(destination);
+
+            HexComponent hex = destination;
+            while (pathParent.ContainsKey(hex))
+            {
+                path.Add(hex);
+                hex = pathParent[hex];
+            }
+            path.Reverse();
+
+            //path.Add(start);
+            //path.Add(destination);
             return path;
         }
 
@@ -1751,7 +2020,39 @@ namespace SeniorProjectGame
         //  e.g. "berserk" might be overly aggressive, "passive" might never attack anything.
         public HexComponent DestinationForUnit(UnitComponent unit, string strategy)
         {
-            return boardComponent.GetHex(new Vector2(3, 8));
+            float[] c = new float[7]; //  constants that correspond to AI values.
+
+            if (strategy == "default")
+            {
+                c = new float[] { 10, 20, 5, 10, 5, 3, 10 };
+            }
+
+            List<UnitComponent> seenUnits = unit.seenUnitList;
+
+            float maxScore = -1;
+            UnitComponent maxUnit = null;
+
+            List<float> seenUnitsScores = new List<float>();
+            foreach (UnitComponent u in seenUnits)
+            {
+                float score = 0;
+
+                // todo: implement pseudocode
+                /*score = (c[0] / (currentHealth * (def + res))) + c[1] * (CanThisUnitCanFightBack?) + 
+                    (c[2] / DamageThisUnitWouldDealToYou) + c[3]*(RandomNumber) + (c[4] / DistanceThisEnemyIsFromYou)
+                    + c[5] / (DoesThisUnitHaveAHealingItem?) + c[6] * (IsThisUnitASupport?)
+                */
+
+                if (score > maxScore)
+                {
+                    maxScore = score;
+                    maxUnit = u;
+                }
+
+                seenUnitsScores.Add(score);
+            }
+
+            return maxUnit.GetHex();
         }
 
         //  calculate an optimal action for a unit to perform when its done moving.
@@ -1916,11 +2217,17 @@ namespace SeniorProjectGame
                 //If there aren't enough spaces for them the highest in your queue will go
                 //You should be able to reorder your party
 
+<<<<<<< HEAD
                 State.screenState = State.ScreenState.DIALOGUE;
                 ChatboxManager.SetEventName("Beginning");
                 ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), ChatboxManager.GetEvent()));
                 //Camera.MoveTo(Vector2.Zero);
             }
+=======
+            State.screenState = State.ScreenState.DIALOGUE;
+            ChatboxManager.SetEvent("Beginning");
+            ChatboxManager.SetNewInfo(ProcessHexMapDialogue(worldMapComponent.GetCurrentNodeID(), ChatboxManager.GetEvent()));
+>>>>>>> origin/master
         }
 
         void EndLevel()
@@ -2220,10 +2527,19 @@ namespace SeniorProjectGame
                 {
                     int movesLeft = State.originalHexClicked.GetUnit().GetMovesLeft();
                     //  spriteBatch.DrawString(font, movesLeft.ToString(), new Vector2(0, 3 * font.LineSpacing), Color.White);
+<<<<<<< HEAD
+=======
                 }
-                if (elapsedTimeForMove != null)
+                spriteBatch.DrawString(font, State.elapsedTimeForMove.ToString(), new Vector2(0, 7 * font.LineSpacing), Color.White);
+                spriteBatch.DrawString(font, State.turnState.ToString(), new Vector2(0, 8 * font.LineSpacing), Color.White);
+                if (debugString != null)
                 {
-                    spriteBatch.DrawString(font, elapsedTimeForMove.ToString(), new Vector2(0, 7 * font.LineSpacing), Color.White);
+                    spriteBatch.DrawString(font, debugString, new Vector2(0, 9 * font.LineSpacing), Color.White);
+>>>>>>> origin/master
+                }
+                if (debugString1 != null)
+                {
+                    spriteBatch.DrawString(font, debugString1, new Vector2(0, 10 * font.LineSpacing), Color.White);
                 }
                 //  spriteBatch.DrawString(font, State.sumOfMoves.ToString(), new Vector2(0, 4 * font.LineSpacing), Color.White);
 

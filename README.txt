@@ -38,3 +38,7 @@ Utility Classes
 	TerrainPackage -
 
 	Camera - 
+
+=====
+
+5/20/2013: Installed C5 library for priority queue support using the NuGet package manager.
