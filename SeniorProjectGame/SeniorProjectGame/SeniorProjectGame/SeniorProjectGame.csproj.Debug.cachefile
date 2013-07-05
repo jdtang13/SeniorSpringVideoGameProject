@@ -47,20 +47,14 @@ Content\Graphics\TileTextures\Bases\bush.xnb
 Content\Graphics\Dialogue\chatboxBackdrop.xnb
 Content\Graphics\Dialogue\chatboxWideBackdrop.xnb
 Content\Graphics\Dialogue\Actors\missing.xnb
-<<<<<<< HEAD
-Content\Graphics\Dialogue\Actors\Harry.xnb
-=======
->>>>>>> origin/master
 Content\Audio\Sounds\selects.xnb
 Content\Audio\Sounds\selectss.xnb
 Content\Audio\Sounds\select.xnb
 Content\Audio\Sounds\Powerup27.xnb
 Content\Audio\Sounds\down.xnb
-<<<<<<< HEAD
+Content\Graphics\Dialogue\Actors\Harry.xnb
 Content\Graphics\Menu\acceptButton.xnb
 Content\Graphics\Menu\partyMemberBackdrop.xnb
 Content\Graphics\Menu\partyMemberScrollDown.xnb
 Content\Graphics\Menu\partyMemberScrollUp.xnb
 Content\Graphics\Menu\backButton.xnb
-=======
->>>>>>> origin/master
