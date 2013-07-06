@@ -1602,15 +1602,6 @@ namespace SeniorProjectGame
                         UnitComponent unitComp = enemy.GetComponent("UnitComponent") as UnitComponent;
 
                         List<HexComponent> visibleHexes = GetVisibleHexes(enemy);
-                        //foreach (Entity ally in boardComponent.alliedUnitList)
-                        //{
-                        //    UnitComponent allyComp = ally.GetComponent("UnitComponent") as UnitComponent;
-                        //    if (visibleHexes.Contains(allyComp.GetHex()))
-                        //    {
-                        //        downSound.Play();
-                        //        break;
-                        //    }
-                        //}
 
                         HexComponent destinationHex = DestinationForUnit(unitComp, "default");
 
@@ -1802,7 +1793,6 @@ namespace SeniorProjectGame
             base.Update(gameTime);
         }
 
-
         public void UpdateDebugList(List<HexComponent> list)
         {
             debugString1 = "";
@@ -1981,8 +1971,14 @@ namespace SeniorProjectGame
 
                 seenUnitsScores.Add(score);
             }
-
-            return maxUnit.GetHex();
+            if (maxUnit != null)
+            {
+                return maxUnit.GetHex();
+            }
+            else
+            {
+                return boardComponent.GetHex(new Vector2(0, 0)); 
+            }
         }
 
         //  calculate an optimal action for a unit to perform when its done moving.
